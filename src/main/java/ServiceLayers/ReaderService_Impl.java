@@ -34,7 +34,7 @@ public class ReaderService_Impl implements ReaderService_Interface{
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
         properties = new GetProperties("C:\\Users\\jarro\\OneDrive\\Documents\\NetBeansProjects\\RIPClient\\src\\java\\Properties\\config.properties");
-        uri = properties.get("uri") + "reader/";
+        uri = properties.get("uri") + "readers/";
     }
     
     @Override
@@ -42,7 +42,7 @@ public class ReaderService_Impl implements ReaderService_Interface{
         String getUserSaltUri = uri + "userExists/{email}";
         webTarget = client.target(getUserSaltUri).resolveTemplate("email", email);
         response = webTarget.request(MediaType.APPLICATION_JSON).get();
-        return Boolean.valueOf(response.readEntity(String.class));
+        return response.readEntity(Boolean.class);
     }
     
 }

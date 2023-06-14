@@ -42,6 +42,7 @@ public class ClientController extends HttpServlet {
                 HashMap<String, String> details = loginService.getUserSalt(user.getEmail());
                 String message = "Login Credentials Incorrect: email or password was not found.";
                 if (Boolean.parseBoolean(details.get("userFound"))) {
+                    user.setSalt(details.get("salt"));
                     user = loginService.loginReader(user);
                     if (user != null) {
                         request.setAttribute("user", user);
