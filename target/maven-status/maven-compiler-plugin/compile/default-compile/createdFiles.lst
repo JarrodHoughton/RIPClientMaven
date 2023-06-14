@@ -1,0 +1,17 @@
+Models\Story.class
+Models\StoryStatistic.class
+Models\Writer.class
+Models\Rating.class
+ServiceLayers\LoginService_Impl$1.class
+Models\View.class
+Controllers\ClientController.class
+ServiceLayers\LoginService_Interface.class
+Utils\PasswordEncryptor.class
+Utils\GetProperties.class
+ServiceLayers\LoginService_Impl.class
+Models\Account.class
+Models\Like.class
+Models\Application.class
+Models\Genre.class
+Models\Reader.class
+Models\Editor.class
