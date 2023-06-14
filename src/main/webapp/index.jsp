@@ -22,7 +22,7 @@
         <h3><%=user.toString()%></h3>
         <%}%>
         <div>Enter Login:</div>
-        <form action="LoginController" method="post">
+        <form action="LoginController" method="get">
             Email:<input type="email" name="email" required><br>
             Password:<input type="password" name="password" maxlength="16" minlength="8" required><br>
             <input type="submit" value="login" name="submit"><br>
