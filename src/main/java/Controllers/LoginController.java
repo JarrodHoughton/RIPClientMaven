@@ -24,6 +24,7 @@ import java.util.HashMap;
  */
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
+
     private LoginService_Interface loginService;
     private ReaderService_Interface readerService;
 
@@ -31,7 +32,7 @@ public class LoginController extends HttpServlet {
         loginService = new LoginService_Impl();
         readerService = new ReaderService_Impl();
     }
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         switch (request.getParameter("submit")) {
@@ -42,7 +43,7 @@ public class LoginController extends HttpServlet {
                 HashMap<String, String> details = loginService.getUserSalt(user.getEmail());
                 String message = "Login Credentials Incorrect: email or password was not found.";
                 if (Boolean.parseBoolean(details.get("userFound"))) {
-                    switch(details.get("userType")) {
+                    switch (details.get("userType")) {
                         case "R":
                             Reader reader = new Reader();
                             reader.setSalt(details.get("salt"));
@@ -50,8 +51,9 @@ public class LoginController extends HttpServlet {
                             reader.setEmail(request.getParameter("email"));
                             reader = loginService.loginReader(reader);
                             request.setAttribute("user", reader);
+                            request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             break;
-                            
+
                         case "W":
                             Writer writer = new Writer();
                             writer.setSalt(details.get("salt"));
@@ -59,22 +61,34 @@ public class LoginController extends HttpServlet {
                             writer.setEmail(request.getParameter("email"));
                             writer = loginService.loginWriter(writer);
                             request.setAttribute("user", writer);
+                            request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             break;
-                            
-                        case "E","A":
+
+                        case "E":
                             Editor editor = new Editor();
                             editor.setSalt(details.get("salt"));
                             editor.setPasswordHash(request.getParameter("password"));
                             editor.setEmail(request.getParameter("email"));
                             editor = loginService.loginEditor(editor);
                             request.setAttribute("user", editor);
+                            request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
                             break;
-                            
+
+                        case "A":
+                            editor = new Editor();
+                            editor.setSalt(details.get("salt"));
+                            editor.setPasswordHash(request.getParameter("password"));
+                            editor.setEmail(request.getParameter("email"));
+                            editor = loginService.loginEditor(editor);
+                            request.setAttribute("user", editor);
+                            request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
+                            break;
+
                         default:
                             request.setAttribute("message", "Something went wrong logging in.");
                             request.getRequestDispatcher("index.jsp").forward(request, response);
                     }
-                    
+
                     if (user != null) {
                         request.setAttribute("user", user);
                         message = "Login successful.";
@@ -98,7 +112,7 @@ public class LoginController extends HttpServlet {
                     message = loginService.register(reader);
                     request.setAttribute("user", loginService.loginReader(reader));
                 }
-                request.setAttribute("message",message);
+                request.setAttribute("message", message);
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             default:
