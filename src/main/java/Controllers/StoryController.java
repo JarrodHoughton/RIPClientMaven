@@ -18,19 +18,33 @@ import java.util.HashMap;
  */
 @WebServlet(name = "StoryController", urlPatterns = {"/StoryController"})
 public class StoryController extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
+    
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        switch (request.getParameter("submit")) {
+            case "viewStory":
+                
+                break;
+            case "readStory":
+                
+                break;
+            case "likeStory":
+                
+                break;
+            case "rateStory":
+                
+                break;
+            case "commentStory":
+                
+                break;
+            case "submitStory":
+                
+                break;
+            case "editStory":
+                
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
