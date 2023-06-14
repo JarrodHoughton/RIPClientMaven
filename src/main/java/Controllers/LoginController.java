@@ -5,6 +5,8 @@
 package Controllers;
 
 import Models.*;
+import ServiceLayers.GenreService_Impl;
+import ServiceLayers.GenreService_Interface;
 import ServiceLayers.LoginService_Impl;
 import ServiceLayers.LoginService_Interface;
 import ServiceLayers.ReaderService_Impl;
@@ -24,11 +26,12 @@ import java.util.HashMap;
  */
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
-
+    private GenreService_Interface genreService;
     private LoginService_Interface loginService;
     private ReaderService_Interface readerService;
 
     public LoginController() {
+        genreService = new GenreService_Impl();
         loginService = new LoginService_Impl();
         readerService = new ReaderService_Impl();
     }
@@ -41,7 +44,7 @@ public class LoginController extends HttpServlet {
                 user.setEmail(request.getParameter("email"));
                 user.setPasswordHash(request.getParameter("password"));
                 HashMap<String, String> details = loginService.getUserSalt(user.getEmail());
-                String message = "Login Credentials Incorrect: email or password was not found.";
+                String message = "Login Credentials Invalid: password was incorrect.";
                 if (Boolean.parseBoolean(details.get("userFound"))) {
                     switch (details.get("userType")) {
                         case "R":
@@ -50,7 +53,13 @@ public class LoginController extends HttpServlet {
                             reader.setPasswordHash(request.getParameter("password"));
                             reader.setEmail(request.getParameter("email"));
                             reader = loginService.loginReader(reader);
-                            request.setAttribute("user", reader);
+                            if (reader != null) {
+                                request.setAttribute("user", reader);
+                                message = "Login successful.";
+                            } else {
+                                request.setAttribute("message", message);
+                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                            }
                             request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             break;
 
@@ -60,7 +69,13 @@ public class LoginController extends HttpServlet {
                             writer.setPasswordHash(request.getParameter("password"));
                             writer.setEmail(request.getParameter("email"));
                             writer = loginService.loginWriter(writer);
-                            request.setAttribute("user", writer);
+                            if (writer != null) {
+                                request.setAttribute("user", writer);
+                                message = "Login successful.";
+                            } else {
+                                request.setAttribute("message", message);
+                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                            }
                             request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             break;
 
@@ -70,7 +85,13 @@ public class LoginController extends HttpServlet {
                             editor.setPasswordHash(request.getParameter("password"));
                             editor.setEmail(request.getParameter("email"));
                             editor = loginService.loginEditor(editor);
-                            request.setAttribute("user", editor);
+                            if (editor != null) {
+                                request.setAttribute("user", editor);
+                                message = "Login successful.";
+                            } else {
+                                request.setAttribute("message", message);
+                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                            }
                             request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
                             break;
 
@@ -80,18 +101,19 @@ public class LoginController extends HttpServlet {
                             editor.setPasswordHash(request.getParameter("password"));
                             editor.setEmail(request.getParameter("email"));
                             editor = loginService.loginEditor(editor);
-                            request.setAttribute("user", editor);
-                            request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
+                            if (editor != null) {
+                                request.setAttribute("user", editor);
+                                message = "Login successful.";
+                                request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
+                            } else {
+                                request.setAttribute("message", message);
+                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                            }
                             break;
 
                         default:
                             request.setAttribute("message", "Something went wrong logging in.");
                             request.getRequestDispatcher("index.jsp").forward(request, response);
-                    }
-
-                    if (user != null) {
-                        request.setAttribute("user", user);
-                        message = "Login successful.";
                     }
                 } else {
                     message = "user not found.";
@@ -114,6 +136,10 @@ public class LoginController extends HttpServlet {
                 }
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("index.jsp").forward(request, response);
+                break;
+            case "getGenresForRegister":
+                request.setAttribute("genres", genreService.getAllGenres());
+                request.getRequestDispatcher("register.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();
