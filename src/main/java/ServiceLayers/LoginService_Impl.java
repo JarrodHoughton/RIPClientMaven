@@ -59,7 +59,7 @@ public class LoginService_Impl implements LoginService_Interface{
     @Override
     public Reader loginReader(Reader reader) {
         try {
-//            reader.setPasswordHash(PasswordEncryptor.hashPassword(reader.getPasswordHash(), reader.getSalt()));
+            reader.setPasswordHash(PasswordEncryptor.hashPassword(reader.getPasswordHash(), reader.getSalt()));
             String loginReaderUri = uri + "getUser";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
