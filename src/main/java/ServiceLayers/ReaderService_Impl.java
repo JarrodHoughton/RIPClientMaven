@@ -33,8 +33,8 @@ public class ReaderService_Impl implements ReaderService_Interface{
     public ReaderService_Impl() {
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
-        properties = new GetProperties("C:\\Users\\jarro\\OneDrive\\Documents\\NetBeansProjects\\RIPClient\\src\\java\\Properties\\config.properties");
-        uri = properties.get("uri") + "readers/";
+//        properties = new GetProperties("C:\\Users\\jarro\\OneDrive\\Documents\\NetBeansProjects\\RIPClient\\src\\java\\Properties\\config.properties");
+        uri = "http://localhost:8080/RIPServerMaven/RIP/readers/";
     }
     
     @Override
