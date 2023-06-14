@@ -23,11 +23,12 @@
         <%}%>
         <div>Enter Login:</div>
         <form action="ClientController" method="get">
+            Name:<input type="text" name="name" required><br>
+            Surname:<input type="text" name="surname" required><br>
             Email:<input type="email" name="email" required><br>
             Password:<input type="password" name="password" maxlength="16" minlength="8" required><br>
-            <input type="submit" value="login" name="submit"><br>
+            Phone Number:<input type="number" name="phoneNumber" maxlength="10" minlength="10" required><br>
+            <input type="submit" value="register" name="submit">
         </form>
-        <br>
-        <a href="register.jsp">Sign Up!</a>
     </body>
 </html>

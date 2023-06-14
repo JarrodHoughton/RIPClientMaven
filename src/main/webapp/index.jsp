@@ -23,9 +23,11 @@
         <%}%>
         <div>Enter Login:</div>
         <form action="ClientController" method="get">
-            Email:<input type="text" name="email">
-            Password:<input type="password" name="password">
-            <input type="submit" value="login" name="submit">
+            Email:<input type="email" name="email" required><br>
+            Password:<input type="password" name="password" maxlength="16" minlength="8" required><br>
+            <input type="submit" value="login" name="submit"><br>
         </form>
+        <br>
+        <a href="register.jsp">Sign Up!</a>
     </body>
 </html>
