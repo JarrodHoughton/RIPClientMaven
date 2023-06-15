@@ -118,7 +118,7 @@ public class LoginController extends HttpServlet {
                             request.getRequestDispatcher("index.jsp").forward(request, response);
                     }
                 } else {
-                    message = "user not found.";
+                    message = "User not found.";
                 }
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("index.jsp").forward(request, response);
