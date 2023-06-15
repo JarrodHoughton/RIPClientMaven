@@ -42,8 +42,8 @@ public class StoryController extends HttpServlet {
             case "editStory":
                 
                 break;
-            case "createStory":
-                
+            case "manageStories":
+                request.getRequestDispatcher("createStory.jsp");
                 break;
             default:
                 throw new AssertionError();
