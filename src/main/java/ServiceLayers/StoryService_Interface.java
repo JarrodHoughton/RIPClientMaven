@@ -4,10 +4,15 @@
  */
 package ServiceLayers;
 
+import Models.Story;
+
 /**
  *
  * @author jarro
  */
 public interface StoryService_Interface {
+    
+    public String addStory(Story story);
+    public String updateStory(Story story);
     
 }
