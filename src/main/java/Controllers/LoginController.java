@@ -18,7 +18,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -131,6 +133,14 @@ public class LoginController extends HttpServlet {
                     reader.setName(request.getParameter("name"));
                     reader.setSurname(request.getParameter("surname"));
                     reader.setPhoneNumber(request.getParameter("phoneNumber"));
+                    List<Genre> genres = genreService.getAllGenres();
+                    List<Integer> genreIds = new ArrayList<>();
+                    for (Genre genre:genres) {
+                        if (request.getParameter(String.valueOf(genre.getId()))!=null) {
+                            genreIds.add(genre.getId());
+                        }
+                    }
+                    reader.setFavouriteGenreIds(genreIds);
                     message = loginService.register(reader);
                     request.setAttribute("user", loginService.loginReader(reader));
                 }
