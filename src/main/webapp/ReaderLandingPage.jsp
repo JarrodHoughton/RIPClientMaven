@@ -65,17 +65,22 @@
                 reader = (Reader) user;
             }
             
+            if  (user!=null && user.getUserType().equals("W")) {
+                writer = (Writer) user;
+            }
+            
             if  (reader!=null) {
         %>
         <h4><%=reader%></h4>
+        <h1>You have logged in as a Reader.</h1>
         <%  } 
             if (writer!=null) {
         %>
         <h4><%=writer%></h4>
+        <h1>You have logged in as a Writer.</h1>
         <%
             }
         %>
-        <h1>You have logged in as a Reader.</h1>
 
         <div id="navbar-container">
             <!-- Navbar -->
@@ -93,7 +98,7 @@
                         <%
                         if (writer!=null) {
                         %>
-                        <a class="btn btn-primary ms-2" href="ReaderLandingPage.jsp">Manage Stories</a>
+                        <a class="btn btn-primary ms-2" href="StoryController?submit=manageStories">Manage Stories</a>
                         <%
                             }
                         %>

@@ -63,11 +63,10 @@ public class LoginService_Impl implements LoginService_Interface{
             String loginReaderUri = uri + "getUser";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
-            reader = response.readEntity(Reader.class);
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return reader;
+        return response.readEntity(Reader.class);
     }
 
     @Override
@@ -77,11 +76,10 @@ public class LoginService_Impl implements LoginService_Interface{
             String loginReaderUri = uri + "getUser";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(writer)));
-            writer = response.readEntity(Writer.class);
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return writer;
+        return response.readEntity(Writer.class);
     }
 
     @Override
@@ -91,11 +89,10 @@ public class LoginService_Impl implements LoginService_Interface{
             String loginReaderUri = uri + "getUser";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(editor)));
-            editor = response.readEntity(Editor.class);
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return editor;
+        return response.readEntity(Editor.class);
     }
 
     @Override

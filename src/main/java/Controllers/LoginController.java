@@ -77,7 +77,6 @@ public class LoginController extends HttpServlet {
                             writer.setEmail(request.getParameter("email"));
                             writer = loginService.loginWriter(writer);
                             if (writer != null) {
-                                request.setAttribute("user", writer);
                                 message = "Login successful.";
                                 request.setAttribute("message", message);
                                 session.setAttribute("user", writer);
@@ -96,7 +95,6 @@ public class LoginController extends HttpServlet {
                             editor.setEmail(request.getParameter("email"));
                             editor = loginService.loginEditor(editor);
                             if (editor != null) {
-                                request.setAttribute("user", editor);
                                 message = "Login successful.";
                                 request.setAttribute("message", message);
                                 session.setAttribute("user", editor);
@@ -115,7 +113,6 @@ public class LoginController extends HttpServlet {
                             editor.setEmail(request.getParameter("email"));
                             editor = loginService.loginEditor(editor);
                             if (editor != null) {
-                                request.setAttribute("user", editor);
                                 message = "Login successful.";
                                 request.setAttribute("message", message);
                                 session.setAttribute("user", editor);
