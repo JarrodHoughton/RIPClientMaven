@@ -20,15 +20,15 @@ import java.util.logging.Logger;
  * @author jarro
  */
 public class MailService_Impl implements MailService_Interface {
-
+    
     @Override
     public Boolean sendMail(String serverEmail, String userEmail, String email, String subject) {
         Boolean messageSent = false;
         // Recipient's email ID needs to be mentioned.
-        String to = "fromaddress@gmail.com";
+        String to = serverEmail;
 
         // Sender's email ID needs to be mentioned
-        String from = "toaddress@gmail.com";
+        String from = userEmail;
 
         // Assuming you are sending email from through gmails smtp
         String host = "smtp.gmail.com";
@@ -47,7 +47,7 @@ public class MailService_Impl implements MailService_Interface {
 
             protected PasswordAuthentication getPasswordAuthentication() {
 
-                return new PasswordAuthentication(to, "*******");
+                return new PasswordAuthentication(to, "14o5 Google o2");
 
             }
 

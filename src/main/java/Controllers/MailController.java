@@ -30,7 +30,9 @@ public class MailController extends HttpServlet {
             throws ServletException, IOException {
         switch (request.getParameter("submit")) {
             case "sendVerificationEmail":
-                
+                String email = 
+                        "<h1> This is a test email!<h1>";
+                mailService.sendMail("jarrod.houghton@gmail.com", "jarrod.houghton@gmail.com", email, "Test Email");
                 break;
             default:
                 throw new AssertionError();
