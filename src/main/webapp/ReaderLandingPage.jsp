@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="Models.*"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,6 +13,18 @@
         <title>Reader Landing Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <% 
+            Account user = (Account) request.getAttribute("user");
+            Reader reader = null;
+            Writer writer = null;
+            if  (user!=null && user.getUserType().equals("R")) {
+                reader = (Reader) user;
+            }
+            
+            if  (reader!=null) {
+        %>
+        <h4><%=reader%></h4>
+        <%  }%>
+        <h1>You have logged in as a Reader.</h1>
     </body>
 </html>
