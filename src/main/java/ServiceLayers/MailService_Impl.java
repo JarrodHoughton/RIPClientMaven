@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class MailService_Impl implements MailService_Interface {
     
     @Override
-    public Boolean sendMail(String serverEmail, String userEmail, String email, String subject) {
+    public Boolean sendMail(String serverEmail, String serverPassword, String userEmail, String email, String subject) {
         Boolean messageSent = false;
         // Recipient's email ID needs to be mentioned.
         String to = serverEmail;
@@ -38,16 +38,16 @@ public class MailService_Impl implements MailService_Interface {
 
         // Setup mail server
         properties.put("mail.smtp.host", host);
-        properties.put("mail.smtp.port", "465");
-        properties.put("mail.smtp.ssl.enable", "true");
-        properties.put("mail.smtp.auth", "true");
+//        properties.put("mail.smtp.port", "465");
+//        properties.put("mail.smtp.ssl.enable", "true");
+//        properties.put("mail.smtp.auth", "true");
 
         // Get the Session object.// and pass username and password
         Session session = Session.getInstance(properties, new jakarta.mail.Authenticator() {
 
             protected PasswordAuthentication getPasswordAuthentication() {
 
-                return new PasswordAuthentication(to, "14o5 Google o2");
+                return new PasswordAuthentication(to, serverPassword);
 
             }
 

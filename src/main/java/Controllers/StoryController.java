@@ -42,6 +42,9 @@ public class StoryController extends HttpServlet {
             case "editStory":
                 
                 break;
+            case "createStory":
+                
+                break;
             default:
                 throw new AssertionError();
         }
