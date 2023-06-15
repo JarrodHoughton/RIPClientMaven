@@ -85,6 +85,7 @@
                         </div>
                         <div class="not-member">
                             <p>Not a member? <a href="LoginController?submit=getGenresForRegister">Register</a></p>
+                            <p><a href="TestEmail.jsp">Test Email</a></p>
                         </div>
                     </form>
                 </div>

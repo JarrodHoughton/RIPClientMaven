@@ -119,15 +119,16 @@ public class LoginController extends HttpServlet {
                     }
                 } else {
                     message = "User not found.";
+                    request.setAttribute("message", message);
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
                 }
-                request.setAttribute("message", message);
-                request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             case "register":
                 message = "This email already exists.";
-                if (!readerService.userExists(request.getParameter("email"))) {
+                String email = request.getParameter("email");
+                if (!readerService.userExists(email)) {
                     Reader reader = new Reader();
-                    reader.setEmail(request.getParameter("email"));
+                    reader.setEmail(email);
                     reader.setSalt(PasswordEncryptor.generateSalt());
                     reader.setPasswordHash(PasswordEncryptor.hashPassword(request.getParameter("password"), reader.getSalt()));
                     reader.setName(request.getParameter("name"));
