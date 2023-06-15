@@ -5,14 +5,19 @@
 package ServiceLayers;
 
 import Models.Story;
+import java.util.List;
 
 /**
  *
  * @author jarro
  */
 public interface StoryService_Interface {
-    
-    public String addStory(Story story);
+    public Story getStory(Integer storyId);
+    public List<Story> getAllStories();
+    public List<Story> getStoriesInGenre(Integer genreId);
+    public List<Story> getTopPicks();
+    public List<Story> getRecommendations();
     public String updateStory(Story story);
-    
+    public String deleteStory(Integer storyId);
+    public String addStory(Story story);
 }

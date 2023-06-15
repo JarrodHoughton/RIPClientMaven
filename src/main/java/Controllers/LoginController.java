@@ -18,6 +18,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ public class LoginController extends HttpServlet {
     private GenreService_Interface genreService;
     private LoginService_Interface loginService;
     private ReaderService_Interface readerService;
+    private HttpSession session;
 
     public LoginController() {
         genreService = new GenreService_Impl();
@@ -42,6 +44,7 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
         switch (request.getParameter("submit")) {
             case "login":
+                session = request.getSession(true);
                 Account user = new Reader();
                 user.setEmail(request.getParameter("email"));
                 user.setPasswordHash(request.getParameter("password"));
@@ -56,13 +59,15 @@ public class LoginController extends HttpServlet {
                             reader.setEmail(request.getParameter("email"));
                             reader = loginService.loginReader(reader);
                             if (reader != null) {
-                                request.setAttribute("user", reader);
                                 message = "Login successful.";
+                                request.setAttribute("message", message);
+                                session.setAttribute("user", reader);
+                                session.setAttribute("genres", genreService.getAllGenres());
+                                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
                                 request.getRequestDispatcher("index.jsp").forward(request, response);
                             }
-                            request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             break;
 
                         case "W":
@@ -74,11 +79,14 @@ public class LoginController extends HttpServlet {
                             if (writer != null) {
                                 request.setAttribute("user", writer);
                                 message = "Login successful.";
+                                request.setAttribute("message", message);
+                                session.setAttribute("user", writer);
+                                session.setAttribute("genres", genreService.getAllGenres());
+                                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
                                 request.getRequestDispatcher("index.jsp").forward(request, response);
                             }
-                            request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             break;
 
                         case "E":
@@ -90,11 +98,14 @@ public class LoginController extends HttpServlet {
                             if (editor != null) {
                                 request.setAttribute("user", editor);
                                 message = "Login successful.";
+                                request.setAttribute("message", message);
+                                session.setAttribute("user", editor);
+                                session.setAttribute("genres", genreService.getAllGenres());
+                                request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
                                 request.getRequestDispatcher("index.jsp").forward(request, response);
                             }
-                            request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
                             break;
 
                         case "A":
@@ -106,6 +117,9 @@ public class LoginController extends HttpServlet {
                             if (editor != null) {
                                 request.setAttribute("user", editor);
                                 message = "Login successful.";
+                                request.setAttribute("message", message);
+                                session.setAttribute("user", editor);
+                                session.setAttribute("genres", genreService.getAllGenres());
                                 request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
