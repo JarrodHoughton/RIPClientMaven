@@ -30,9 +30,9 @@ public class MailController extends HttpServlet {
             throws ServletException, IOException {
         switch (request.getParameter("submit")) {
             case "sendVerificationEmail":
-                String email = 
-                        "<h1> This is a test email!<h1>";
-                mailService.sendMail("jarrod.houghton@gmail.com", "jarrod.houghton@gmail.com", email, "Test Email");
+                String email = "<p>"+request.getParameter("email")+"<p>";
+                mailService.sendMail("jarrod.houghton@gmail.com", "14o5 Google o2","jarrod.houghton@gmail.com", email, "Test Email");
+                request.getRequestDispatcher("TestMail.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();
