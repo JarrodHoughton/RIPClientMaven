@@ -77,7 +77,7 @@ public class StoryService_Impl implements StoryService_Interface{
 
     @Override
     public List<Story> getTopPicks() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return getAllStories();
     }
 
     @Override

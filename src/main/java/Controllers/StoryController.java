@@ -62,7 +62,7 @@ public class StoryController extends HttpServlet {
 
                 break;
             case "editStory":
-
+                
                 break;
             case "addStory":
                 Story story = new Story();
@@ -109,7 +109,7 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("createStory.jsp").forward(request, response);
                 break;
             case "getTopPicks":
-                request.setAttribute("topPicks", List.of("This", "is", "a", "test", "list", "this will be replaced by a list of stories"));
+                request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             case "manageStories":
