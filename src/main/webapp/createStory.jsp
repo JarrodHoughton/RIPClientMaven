@@ -22,7 +22,7 @@
         <h1><%=genres%></h1>
         <%}%>
         <h1>Write a new story</h1>
-        <form action="StoryController" method="post" enctype="multipart/form-data">
+        <form action="StoryController" method="get" enctype="multipart/form-data">
             <div>
                 <label for="title">Title:</label><br>
                 <input type="text" id="title" name="title" required>

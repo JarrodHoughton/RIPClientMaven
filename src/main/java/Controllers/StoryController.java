@@ -13,6 +13,7 @@ import ServiceLayers.StoryService_Impl;
 import ServiceLayers.StoryService_Interface;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,54 +29,66 @@ import java.util.List;
  * @author jarro
  */
 @WebServlet(name = "StoryController", urlPatterns = {"/StoryController"})
+@MultipartConfig(maxFileSize=1024*1024*10)
 public class StoryController extends HttpServlet {
+
     private StoryService_Interface storyService;
     private GenreService_Interface genreService;
-    
+
     public StoryController() {
         this.storyService = new StoryService_Impl();
         genreService = new GenreService_Impl();
     }
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         switch (request.getParameter("submit")) {
             case "viewStory":
-                
+
                 break;
             case "readStory":
-                
+
                 break;
             case "likeStory":
-                
+
                 break;
             case "rateStory":
-                
+
                 break;
             case "commentStory":
-                
+
                 break;
             case "submitStory":
-                
+
                 break;
             case "editStory":
-                
+
                 break;
             case "addStory":
-                Writer author = (Writer) request.getSession(false).getAttribute("user");
                 Story story = new Story();
+                System.out.println("Adding a stroy.");
+                Writer author = (Writer) request.getSession(false).getAttribute("user");
+                if (author!=null) {
+                    story.setAuthorId(author.getId());
+                } else {
+                    System.out.println("Author was null.");
+                }
                 Part filePart = request.getPart("image");
-                InputStream fis = filePart.getInputStream();
-                byte[] imageData = new byte[(int)filePart.getSize()];
-                fis.read(imageData);
-                story.setImage(imageData);
+                if (filePart != null) {
+                    try (InputStream fis = filePart.getInputStream()) {
+                        byte[] imageData = new byte[(int) filePart.getSize()];
+                        fis.read(imageData);
+                        story.setImage(imageData);
+                    }
+                } else {
+                    System.out.println("Image was null.");
+                }
                 story.setTitle(request.getParameter("title"));
                 story.setContent(request.getParameter("story"));
                 story.setBlurb(request.getParameter("summary"));
-                story.setAuthorId(author.getId());
                 List<Genre> genres = genreService.getAllGenres();
                 List<Integer> genreIds = new ArrayList<>();
-                for (Genre genre:genres) {
-                    if (request.getParameter(String.valueOf(genre.getId()))!=null) {
+                for (Genre genre : genres) {
+                    if (request.getParameter(String.valueOf(genre.getId())) != null) {
                         genreIds.add(genre.getId());
                     }
                 }
@@ -87,6 +100,7 @@ public class StoryController extends HttpServlet {
                     message = storyService.addStory(story);
                 }
                 request.setAttribute("message", message);
+                System.out.println("Finished adding a story.");
                 request.getRequestDispatcher("createStory.jsp");
                 break;
             case "getTopPicks":
