@@ -58,7 +58,7 @@ public class GenreService_Impl implements GenreService_Interface{
             webTarget = client.target(getAllGenresUri);
             genres = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Genre>>(){});
         } catch (IOException ex) {
-            Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return genres;
     }
@@ -78,7 +78,7 @@ public class GenreService_Impl implements GenreService_Interface{
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(genre)));
         } catch (IOException ex) {
-            Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return response.readEntity(String.class);
     }

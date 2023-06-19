@@ -30,7 +30,7 @@ import java.util.List;
  * @author jarro
  */
 @WebServlet(name = "StoryController", urlPatterns = {"/StoryController"})
-@MultipartConfig(maxFileSize=1024*1024*10)
+@MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 public class StoryController extends HttpServlet {
 
     private StoryService_Interface storyService;
@@ -62,13 +62,13 @@ public class StoryController extends HttpServlet {
 
                 break;
             case "editStory":
-                
+
                 break;
             case "addStory":
                 Story story = new Story();
                 System.out.println("Adding a stroy.");
                 Writer author = (Writer) request.getSession(false).getAttribute("user");
-                if (author!=null) {
+                if (author != null) {
                     story.setAuthorId(author.getId());
                 } else {
                     System.out.println("Author was null.");
@@ -111,6 +111,13 @@ public class StoryController extends HttpServlet {
             case "getTopPicks":
                 request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
+                break;
+            case "getTopPicksForTest":
+                request.setAttribute("topPicks", storyService.getTopPicks());
+                request.getRequestDispatcher("ImageTestWebPage.jsp").forward(request, response);
+                break;
+            case "getRecommendedStories":
+
                 break;
             case "manageStories":
                 request.getRequestDispatcher("createStory.jsp").forward(request, response);

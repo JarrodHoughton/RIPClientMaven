@@ -4,9 +4,11 @@
  */
 package ServiceLayers;
 
+import Models.Genre;
 import Models.Story;
 import Utils.GetProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -23,7 +25,8 @@ import java.util.logging.Logger;
  *
  * @author jarro
  */
-public class StoryService_Impl implements StoryService_Interface{
+public class StoryService_Impl implements StoryService_Interface {
+
     private Client client;
     private WebTarget webTarget;
     private ObjectMapper mapper;
@@ -37,15 +40,26 @@ public class StoryService_Impl implements StoryService_Interface{
         properties = new GetProperties("src\\java\\Properties\\config.properties");
         uri = "http://localhost:8080/RIPServerMaven/RIP/stories/";
     }
-    
+
     @Override
     public Story getStory(Integer storyId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String getStoryUri = uri + "getStory/{storyId}";
+        webTarget = client.target(getStoryUri).resolveTemplate("storyId", storyId);
+        response = webTarget.request().get();
+        return response.readEntity(Story.class);
     }
 
     @Override
     public List<Story> getAllStories() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Story> stories = null;
+        try {
+            String getAllStoriesUri = uri + "getAllStories";
+            webTarget = client.target(getAllStoriesUri);
+            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return stories;
     }
 
     @Override
@@ -55,12 +69,22 @@ public class StoryService_Impl implements StoryService_Interface{
 
     @Override
     public String updateStory(Story story) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            String loginReaderUri = uri + "updateStory";
+            webTarget = client.target(loginReaderUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(story)));
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return response.readEntity(String.class);
     }
 
     @Override
     public String deleteStory(Integer storyId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String deleteStoryUri = uri + "deleteStory/{storyId}";
+        webTarget = client.target(deleteStoryUri).resolveTemplate("storyId", storyId);
+        response = webTarget.request().get();
+        return response.readEntity(String.class);
     }
 
     @Override
@@ -70,7 +94,7 @@ public class StoryService_Impl implements StoryService_Interface{
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(story)));
         } catch (IOException ex) {
-            Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return response.readEntity(String.class);
     }
@@ -84,7 +108,7 @@ public class StoryService_Impl implements StoryService_Interface{
     public List<Story> getRecommendations() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
