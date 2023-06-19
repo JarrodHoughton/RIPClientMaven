@@ -4,8 +4,11 @@
  */
 package Controllers;
 
+import Models.Genre;
 import Models.Story;
 import Models.Writer;
+import ServiceLayers.GenreService_Impl;
+import ServiceLayers.GenreService_Interface;
 import ServiceLayers.StoryService_Impl;
 import ServiceLayers.StoryService_Interface;
 import java.io.IOException;
@@ -16,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,9 +30,11 @@ import java.util.List;
 @WebServlet(name = "StoryController", urlPatterns = {"/StoryController"})
 public class StoryController extends HttpServlet {
     private StoryService_Interface storyService;
+    private GenreService_Interface genreService;
     
     public StoryController() {
         this.storyService = new StoryService_Impl();
+        genreService = new GenreService_Impl();
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -66,6 +72,13 @@ public class StoryController extends HttpServlet {
                 story.setContent(request.getParameter("story"));
                 story.setBlurb(request.getParameter("summary"));
                 story.setAuthorId(author.getId());
+                List<Genre> genres = genreService.getAllGenres();
+                List<Integer> genreIds = new ArrayList<>();
+                    for (Genre genre:genres) {
+                        if (request.getParameter(String.valueOf(genre.getId()))!=null) {
+                            genreIds.add(genre.getId());
+                        }
+                    }
                 request.setAttribute("message", storyService.addStory(story));
                 request.getRequestDispatcher("createStory.jsp");
                 break;
