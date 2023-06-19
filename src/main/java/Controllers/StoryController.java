@@ -56,7 +56,8 @@ public class StoryController extends HttpServlet {
                 break;
             case "getTopPicks":
                 request.setAttribute("topPicks", storyService.getTopPicks());
-                request.getRequestDispatcher("index.jsp");
+                request.setAttribute("topPicksRetrieved", true);
+                request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             case "manageStories":
                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
