@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -55,8 +56,7 @@ public class StoryController extends HttpServlet {
                 
                 break;
             case "getTopPicks":
-                request.setAttribute("topPicks", storyService.getTopPicks());
-                request.setAttribute("topPicksRetrieved", true);
+                request.setAttribute("topPicks", List.of("This", "is", "a", "test", "list", "this will be replaced by a list of stories"));
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             case "manageStories":
