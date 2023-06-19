@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -77,7 +78,11 @@ public class StoryController extends HttpServlet {
                     try (InputStream fis = filePart.getInputStream()) {
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
-                        story.setImage(imageData);
+                        Byte[] image = new Byte[imageData.length];
+                        for (int i = 0; i < imageData.length; i++) {
+                            image[i] = (Byte) imageData[i];
+                        }
+                        story.setImage(image);
                     }
                 } else {
                     System.out.println("Image was null.");
@@ -101,7 +106,7 @@ public class StoryController extends HttpServlet {
                 }
                 request.setAttribute("message", message);
                 System.out.println("Finished adding a story.");
-                request.getRequestDispatcher("createStory.jsp");
+                request.getRequestDispatcher("createStory.jsp").forward(request, response);
                 break;
             case "getTopPicks":
                 request.setAttribute("topPicks", List.of("This", "is", "a", "test", "list", "this will be replaced by a list of stories"));
