@@ -74,12 +74,19 @@ public class StoryController extends HttpServlet {
                 story.setAuthorId(author.getId());
                 List<Genre> genres = genreService.getAllGenres();
                 List<Integer> genreIds = new ArrayList<>();
-                    for (Genre genre:genres) {
-                        if (request.getParameter(String.valueOf(genre.getId()))!=null) {
-                            genreIds.add(genre.getId());
-                        }
+                for (Genre genre:genres) {
+                    if (request.getParameter(String.valueOf(genre.getId()))!=null) {
+                        genreIds.add(genre.getId());
                     }
-                request.setAttribute("message", storyService.addStory(story));
+                }
+                story.setGenreIds(genreIds);
+                String message;
+                if (genreIds.isEmpty()) {
+                    message = "Failed to create story: Please select genres for your story.";
+                } else {
+                    message = storyService.addStory(story);
+                }
+                request.setAttribute("message", message);
                 request.getRequestDispatcher("createStory.jsp");
                 break;
             case "getTopPicks":
