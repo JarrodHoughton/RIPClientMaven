@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="Models.*"%>
+<%@page import="java.util.List"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,6 +14,13 @@
         <title>Create Story</title>
     </head>
     <body>
+        <%
+            List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
+            Writer user = (Writer) request.getSession(false).getAttribute("user");
+            if  (genres!=null) {
+        %>
+        <h1><%=genres%></h1>
+        <%}%>
         <h1>Write a new story</h1>
         <form action="StoryController" method="post" enctype="multipart/form-data">
             <div>
@@ -29,6 +38,20 @@
             <div>
                 <label for="summary">Summary:</label><br>
                 <textarea id="summary" name="summary" rows="5" cols="50" required></textarea>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Genres
+                </button>
+                <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="dropdownMenuButton">
+                    <% for(Genre genre: genres) { %>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="<%= genre.getId() %>" value="<%= genre.getId() %>"> <%= genre.getName() %>
+                        </label>
+                    </li>
+                    <% } %>
+                </ul>
             </div>
             <input type="submit" value="addStory" name="submit">
         </form>

@@ -94,7 +94,7 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             case "manageStories":
-                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
+                request.getRequestDispatcher("createStory.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();
