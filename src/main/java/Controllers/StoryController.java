@@ -4,6 +4,8 @@
  */
 package Controllers;
 
+import Models.Story;
+import Models.Writer;
 import ServiceLayers.StoryService_Impl;
 import ServiceLayers.StoryService_Interface;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,8 +55,19 @@ public class StoryController extends HttpServlet {
                 
                 break;
             case "addStory":
+                Writer author = (Writer) request.getSession(false).getAttribute("user");
+                Story story = new Story();
                 Part filePart = request.getPart("image");
-                
+                InputStream fis = filePart.getInputStream();
+                byte[] imageData = new byte[(int)filePart.getSize()];
+                fis.read(imageData);
+                story.setImage(imageData);
+                story.setTitle(request.getParameter("title"));
+                story.setContent(request.getParameter("story"));
+                story.setBlurb(request.getParameter("summary"));
+                story.setAuthorId(author.getId());
+                request.setAttribute("message", storyService.addStory(story));
+                request.getRequestDispatcher("createStory.jsp");
                 break;
             case "getTopPicks":
                 request.setAttribute("topPicks", List.of("This", "is", "a", "test", "list", "this will be replaced by a list of stories"));
