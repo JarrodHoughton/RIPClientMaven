@@ -66,7 +66,7 @@ public class LoginController extends HttpServlet {
                                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
-                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                                request.getRequestDispatcher("login.jsp").forward(request, response);
                             }
                             break;
 
@@ -84,7 +84,7 @@ public class LoginController extends HttpServlet {
                                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
-                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                                request.getRequestDispatcher("login.jsp").forward(request, response);
                             }
                             break;
 
@@ -102,7 +102,7 @@ public class LoginController extends HttpServlet {
                                 request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
-                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                                request.getRequestDispatcher("login.jsp").forward(request, response);
                             }
                             break;
 
@@ -120,18 +120,18 @@ public class LoginController extends HttpServlet {
                                 request.getRequestDispatcher("EditorLandingPage.jsp").forward(request, response);
                             } else {
                                 request.setAttribute("message", message);
-                                request.getRequestDispatcher("index.jsp").forward(request, response);
+                                request.getRequestDispatcher("login.jsp").forward(request, response);
                             }
                             break;
 
                         default:
                             request.setAttribute("message", "Something went wrong logging in.");
-                            request.getRequestDispatcher("index.jsp").forward(request, response);
+                            request.getRequestDispatcher("login.jsp").forward(request, response);
                     }
                 } else {
                     message = "User not found.";
                     request.setAttribute("message", message);
-                    request.getRequestDispatcher("index.jsp").forward(request, response);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
                 }
                 break;
             case "register":
@@ -157,7 +157,7 @@ public class LoginController extends HttpServlet {
                     request.setAttribute("user", loginService.loginReader(reader));
                 }
                 request.setAttribute("message", message);
-                request.getRequestDispatcher("index.jsp").forward(request, response);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
             case "getGenresForRegister":
                 request.setAttribute("genres", genreService.getAllGenres());

@@ -4,12 +4,15 @@
  */
 package Controllers;
 
+import ServiceLayers.StoryService_Impl;
+import ServiceLayers.StoryService_Interface;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import java.util.HashMap;
 
 /**
@@ -18,6 +21,11 @@ import java.util.HashMap;
  */
 @WebServlet(name = "StoryController", urlPatterns = {"/StoryController"})
 public class StoryController extends HttpServlet {
+    private StoryService_Interface storyService;
+    
+    public StoryController() {
+        this.storyService = new StoryService_Impl();
+    }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         switch (request.getParameter("submit")) {
@@ -41,6 +49,14 @@ public class StoryController extends HttpServlet {
                 break;
             case "editStory":
                 
+                break;
+            case "addStory":
+                Part filePart = request.getPart("image");
+                
+                break;
+            case "getTopPicks":
+                request.setAttribute("topPicks", storyService.getTopPicks());
+                request.getRequestDispatcher("index.jsp");
                 break;
             case "manageStories":
                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);

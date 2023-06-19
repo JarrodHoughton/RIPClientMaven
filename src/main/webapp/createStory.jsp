@@ -30,7 +30,7 @@
                 <label for="summary">Summary:</label><br>
                 <textarea id="summary" name="summary" rows="5" cols="50" required></textarea>
             </div>
-            <input type="submit" value="Submit">
+            <input type="submit" value="addStory" name="submit">
         </form>
     </body>
 </html>
