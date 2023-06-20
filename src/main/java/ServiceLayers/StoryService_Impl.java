@@ -64,7 +64,15 @@ public class StoryService_Impl implements StoryService_Interface {
 
     @Override
     public List<Story> getStoriesInGenre(Integer genreId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Story> stories = null;
+        try {
+            String getStoriesInGenreUri = uri + "getAllStories/{genreId}";
+            webTarget = client.target(getStoriesInGenreUri).resolveTemplate("genreId", genreId);
+            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return stories;
     }
 
     @Override
@@ -101,12 +109,28 @@ public class StoryService_Impl implements StoryService_Interface {
 
     @Override
     public List<Story> getTopPicks() {
-        return getAllStories();
+        List<Story> stories = null;
+        try {
+            String getTopPicksUri = uri + "getTopPicks";
+            webTarget = client.target(getTopPicksUri);
+            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return stories;
     }
 
     @Override
     public List<Story> getRecommendations() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Story> stories = null;
+        try {
+            String getTopPicksUri = uri + "getRecommendations";
+            webTarget = client.target(getTopPicksUri);
+            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return stories;
     }
 
     private String toJsonString(Object obj) throws JsonProcessingException {
