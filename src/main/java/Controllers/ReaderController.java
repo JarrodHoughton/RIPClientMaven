@@ -40,7 +40,7 @@ public class ReaderController extends HttpServlet {
                 break;
             case "approveApplication":
                 Integer readerId = (Integer) request.getAttribute("readerId");
-                String message = writerService.addWriter(readerId);
+                String message = writerService.addWriter(readerId) + applicationService.deleteApplication(readerId);
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("").forward(request, response);
                 break;
