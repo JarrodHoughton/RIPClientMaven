@@ -9,9 +9,12 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Editor Landing</title>
+        <title>Admin Editor Landing</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <button>Edit Stories</button><br/>
+        <button>Approve Writers</button><br/>
+        <button>Get Data Report</button><br/>
+        <button>Manage Editors</button><br/>
     </body>
 </html>
