@@ -9,6 +9,8 @@ import ServiceLayers.GenreService_Impl;
 import ServiceLayers.GenreService_Interface;
 import ServiceLayers.LoginService_Impl;
 import ServiceLayers.LoginService_Interface;
+import ServiceLayers.MailService_Impl;
+import ServiceLayers.MailService_Interface;
 import ServiceLayers.ReaderService_Impl;
 import ServiceLayers.ReaderService_Interface;
 import Utils.PasswordEncryptor;
@@ -32,12 +34,14 @@ public class LoginController extends HttpServlet {
     private GenreService_Interface genreService;
     private LoginService_Interface loginService;
     private ReaderService_Interface readerService;
+    private MailService_Interface mailService;
     private HttpSession session;
 
     public LoginController() {
         genreService = new GenreService_Impl();
         loginService = new LoginService_Impl();
         readerService = new ReaderService_Impl();
+        mailService = new MailService_Impl();
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -154,7 +158,9 @@ public class LoginController extends HttpServlet {
                     }
                     reader.setFavouriteGenreIds(genreIds);
                     message = loginService.register(reader);
-                    request.setAttribute("user", loginService.loginReader(reader));
+                    reader = loginService.loginReader(reader);
+                    message += ": -> " + mailService.sendVerficationEmail(reader);
+                    request.setAttribute("user", reader);
                 }
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -162,6 +168,9 @@ public class LoginController extends HttpServlet {
             case "getGenresForRegister":
                 request.setAttribute("genres", genreService.getAllGenres());
                 request.getRequestDispatcher("register.jsp").forward(request, response);
+                break;
+            case "verifyReader":
+                
                 break;
             default:
                 throw new AssertionError();

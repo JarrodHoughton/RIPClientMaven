@@ -1,5 +1,6 @@
 package ServiceLayers;
 
+import Models.Reader;
 import Utils.GetProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,18 @@ public class MailService_Impl implements MailService_Interface {
             String sendMailUri = uri + "sendMail";
             webTarget = client.target(sendMailUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(emailDetails)));
+        } catch (IOException ex) {
+            Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return response.readEntity(String.class);
+    }
+    
+    @Override
+    public String sendVerficationEmail(Reader reader) {
+        try {
+            String sendVerficationEmailUri = uri + "sendVerificationEmail";
+            webTarget = client.target(sendVerficationEmailUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }

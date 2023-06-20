@@ -4,6 +4,10 @@
  */
 package Controllers;
 
+import ServiceLayers.ApplicationService_Impl;
+import ServiceLayers.ApplicationService_Interface;
+import ServiceLayers.WriterService_Impl;
+import ServiceLayers.WriterService_Interface;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,18 +23,42 @@ import java.util.HashMap;
 @WebServlet(name = "ReaderController", urlPatterns = {"/ReaderController"})
 public class ReaderController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private ApplicationService_Interface applicationService;
+    private WriterService_Interface writerService;
+
+    public ReaderController() {
+        this.applicationService = new ApplicationService_Impl();
+        this.writerService = new WriterService_Impl();
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        switch (request.getParameter("submit")) {
+            case "getWriterApplications":
+                request.setAttribute("applications", applicationService.getApplications());
+                request.getRequestDispatcher("").forward(request, response);
+                break;
+            case "approveApplication":
+                Integer readerId = (Integer) request.getAttribute("readerId");
+                String message = "Failed to approve application.";
+                if (writerService.addWriter(readerId)) {
+                    message = "Application has been approved successfully.";
+                }
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("").forward(request, response);
+                break;
+            case "rejectApplication":
+                readerId = (Integer) request.getAttribute("readerId");
+                message = "System failed to reject application.";
+                if (applicationService.deleteApplication(readerId)) {
+                    message = "Application has been rejected successfully.";
+                }
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("").forward(request, response);
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
