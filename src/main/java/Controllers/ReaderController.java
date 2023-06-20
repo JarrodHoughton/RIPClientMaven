@@ -40,19 +40,13 @@ public class ReaderController extends HttpServlet {
                 break;
             case "approveApplication":
                 Integer readerId = (Integer) request.getAttribute("readerId");
-                String message = "Failed to approve application.";
-                if (writerService.addWriter(readerId)) {
-                    message = "Application has been approved successfully.";
-                }
+                String message = writerService.addWriter(readerId);
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("").forward(request, response);
                 break;
             case "rejectApplication":
                 readerId = (Integer) request.getAttribute("readerId");
-                message = "System failed to reject application.";
-                if (applicationService.deleteApplication(readerId)) {
-                    message = "Application has been rejected successfully.";
-                }
+                message = applicationService.deleteApplication(readerId);
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("").forward(request, response);
                 break;

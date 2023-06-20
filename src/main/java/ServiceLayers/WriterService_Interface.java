@@ -9,5 +9,5 @@ package ServiceLayers;
  * @author jarro
  */
 public interface WriterService_Interface {
-    public Boolean addWriter(Integer readerId);
+    public String addWriter(Integer readerId);
 }

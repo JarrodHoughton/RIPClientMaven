@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface ApplicationService_Interface {
     public List<Application> getApplications();
-    public Boolean addApplication(Application application);
-    public Boolean deleteApplication(Integer accountId);
+    public String addApplication(Application application);
+    public String deleteApplication(Integer accountId);
 }
