@@ -9,5 +9,5 @@ package ServiceLayers;
  * @author jarro
  */
 public interface MailService_Interface {
-    public Boolean sendMail(String serverEmail, String serverPassword, String userEmail, String email, String subject);
+    public String sendMail(String recipientEmail, String emailContent, String subject);
 }

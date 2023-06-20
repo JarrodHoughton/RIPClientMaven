@@ -7,34 +7,37 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Controllers.StoryController"%>
 <%@page import="java.util.List"%>
+<%@page import="Models.*"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>index</title>
-        <% List<String> topPicks = (List<String>) request.getAttribute("topPicks");
+        <% List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
    if (topPicks == null) {
         %>
         <script>
             window.location.replace("StoryController?submit=getTopPicks");
         </script>
         <% } %>
-        
+
     </head>
-    <body onload="myFunction()">
+    <body>
         <h1>Hello World!</h1>
         <div>
             <%
        if (topPicks != null) {
-           for (String pick : topPicks) { %>
+           for (Story story : topPicks) { %>
             <div id="storycard">
                 <ul>
-                    <li><%=pick %></li>
+                    <li><%=story.getTitle()%></li>
                 </ul>
             </div>
 
             <% }
-   } %>
+    } 
+            %>
+            <a href="ImageTestWebPage.jsp">Test Images</a>
         </div>
     </body>
 </html>
