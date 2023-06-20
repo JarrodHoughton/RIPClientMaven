@@ -13,7 +13,10 @@
     </head>
     <body>
         <button>Edit Stories</button><br/>
-        <button>Approve Writers</button><br/>
+        <a href="ApplicationController?submit=getWriterApplications">
+            <button >Approve Writers</button>
+        </a>
+        <br/>
         <button>Get Data Report</button><br/>
         <button>Manage Editors</button><br/>
     </body>
