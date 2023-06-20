@@ -5,6 +5,7 @@
 package ServiceLayers;
 
 import Models.Like;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,12 +21,12 @@ public class LikeService_Impl implements LikeService_Interface{
     }
 
     @Override
-    public String delete(Integer likeId) {
+    public String deleteLike(Integer likeId) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public List<Like> getLikesByReaderId(Integer readerId) {
+    public List<Like> getLikesByReaderId(Integer accountId) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -35,8 +36,15 @@ public class LikeService_Impl implements LikeService_Interface{
     }
 
     @Override
-    public List<Like> getMostLikedBooks(HashMap<String, String> parameters) {
+    public Integer getStoryLikesByDate(Integer storyId, Timestamp startDate, Timestamp endDate) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    @Override
+    public List<Integer> getMostLikedBooks(Integer numberOfBooks, Timestamp startDate, Timestamp endDate) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    
     
 }

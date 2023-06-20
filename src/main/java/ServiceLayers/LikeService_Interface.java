@@ -5,6 +5,7 @@
 package ServiceLayers;
 
 import Models.Like;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,8 +15,9 @@ import java.util.List;
  */
 public interface LikeService_Interface {
     public String addLike(Like like);
-    public String delete(Integer likeId);
-    public List<Like> getLikesByReaderId(Integer readerId);
+    public String deleteLike(Integer likeId);
+    public List<Like> getLikesByReaderId(Integer accountId);
     public List<Like> getLikesByStory(Integer storyId);
-    public List<Like> getMostLikedBooks(HashMap<String, String> parameters);
+    public Integer getStoryLikesByDate(Integer storyId, Timestamp startDate, Timestamp endDate);    
+    public List<Integer> getMostLikedBooks(Integer numberOfBooks, Timestamp startDate, Timestamp endDate);
 }
