@@ -25,13 +25,30 @@
         %>
         <h2>Approve Writer Applications</h2>
         <%
-            if  (applications!=null) {
-                for (Application app:applications) {
+            if  (applications!=null && !applications.isEmpty()) {
         %>
-            <input type="radio" name="<%=app.getReaderId()%>" value="<%=app.getMotivation()%>" />
-        <%      
-                }
-            }
+        <form action="ApplicationController" method="get">
+            <%
+                    for (Application app:applications) {
+            %>
+            <input type="radio" id="<%=app.getReaderId()%>" name="readerId" value="<%=app.getReaderId()%>" />
+            <label for="<%=app.getReaderId()%>"><%=app.getMotivation()%></label><br>
+            <%      
+                    }
+            %>
+            <br><br>
+            <label for="approve">Approve Application</label>
+            <input type="submit" id="approve" name="submit" value="approveApplication">
+            <br>
+            <label for="reject">Approve Application</label>
+            <input type="submit" id="reject" name="submit" value="rejectApplication">
+        </form>
+        <%
+            } else {
+        %>
+        <div>No applications to approve.</div>
+        <%
+           }
         %>
     </body>
 </html>

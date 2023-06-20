@@ -38,15 +38,17 @@ public class ApplicationController extends HttpServlet {
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             case "approveApplication":
-                Integer readerId = (Integer) request.getAttribute("readerId");
-                String message = writerService.addWriter(readerId) + applicationService.deleteApplication(readerId);
+                Integer readerId = Integer.valueOf(request.getParameter("readerId"));
+                String message = writerService.addWriter(readerId) + "<br>" + applicationService.deleteApplication(readerId);
                 request.setAttribute("message", message);
+                request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             case "rejectApplication":
-                readerId = (Integer) request.getAttribute("readerId");
+                readerId = Integer.valueOf(request.getParameter("readerId"));
                 message = applicationService.deleteApplication(readerId);
                 request.setAttribute("message", message);
+                request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             default:

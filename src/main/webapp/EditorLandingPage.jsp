@@ -12,7 +12,10 @@
         <title>Admin Editor Landing</title>
     </head>
     <body>
-        <button>Edit Stories</button><br/>
+        <a href="StoryController?submit=goToEditStories">
+            <button>Edit Stories</button>
+        </a>
+        <br/>
         <a href="ApplicationController?submit=getWriterApplications">
             <button >Approve Writers</button>
         </a>

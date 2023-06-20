@@ -61,8 +61,9 @@ public class StoryController extends HttpServlet {
             case "submitStory":
 
                 break;
-            case "editStory":
-
+            case "goToEditStories":
+                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.getRequestDispatcher("EditStoryPage.jsp").forward(request, response);
                 break;
             case "addStory":
                 Story story = new Story();

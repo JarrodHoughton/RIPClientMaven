@@ -42,13 +42,14 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
     
     @Override
     public List<Application> getApplications() {
-        List<Application> applications = null;
+        List<Application> applications;
         try {
             String getgetApplicationsUri = uri + "getApplications";
             webTarget = client.target(getgetApplicationsUri);
             applications = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Application>>(){});
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return applications;
     }
