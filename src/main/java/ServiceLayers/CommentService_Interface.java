@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  *
- * @author jarro
+ * @author 27713
  */
 public interface CommentService_Interface {
     public List<Comment> getAllCommentForStory(Integer storyId);
