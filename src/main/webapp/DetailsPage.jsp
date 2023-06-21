@@ -74,7 +74,7 @@
     <body>
         <h1>Story Details</h1>
         <%
-            List<Comment> comments = (List<Comment>) request.getAttribute("commments");
+            List<Comment> comments = (List<Comment>) request.getAttribute("comments");
             Story story = (Story) request.getAttribute("story");
             if (story != null) {
         %>
@@ -88,6 +88,7 @@
                 <div class="rating-container">
                     <div class="rating-box">Rating: <%= story.getRating() %></div>
                     <div class="likes-box">Likes: <%= story.getLikeCount() %></div>
+                     <a class="btn btn-read-story" href="StoryController?submit=readStory&storyId=<%=story.getId()%>">Read</a>
                 </div>
             </div>
         </div>
