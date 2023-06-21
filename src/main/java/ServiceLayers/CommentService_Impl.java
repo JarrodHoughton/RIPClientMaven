@@ -43,7 +43,7 @@ public class CommentService_Impl implements CommentService_Interface{
     public List<Comment> getAllCommentForStory(Integer storyId) {
         List<Comment> allComments = null;
         String getCommentsForStoryUri = uri + "getAllComments/{storyId}";
-        webTarget = client.target(getCommentsForStoryUri).resolveTemplate("accountId",storyId);
+        webTarget = client.target(getCommentsForStoryUri).resolveTemplate("storyId",storyId);
         try {
             allComments = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Comment>>(){});
         } catch (IOException ex) {

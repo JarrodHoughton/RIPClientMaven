@@ -54,7 +54,9 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
             case "readStory":
-
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                request.setAttribute("story", storyService.getStory(storyId));
+                request.getRequestDispatcher("ReadStory.jsp").forward(request, response);
                 break;
             case "likeStory":
 
