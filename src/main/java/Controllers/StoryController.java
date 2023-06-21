@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package Controllers;
 
 import Models.Genre;
@@ -86,7 +83,7 @@ public class StoryController extends HttpServlet {
                 break;
             case "goToEditStories":
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
-                request.getRequestDispatcher("EditStoryPage.jsp").forward(request, response);
+                request.getRequestDispatcher("ApproveStoryPage.jsp").forward(request, response);
                 break;
             case "addStory":
                 Story story = new Story();
