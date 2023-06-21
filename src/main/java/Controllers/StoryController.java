@@ -7,6 +7,8 @@ package Controllers;
 import Models.Genre;
 import Models.Story;
 import Models.Writer;
+import ServiceLayers.CommentService_Impl;
+import ServiceLayers.CommentService_Interface;
 import ServiceLayers.GenreService_Impl;
 import ServiceLayers.GenreService_Interface;
 import ServiceLayers.StoryService_Impl;
@@ -35,16 +37,21 @@ public class StoryController extends HttpServlet {
 
     private StoryService_Interface storyService;
     private GenreService_Interface genreService;
+    private CommentService_Interface commentService;
 
     public StoryController() {
         this.storyService = new StoryService_Impl();
         this.genreService = new GenreService_Impl();
+        this.commentService = new CommentService_Impl();
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         switch (request.getParameter("submit")) {
             case "viewStory":
-
+                Integer storyId = Integer.valueOf(request.getParameter("storyId"));
+                request.setAttribute("story", storyService.getStory(storyId));
+                request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
+                request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
             case "readStory":
 
