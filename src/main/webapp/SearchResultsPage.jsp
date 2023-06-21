@@ -1,6 +1,6 @@
 <%-- 
-    Document   : ImageTestWebPage
-    Created on : 19 Jun 2023, 17:17:48
+    Document   : SearchResultsPage
+    Created on : 20 Jun 2023, 19:19:09
     Author     : jarro
 --%>
 
@@ -42,6 +42,10 @@
             .card-fixed {
                 height: 400px; /* Adjust the height as per your requirement */
             }
+            
+            .card-genre {
+                height: 100px; /* Adjust the height as per your requirement */
+            }
 
             .card-img-top-fixed {
                 width: 100%;
@@ -60,14 +64,11 @@
         </style>
     </head>
     <body>
-        <% List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
-   if (topPicks == null) {
+        <% 
+            List<Genre> genresFromSearch = (List<Genre>) request.getAttribute("genresFromSearch");
+            List<Story> storiesFromSearch = (List<Story>) request.getAttribute("storiesFromSearch");
+            String searchValue = (String) request.getAttribute("searchValue");
         %>
-        <script>
-            window.location.replace("StoryController?submit=getTopPicksForTest");
-        </script>
-        <% } %>
-
         <div id="navbar-container">
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -79,7 +80,7 @@
                     </a>
                     <div class="d-flex align-items-center">
                         <form>
-                            <input class="form-control me-2" type="search" placeholder="Search for genres, title, blurbs..." aria-label="Search" name="searchValue">
+                            <input class="form-control me-2" type="search" placeholder="Search for genres, titles, blurbs..." aria-label="Search" name="searchValue">
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                     </div>
@@ -88,13 +89,15 @@
         </div>
 
         <div class="space"></div>
+        <%
+            if (storiesFromSearch != null && !storiesFromSearch.isEmpty()) {
+        %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h2 class="text-center book-title">Top Picks This Week</h2>
+            <h2 class="text-center book-title">Search Results In Stories</h2>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
-                if (topPicks != null) {
-                    for (Story story:topPicks) {
+                    for (Story story : storiesFromSearch) {
                 %>
                 <div class="col">
                     <div class="card card-fixed">
@@ -106,10 +109,48 @@
                 </div>
                 <% 
                         }
-                    } 
                 %>
             </div>
             <div class="other-space"></div>
         </div>
+        <%
+            } else {
+        %>
+        <h3>No results found in stories for "<%=searchValue%>"</h3>
+        <% 
+            }
+        %>
+        
+        <%
+            if (genresFromSearch != null && !genresFromSearch.isEmpty()) {
+        %>
+        <div class="container mt-5">
+            <!-- Spacing -->
+            <h2 class="text-center book-title">Search Results In Genres</h2>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
+                <%
+                    for (Genre genre : genresFromSearch) {
+                %>
+                <div class="col">
+                    <div class="card card-genre">
+                        <div class="card-body">
+                            <h5 class="card-title"><%=genre.getName()%></h5>
+                            <a href="StoryController?submit=viewAllStoriesInGenre&genreId=<%=genre.getId()%>&genreName=<%=genre.getName()%>" class="btn btn-primary">View Stories</a>
+                        </div>
+                    </div>
+                </div>
+                <% 
+                        }
+                %>
+            </div>
+            <div class="other-space"></div>
+        </div>
+        <%
+            } else {
+        %>
+        <h3>No results found in genres for "<%=searchValue%>"</h3>
+        <% 
+            }
+        %>
     </body>
 </html>

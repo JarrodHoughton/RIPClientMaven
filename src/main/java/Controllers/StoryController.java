@@ -38,7 +38,7 @@ public class StoryController extends HttpServlet {
 
     public StoryController() {
         this.storyService = new StoryService_Impl();
-        genreService = new GenreService_Impl();
+        this.genreService = new GenreService_Impl();
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -60,6 +60,20 @@ public class StoryController extends HttpServlet {
                 break;
             case "submitStory":
 
+                break;
+            case "viewAllStoriesInGenre":
+                Integer genreId = Integer.valueOf(request.getParameter("genreId"));
+                String genreName = request.getParameter("genreName");
+                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId));
+                request.setAttribute("genreName", genreName);
+                request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
+                break;
+            case "searchForGenreAndStories":
+                String searchValue = request.getParameter("searchValue");
+                request.setAttribute("storiesFromSearch", storyService.searchForStories(searchValue));
+                request.setAttribute("genresFromSearch", genreService.searchForGenres(searchValue));
+                request.setAttribute("searchValue", searchValue);
+                request.getRequestDispatcher("SearchResultsPage.jsp").forward(request, response);
                 break;
             case "goToEditStories":
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());

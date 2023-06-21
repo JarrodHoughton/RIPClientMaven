@@ -31,6 +31,7 @@ import java.util.List;
  */
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
+
     private GenreService_Interface genreService;
     private LoginService_Interface loginService;
     private ReaderService_Interface readerService;
@@ -140,27 +141,31 @@ public class LoginController extends HttpServlet {
                 break;
             case "register":
                 message = "This email already exists.";
+                String password = request.getParameter("password");
                 String email = request.getParameter("email");
                 if (!readerService.userExists(email)) {
                     Reader reader = new Reader();
                     reader.setEmail(email);
                     reader.setSalt(PasswordEncryptor.generateSalt());
-                    reader.setPasswordHash(PasswordEncryptor.hashPassword(request.getParameter("password"), reader.getSalt()));
+                    reader.setPasswordHash(PasswordEncryptor.hashPassword(password, reader.getSalt()));
                     reader.setName(request.getParameter("name"));
                     reader.setSurname(request.getParameter("surname"));
                     reader.setPhoneNumber(request.getParameter("phoneNumber"));
                     List<Genre> genres = genreService.getAllGenres();
                     List<Integer> genreIds = new ArrayList<>();
-                    for (Genre genre:genres) {
-                        if (request.getParameter(String.valueOf(genre.getId()))!=null) {
+                    for (Genre genre : genres) {
+                        if (request.getParameter(String.valueOf(genre.getId())) != null) {
                             genreIds.add(genre.getId());
                         }
                     }
                     reader.setFavouriteGenreIds(genreIds);
                     message = loginService.register(reader);
+                    reader.setPasswordHash(password);
                     reader = loginService.loginReader(reader);
-                    message += ": -> " + mailService.sendVerficationEmail(reader);
-                    request.setAttribute("user", reader);
+                    if (reader != null) {
+                        message += "<br>" + mailService.sendVerficationEmail(reader);
+                        request.setAttribute("user", reader);
+                    }
                 }
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -170,7 +175,15 @@ public class LoginController extends HttpServlet {
                 request.getRequestDispatcher("register.jsp").forward(request, response);
                 break;
             case "verifyReader":
-                
+                Integer readerId = Integer.valueOf(request.getParameter("readerId"));
+                String verifyToken = request.getParameter("verifyToken");
+                if (verifyToken.equals(readerService.getVerifyToken(readerId))) {
+                    message = readerService.setVerified(readerId);
+                } else {
+                    message = "Your verification token does not match the token with your account.";
+                }
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();

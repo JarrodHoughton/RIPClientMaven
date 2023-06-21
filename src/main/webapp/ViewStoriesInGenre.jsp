@@ -1,6 +1,6 @@
 <%-- 
-    Document   : ImageTestWebPage
-    Created on : 19 Jun 2023, 17:17:48
+    Document   : SearchResultsPage
+    Created on : 20 Jun 2023, 19:19:09
     Author     : jarro
 --%>
 
@@ -60,14 +60,10 @@
         </style>
     </head>
     <body>
-        <% List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
-   if (topPicks == null) {
+        <% 
+            List<Story> storiesInGenre = (List<Story>) request.getAttribute("storiesInGenre");
+            String genreName = (String) request.getAttribute("genreName");
         %>
-        <script>
-            window.location.replace("StoryController?submit=getTopPicksForTest");
-        </script>
-        <% } %>
-
         <div id="navbar-container">
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -79,7 +75,7 @@
                     </a>
                     <div class="d-flex align-items-center">
                         <form>
-                            <input class="form-control me-2" type="search" placeholder="Search for genres, title, blurbs..." aria-label="Search" name="searchValue">
+                            <input class="form-control me-2" type="search" placeholder="Search for genres, titles, blurbs..." aria-label="Search" name="searchValue">
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                     </div>
@@ -88,13 +84,15 @@
         </div>
 
         <div class="space"></div>
+        <%
+            if (storiesInGenre != null && !storiesInGenre.isEmpty()) {
+        %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h2 class="text-center book-title">Top Picks This Week</h2>
+            <h2 class="text-center book-title">Stories In Genre: <%=genreName%></h2>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
-                if (topPicks != null) {
-                    for (Story story:topPicks) {
+                    for (Story story : storiesInGenre) {
                 %>
                 <div class="col">
                     <div class="card card-fixed">
@@ -106,10 +104,16 @@
                 </div>
                 <% 
                         }
-                    } 
                 %>
             </div>
             <div class="other-space"></div>
         </div>
+        <%
+            } else {
+        %>
+        <h3>No stories found in genre: "<%=genreName%>"</h3>
+        <% 
+            }
+        %>
     </body>
 </html>

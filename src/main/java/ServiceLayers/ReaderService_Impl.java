@@ -44,5 +44,21 @@ public class ReaderService_Impl implements ReaderService_Interface{
         response = webTarget.request(MediaType.APPLICATION_JSON).get();
         return response.readEntity(Boolean.class);
     }
+
+    @Override
+    public String setVerified(Integer readerId) {
+        String setVerifiedUri = uri + "setVerified/{readerId}";
+        webTarget = client.target(setVerifiedUri).resolveTemplate("readerId", readerId);
+        response = webTarget.request(MediaType.APPLICATION_JSON).get();
+        return response.readEntity(String.class);
+    }
+
+    @Override
+    public String getVerifyToken(Integer readerId) {
+        String getVerifyTokenUri = uri + "getVerifyToken/{readerId}";
+        webTarget = client.target(getVerifyTokenUri).resolveTemplate("readerId", readerId);
+        response = webTarget.request(MediaType.APPLICATION_JSON).get();
+        return response.readEntity(String.class);
+    }
     
 }

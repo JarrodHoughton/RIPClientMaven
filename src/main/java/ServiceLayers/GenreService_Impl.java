@@ -86,4 +86,17 @@ public class GenreService_Impl implements GenreService_Interface{
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
+
+    @Override
+    public List<Genre> searchForGenres(String searchValue) {
+        List<Genre> genres = null;
+        try {
+            String searchForGenresUri = uri + "searchForGenres/{searchValue}";
+            webTarget = client.target(searchForGenresUri).resolveTemplate("searchValue", searchValue);
+            genres = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Genre>>(){});
+        } catch (IOException ex) {
+            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return genres;
+    }
 }

@@ -55,23 +55,20 @@
                 </a>
             </div>
         </nav>
-
+        <% 
+            String message = (String) request.getAttribute("message");
+            Reader user = (Reader) request.getAttribute("user");
+            if  (message != null) { 
+        %>
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><%= message %></h4>
+        </div>
+        <% 
+            } 
+        %>
         <div class="container mt-4">
             <div class="row">
                 <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
-                    <% String message = (String) request.getAttribute("message");
-                       Reader user = (Reader) request.getAttribute("user");
-                       if  (message != null) { %>
-                    <div class="alert alert-danger" role="alert">
-                        <h4 class="alert-heading"><%= message %></h4>
-                    </div>
-                    <% } 
-               if(user != null) { %>
-                    <div class="alert alert-info" role="alert">
-                        <h4 class="alert-heading"><%= user.toString() %></h4>
-                    </div>
-                    <% } %>
-
                     <form action="LoginController" method="post" class="login-form">
                         <h3 class="text-center mb-4">Login</h3>
                         <div class="mb-3">
@@ -85,13 +82,10 @@
                         </div>
                         <div class="not-member">
                             <p>Not a member? <a href="LoginController?submit=getGenresForRegister">Register</a></p>
-                            <p><a href="TestEmail.jsp">Test Email</a></p>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
-
     </body>
 </html>

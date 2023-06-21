@@ -10,4 +10,6 @@ package ServiceLayers;
  */
 public interface ReaderService_Interface {
     public Boolean userExists(String email);
+    public String setVerified(Integer readerId);
+    public String getVerifyToken(Integer readerId);
 }

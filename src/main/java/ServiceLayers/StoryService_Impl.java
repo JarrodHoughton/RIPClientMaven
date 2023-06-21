@@ -66,7 +66,7 @@ public class StoryService_Impl implements StoryService_Interface {
     public List<Story> getStoriesInGenre(Integer genreId) {
         List<Story> stories = null;
         try {
-            String getStoriesInGenreUri = uri + "getAllStories/{genreId}";
+            String getStoriesInGenreUri = uri + "getStoriesInGenre/{genreId}";
             webTarget = client.target(getStoriesInGenreUri).resolveTemplate("genreId", genreId);
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
@@ -144,6 +144,19 @@ public class StoryService_Impl implements StoryService_Interface {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return submittedStories;
+    }
+    
+    @Override
+    public List<Story> searchForStories(String searchValue) {
+        List<Story> stories = null;
+        try {
+            String searchForStoriesUri = uri + "searchForStories/{searchValue}";
+            webTarget = client.target(searchForStoriesUri).resolveTemplate("searchValue", searchValue);
+            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return stories;
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
