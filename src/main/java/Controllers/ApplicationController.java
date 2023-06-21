@@ -9,46 +9,47 @@ import ServiceLayers.ApplicationService_Interface;
 import ServiceLayers.WriterService_Impl;
 import ServiceLayers.WriterService_Interface;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 
 /**
  *
  * @author jarro
  */
-@WebServlet(name = "ReaderController", urlPatterns = {"/ReaderController"})
-public class ReaderController extends HttpServlet {
-
+@WebServlet(name = "ApplicationController", urlPatterns = {"/ApplicationController"})
+public class ApplicationController extends HttpServlet {
     private ApplicationService_Interface applicationService;
     private WriterService_Interface writerService;
 
-    public ReaderController() {
+    public ApplicationController() {
         this.applicationService = new ApplicationService_Impl();
         this.writerService = new WriterService_Impl();
     }
-
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         switch (request.getParameter("submit")) {
             case "getWriterApplications":
                 request.setAttribute("applications", applicationService.getApplications());
-                request.getRequestDispatcher("").forward(request, response);
+                request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             case "approveApplication":
-                Integer readerId = (Integer) request.getAttribute("readerId");
-                String message = writerService.addWriter(readerId);
+                Integer readerId = Integer.valueOf(request.getParameter("readerId"));
+                String message = writerService.addWriter(readerId) + "<br>" + applicationService.deleteApplication(readerId);
                 request.setAttribute("message", message);
-                request.getRequestDispatcher("").forward(request, response);
+                request.setAttribute("applications", applicationService.getApplications());
+                request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             case "rejectApplication":
-                readerId = (Integer) request.getAttribute("readerId");
+                readerId = Integer.valueOf(request.getParameter("readerId"));
                 message = applicationService.deleteApplication(readerId);
                 request.setAttribute("message", message);
-                request.getRequestDispatcher("").forward(request, response);
+                request.setAttribute("applications", applicationService.getApplications());
+                request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();

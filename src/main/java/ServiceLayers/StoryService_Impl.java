@@ -132,7 +132,20 @@ public class StoryService_Impl implements StoryService_Interface {
         }
         return stories;
     }
-
+    
+    @Override
+    public List<Story> getSubmittedStories() {
+        List<Story> submittedStories = null;
+        try {
+            String getSubmittedStoriesUri = uri + "getSubmittedStories";
+            webTarget = client.target(getSubmittedStoriesUri);
+            submittedStories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return submittedStories;
+    }
+    
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
