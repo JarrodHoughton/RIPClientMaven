@@ -1,9 +1,3 @@
-<%-- 
-    Document   : DetailsPage
-    Created on : Jun 20, 2023, 6:17:03 PM
-    Author     : Jaco Minnaar 
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -69,6 +63,24 @@
                 text-align: center;
                 font-size: 16px;
             }
+
+            .comments-container {
+                margin-top: 20px;
+            }
+
+            .comment {
+                margin-bottom: 10px;
+                padding: 10px;
+                background-color: #f2f2f2;
+            }
+
+            .comment-author {
+                font-weight: bold;
+            }
+
+            .comment-content {
+                margin-top: 5px;
+            }
         </style>
     </head>
     <body>
@@ -88,18 +100,30 @@
                 <div class="rating-container">
                     <div class="rating-box">Rating: <%= story.getRating() %></div>
                     <div class="likes-box">Likes: <%= story.getLikeCount() %></div>
-                     <a class="btn btn-read-story" href="StoryController?submit=readStory&storyId=<%=story.getId()%>">Read</a>
+                    <a class="btn btn-read-story" href="StoryController?submit=viewStory&storyId=<%= story.getId() %>">Read</a>
                 </div>
             </div>
         </div>
-                <%
-                    if (story.getCommentsEnabled() && comments != null) {
-                %>
-                <!-- display comments -->
-                
         <%
-                    }
+            if (story.getCommentsEnabled() && comments != null) {
+        %>
+        <div class="comments-container">
+            <h3>Comments</h3>
+            <% 
+                for (Comment comment : comments) {
+            %>
+            <div class="comment">
+                <p class="comment-content"><%= comment.getMessage() %></p>
+            </div>
+            <%
+                }
+            %>
+        </div>
+        <%
             }
-        %> 
+        %>
+        <%
+            }
+        %>
     </body>
 </html>
