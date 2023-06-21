@@ -4,14 +4,16 @@
  */
 package ServiceLayers;
 
+import Models.Rating;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  *
- * @author jarro
+ * @author 27713
  */
 public interface RatingService_Interface {
-    public Boolean addRating(Integer accountId, Integer storyId, Integer ratingValue);
-    public List<Integer> getTopHighestRatedStoriesInTimePeriod(HashMap<String, String> parameters); //HashMap contains -> startDate, endDate, numberOfEntries
+    public String addRating(Rating rating);
+    public List<Integer> getTopHighestRatedStoriesInTimePeriod(Timestamp startDate, Timestamp endDate, Integer numberOfEntries);
 }
