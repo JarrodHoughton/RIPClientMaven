@@ -14,7 +14,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>index</title>
         <% List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
-   if (topPicks == null) {
+           Boolean getTopPicksCalled = (Boolean) request.getAttribute("getTopPicksCalled");
+           if (getTopPicksCalled == null) {
+                getTopPicksCalled = false;
+            }
+   if (topPicks == null && !getTopPicksCalled) {
         %>
         <script>
             window.location.replace("StoryController?submit=getTopPicks");

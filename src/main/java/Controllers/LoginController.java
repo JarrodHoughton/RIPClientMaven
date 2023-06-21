@@ -55,7 +55,7 @@ public class LoginController extends HttpServlet {
                 user.setPasswordHash(request.getParameter("password"));
                 HashMap<String, String> details = loginService.getUserSalt(user.getEmail());
                 String message = "Login Credentials Invalid: password was incorrect.";
-                if (Boolean.parseBoolean(details.get("userFound"))) {
+                if (Boolean.parseBoolean(details.get("userFound"))&&Boolean.parseBoolean(details.get("userVerified"))) {
                     switch (details.get("userType")) {
                         case "R":
                             Reader reader = new Reader();
@@ -133,8 +133,12 @@ public class LoginController extends HttpServlet {
                             request.setAttribute("message", "Something went wrong logging in.");
                             request.getRequestDispatcher("login.jsp").forward(request, response);
                     }
+                } else if(!Boolean.parseBoolean(details.get("userVerified"))) {
+                    message = "Please verify your account.";
+                    request.setAttribute("message", message);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
                 } else {
-                    message = "User not found.";
+                    message = "Login Credentials Invalid: Email not found.";
                     request.setAttribute("message", message);
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                 }

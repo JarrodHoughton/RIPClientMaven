@@ -124,10 +124,12 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("createStory.jsp").forward(request, response);
                 break;
             case "getTopPicks":
+                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
                 request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             case "getTopPicksForTest":
+                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
                 request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("ImageTestWebPage.jsp").forward(request, response);
                 break;
