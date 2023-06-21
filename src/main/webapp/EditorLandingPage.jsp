@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="Models.*"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,6 +13,16 @@
         <title>Admin Editor Landing</title>
     </head>
     <body>
+        <%
+            Editor editor = (Editor) request.getSession(false).getAttribute("user");
+            String message = (String) request.getAttribute("message");
+            
+            if (message != null) {
+        %>
+        <h3><%=message%></h3>
+        <%
+            }
+        %>
         <a href="StoryController?submit=goToEditStories">
             <button>Edit Stories</button>
         </a>
@@ -21,6 +32,13 @@
         </a>
         <br/>
         <button>Get Data Report</button><br/>
+        
+        <%
+            if  (editor !=null && editor.getUserType().equals("A")) {
+        %>
         <button>Manage Editors</button><br/>
+        <%
+            }
+        %>
     </body>
 </html>
