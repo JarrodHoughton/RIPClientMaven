@@ -38,6 +38,10 @@ public abstract class StoryStatistic {
         return date;
     }
 
+    public void setDate(String date) {
+        this.date = LocalDateTime.parse(date);
+    }
+    
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
