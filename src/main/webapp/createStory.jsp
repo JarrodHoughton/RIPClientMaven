@@ -54,6 +54,7 @@
                 </ul>
             </div>
             <input type="submit" value="addStory" name="submit">
+            <input type="submit" value="saveToDraft" name="submit">
         </form>
     </body>
 </html>
