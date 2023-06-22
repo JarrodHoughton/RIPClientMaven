@@ -181,10 +181,13 @@ public class LoginController extends HttpServlet {
             case "verifyReader":
                 Integer readerId = Integer.valueOf(request.getParameter("readerId"));
                 String verifyToken = request.getParameter("verifyToken");
-                if (verifyToken.equals(readerService.getVerifyToken(readerId))) {
+                
+                if (readerService.isVerified(readerId)) {
+                    message = "Your account has already been verified.";
+                } else if (verifyToken.equals(readerService.getVerifyToken(readerId))) {
                     message = readerService.setVerified(readerId);
                 } else {
-                    message = "Your verification token does not match the token with your account.";
+                    message = "Something went wrong verifying your account.";
                 }
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("login.jsp").forward(request, response);

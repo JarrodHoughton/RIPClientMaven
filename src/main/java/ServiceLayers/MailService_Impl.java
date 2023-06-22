@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MailService_Impl implements MailService_Interface {
+
     private Client client;
     private WebTarget webTarget;
     private ObjectMapper mapper;
@@ -29,7 +30,7 @@ public class MailService_Impl implements MailService_Interface {
         properties = new GetProperties("src\\java\\Properties\\config.properties");
         uri = "http://localhost:8080/RIPServerMaven/RIP/mail/";
     }
-    
+
     @Override
     public String sendMail(String recipientEmail, String emailContent, String subject) {
         try {
@@ -45,7 +46,7 @@ public class MailService_Impl implements MailService_Interface {
         }
         return response.readEntity(String.class);
     }
-    
+
     @Override
     public String sendVerficationEmail(Reader reader) {
         try {
@@ -57,8 +58,19 @@ public class MailService_Impl implements MailService_Interface {
         }
         return response.readEntity(String.class);
     }
-    
+
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
+    }
+
+    @Override
+    public String sendReferralEmail(String recipientEmail, String recipientName) {
+        String sendReferralEmailUri = uri + "sendReferralEmail/{recipientEmail}/{recipientName}";
+        HashMap<String, Object> referralDetails = new HashMap<>();
+        referralDetails.put("recipientEmail", recipientEmail);
+        referralDetails.put("recipientName", recipientName);
+        webTarget = client.target(sendReferralEmailUri).resolveTemplates(referralDetails);
+        response = webTarget.request().get();
+        return response.readEntity(String.class);
     }
 }

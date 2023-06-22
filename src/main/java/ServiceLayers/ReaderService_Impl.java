@@ -4,19 +4,13 @@
  */
 package ServiceLayers;
 
-import Models.Reader;
 import Utils.GetProperties;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -54,11 +48,18 @@ public class ReaderService_Impl implements ReaderService_Interface{
     }
 
     @Override
+    public Boolean isVerified(Integer readerId) {
+        String isVerifiedUri = uri + "isVerified/{readerId}";
+        webTarget = client.target(isVerifiedUri).resolveTemplate("readerId", readerId);
+        response = webTarget.request(MediaType.APPLICATION_JSON).get();
+        return response.readEntity(Boolean.class);
+    }
+    
+    @Override
     public String getVerifyToken(Integer readerId) {
         String getVerifyTokenUri = uri + "getVerifyToken/{readerId}";
         webTarget = client.target(getVerifyTokenUri).resolveTemplate("readerId", readerId);
         response = webTarget.request(MediaType.APPLICATION_JSON).get();
         return response.readEntity(String.class);
-    }
-    
+    }   
 }

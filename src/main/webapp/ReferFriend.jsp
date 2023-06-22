@@ -9,9 +9,18 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Refer A Friend</title>
     </head>
     <body>
+        <%
+            String message = (String) request.getAttribute("message");
+            
+            if (message!=null) {
+        %>
+        <h4><%= message %></h4>
+        <%
+            }
+        %>
         <h1>Refer a friend</h1>
         <form action="MailController" method="post" class="refer-friend-form">
             
@@ -25,8 +34,7 @@
                 <input type="number" class="form-control" id="numbert" name="phonenumber" placeholder="Enter phone number" maxlength="10" minlength="10" required>
             </div>
             <div class="text-center">
-                <input type="submit" action="MailController?submit=sendReferralEmail">
-                
+                <input type="submit" value="sendReferralEmail" name="submit">
             </div>
 
         </form>

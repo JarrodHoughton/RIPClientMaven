@@ -33,6 +33,10 @@ public class MailController extends HttpServlet {
                 request.setAttribute("message", mailService.sendMail(request.getParameter("email"), request.getParameter("content"), request.getParameter("subject")));
                 request.getRequestDispatcher("TestEmail.jsp").forward(request, response);
                 break;
+            case "sendReferralEmail":
+                request.setAttribute("message", mailService.sendReferralEmail(request.getParameter("email"), request.getParameter("name")));
+                request.getRequestDispatcher("ReferFriend.jsp").forward(request, response);
+                break;
             default:
                 throw new AssertionError();
         }
