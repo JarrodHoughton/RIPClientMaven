@@ -14,5 +14,8 @@
     <body>
         <p>Blurb</p>
         <p>Full Story</p>
+        <button type="button">Approve</button>
+        <button type="button">Deny</button>
+
     </body>
 </html>
