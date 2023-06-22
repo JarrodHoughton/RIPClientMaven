@@ -129,7 +129,7 @@ public class StoryController extends HttpServlet {
                 System.out.println("Finished adding a story.");
                 request.getRequestDispatcher("createStory.jsp").forward(request, response);
                 break;
-            case "getTopPicks":
+            case "getStoriesForLandingPage":
                 request.setAttribute("getTopPicksCalled", Boolean.TRUE);
                 request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
@@ -143,7 +143,10 @@ public class StoryController extends HttpServlet {
 
                 break;
             case "manageStories":
-                request.getRequestDispatcher("createStory.jsp").forward(request, response);
+                Writer writer = (Writer)request.getSession(false).getAttribute("user");
+                request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
+                request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
+                request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();

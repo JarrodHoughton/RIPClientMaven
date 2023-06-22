@@ -5,6 +5,11 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="Models.*"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Base64"%>
+<%@page import="org.apache.commons.lang3.ArrayUtils"%>
+<%@page import="java.util.Arrays"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,25 +17,15 @@
         <title>Manage Stories Page</title>
     </head>
     <body>
-        <h1>Drafts</h1>
-        <table border="1">
-            <tr>
-                <th>Title</th>
-                <th>Image</th>
-                <th>Blurb</th>
-                <th>Story</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td>Title</td>
-                <td><img src="url_to_your_image.jpg" alt="Image Description"></td>
-                <td>Blurb</td>
-                <td>Story</td>
-                <td><button type="button">Submit Story</button></td>
-            </tr>
-        </table>
-                
+        <%
+            List<Story> submittedStories = (List<Story>) request.getAttribute("submittedStories");
+            List<Story> draftedStories = (List<Story>) request.getAttribute("draftedStories");
+        %>
+        
         <h1>Submitted Stories</h1>
+        <%
+            if  (submittedStories != null) {
+        %>
         <table border="1">
             <tr>
                 <th>Title</th>
@@ -39,13 +34,60 @@
                 <th>Story</th>
                 <th>Approval Status</th>
             </tr>
+            <%
+                for (Story story : submittedStories) {
+            %>
             <tr>
-                <td>Title</td>
-                <td><img src="url_to_your_image.jpg" alt="Image Description"></td>
-                <td>Blurb</td>
-                <td>Story</td>
-                <td>Approval status</td>
+                <td><%=story.getTitle()%></td>
+                <td><img src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Story Image"></td>
+                <td><%=story.getBlurb()%></td>
+                <td><%=story.getContent()%></td>
+                <td><%= story.getIsApproved() ? "Approved" : "Waiting Approval"%></td>
             </tr>
+            <%
+                }
+            %>
         </table>
+        <%
+            } else {
+        %>
+        <h3>You currently have no submitted stories.</h3>
+        <%
+            }
+        %>
+        
+        <h1>Drafts</h1>
+        <%
+            if  (draftedStories != null) {
+        %>
+        <table border="1">
+            <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Blurb</th>
+                <th>Story</th>
+                <th>Action</th>
+            </tr>
+            <%
+                for (Story story : draftedStories) {
+            %>
+            <tr>
+               <td><%=story.getTitle()%></td>
+                <td><img src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Story Image"></td>
+                <td><%=story.getBlurb()%></td>
+                <td><%=story.getContent()%></td>
+                <td><button type="button">Submit Story</button></td>
+            </tr>
+            <%
+                }
+            %>
+        </table>
+        <%
+            } else {
+        %>
+        <h3>You currently have no drafted stories.</h3>
+        <%
+            }
+        %>
     </body>
 </html>

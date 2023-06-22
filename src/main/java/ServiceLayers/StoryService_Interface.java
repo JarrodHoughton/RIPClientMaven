@@ -17,8 +17,10 @@ public interface StoryService_Interface {
     public List<Story> getSubmittedStories();
     public List<Story> getStoriesInGenre(Integer genreId);
     public List<Story> getTopPicks();
-    public List<Story> getRecommendations();
     public List<Story> searchForStories(String searchValue);
+    public List<Story> getRecommendations(List<Integer>  genreIds);
+    public List<Story> getWritersSubmittedStories(List<Integer> storyIds, Integer writerId);
+    public List<Story> getWritersDraftedStories(List<Integer> storyIds, Integer writerId);
     public String updateStory(Story story);
     public String deleteStory(Integer storyId);
     public String addStory(Story story);

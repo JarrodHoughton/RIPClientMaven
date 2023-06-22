@@ -69,7 +69,7 @@
    if (topPicks == null && !getTopPicksCalled) {
         %>
         <script>
-            window.location.replace("StoryController?submit=getTopPicks");
+            window.location.replace("StoryController?submit=getStoriesForLandingPage");
         </script>
         <% } %>
     </head>

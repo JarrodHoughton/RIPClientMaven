@@ -5,6 +5,7 @@
 package ServiceLayers;
 
 import Models.Genre;
+import Models.StoriesHolder;
 import Models.Story;
 import Utils.GetProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -98,8 +99,8 @@ public class StoryService_Impl implements StoryService_Interface {
     @Override
     public String addStory(Story story) {
         try {
-            String loginReaderUri = uri + "addStory";
-            webTarget = client.target(loginReaderUri);
+            String addStoryUri = uri + "addStory";
+            webTarget = client.target(addStoryUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(story)));
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -113,19 +114,7 @@ public class StoryService_Impl implements StoryService_Interface {
         try {
             String getTopPicksUri = uri + "getTopPicks";
             webTarget = client.target(getTopPicksUri);
-            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
-        } catch (IOException ex) {
-            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return stories;
-    }
-
-    @Override
-    public List<Story> getRecommendations() {
-        List<Story> stories = null;
-        try {
-            String getTopPicksUri = uri + "getRecommendations";
-            webTarget = client.target(getTopPicksUri);
+            Logger.getLogger("CALLING GET TOP PICKS");
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -157,6 +146,54 @@ public class StoryService_Impl implements StoryService_Interface {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return stories;
+    }
+    
+    @Override
+    public List<Story> getRecommendations(List<Integer> genreIds) {
+        List<Story> recommendedStories = null;
+        try {
+            String loginReaderUri = uri + "getRecommendations";
+            webTarget = client.target(loginReaderUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(genreIds)));
+            recommendedStories = response.readEntity(StoriesHolder.class).getStories();
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return recommendedStories;
+    }
+
+    @Override
+    public List<Story> getWritersSubmittedStories(List<Integer> storyIds, Integer writerId) {
+        List<Story> submittedStories = null;
+        try {
+            StoriesHolder storiesHolder = new StoriesHolder();
+            storiesHolder.setId(writerId);
+            storiesHolder.setStoryIds(storyIds);
+            String loginReaderUri = uri + "getWritersSubmittedStories";
+            webTarget = client.target(loginReaderUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(storiesHolder)));
+            submittedStories = response.readEntity(StoriesHolder.class).getStories();
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return submittedStories;
+    }
+
+    @Override
+    public List<Story> getWritersDraftedStories(List<Integer> storyIds, Integer writerId) {
+        List<Story> draftedStories = null;
+        try {
+            StoriesHolder storiesHolder = new StoriesHolder();
+            storiesHolder.setId(writerId);
+            storiesHolder.setStoryIds(storyIds);
+            String loginReaderUri = uri + "getWritersDraftedStories";
+            webTarget = client.target(loginReaderUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(storiesHolder)));
+            draftedStories = response.readEntity(StoriesHolder.class).getStories();
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return draftedStories;
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
