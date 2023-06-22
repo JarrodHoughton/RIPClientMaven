@@ -42,7 +42,17 @@
                 <td><img src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Story Image"></td>
                 <td><%=story.getBlurb()%></td>
                 <td><%=story.getContent()%></td>
-                <td><%= story.getIsApproved() ? "Approved" : "Waiting Approval"%></td>
+                <%
+                    String approvalStatus;
+                    if (story.getRejected()) {
+                        approvalStatus = "Rejected";
+                    } else if (story.getApproved()) {
+                        approvalStatus = "Approved";
+                    } else {
+                        approvalStatus = "Waiting Approval";
+                    }
+                %>
+                <td><%=approvalStatus%></td>
             </tr>
             <%
                 }
