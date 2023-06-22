@@ -6,6 +6,10 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Base64"%>
+<%@page import="org.apache.commons.lang3.ArrayUtils"%>
+<%@page import="java.util.Arrays"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -55,8 +59,22 @@
                 margin-bottom: 40px;
             }
         </style>
+
     </head>
     <body>
+        <%
+            Boolean getTopPicksCalled = (Boolean) request.getAttribute("getTopPicksCalled");
+            List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
+            if (getTopPicksCalled == null) {
+                getTopPicksCalled = false;
+            }
+            if (topPicks == null && !getTopPicksCalled) {
+        %>
+        <script>
+            window.location.replace("StoryController?submit=getStoriesForReaderLandingPage");
+        </script>
+        <% } %>
+        
         <% 
             Account user = (Account) request.getSession(false).getAttribute("user");
             Reader reader = null;
@@ -83,7 +101,6 @@
         %>
 
         <div id="navbar-container">
-            <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
                     <a class="navbar-brand" href="#">
@@ -108,65 +125,39 @@
         </div>
 
         <div class="space"></div>
+
         <div class="container mt-5">
-            <!-- Spacing -->
-            <h2 class="text-center book-title">Best Sellers</h2>
+            <h2 class="text-center book-title">Top 10 picks</h2>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
+                <%
+                if (topPicks != null) {
+                    for (Story story : topPicks) {
+                        Byte[] imageBytes = story.getImage();
+                        byte[] imageData = new byte[imageBytes.length];
+                        for (int i = 0; i < imageBytes.length; i++) {
+                            imageData[i] = imageBytes[i];
+                        }
+                %>
                 <div class="col">
-                    <div class="card card-fixed">
-                        <img class="card-img-top card-img-top-fixed" src="pexels-nadi-lindsay-4865603.jpg" alt="Book Image">
-                        <div class="card-body">
-                            <h5 class="card-title">The Great Gatsby</h5>
+                    <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                        <div class="card card-fixed">
+
+                            <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+
+                            <div class="card-body">
+                                <h5 class="card-title"><%=story.getTitle()%></h5>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-                <div class="col">
-                    <div class="card card-fixed">
-                        <img class="card-img-top card-img-top-fixed" src="pexels-nadi-lindsay-4865603.jpg" alt="Book Image">
-                        <div class="card-body">
-                            <h5 class="card-title">The Great Gatsby</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card card-fixed">
-                        <img class="card-img-top card-img-top-fixed" src="pexels-nadi-lindsay-4865603.jpg" alt="Book Image">
-                        <div class="card-body">
-                            <h5 class="card-title">The Great Gatsby</h5>
-                        </div>
-                    </div>
-                </div>
+                <%
+            }
+        }
+                %>
             </div>
             <div class="other-space"></div>
-            <h2 class="text-center book-title">Best Sellers</h2>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
-                <div class="col">
-                    <div class="card card-fixed">
-                        <img class="card-img-top card-img-top-fixed" src="pexels-nadi-lindsay-4865603.jpg" alt="Book Image">
-                        <div class="card-body">
-                            <h5 class="card-title">The Great Gatsby</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card card-fixed">
-                        <img class="card-img-top card-img-top-fixed" src="pexels-nadi-lindsay-4865603.jpg" alt="Book Image">
-                        <div class="card-body">
-                            <h5 class="card-title">The Great Gatsby</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card card-fixed">
-                        <img class="card-img-top card-img-top-fixed" src="pexels-nadi-lindsay-4865603.jpg" alt="Book Image">
-                        <div class="card-body">
-                            <h5 class="card-title">The Great Gatsby</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="other-space"></div>
-        </div>
+            <a href="ImageTestWebPage.jsp">Test Images</a>
+        </div>   
 
 
     </body>
