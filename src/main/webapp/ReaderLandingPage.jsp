@@ -102,6 +102,7 @@
                             <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue">
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
+                        <a class="btn btn-primary ms-2" href="Profile.jsp">Profile</a>
                         <%
                         if (writer!=null) {
                         %>
