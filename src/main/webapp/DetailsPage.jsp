@@ -146,7 +146,12 @@
 
         <h1>Story Details</h1>
         <%
-        Reader user = (Reader) request.getSession(false).getAttribute("user");
+        Reader reader = null;
+        Account user = (Account) request.getSession(false).getAttribute("user");
+        if  (user != null && (user.getUserType().equals("R")||user.getUserType().equals("W"))) {
+            reader = (Reader) user;
+        }
+        
         List<Comment> comments = (List<Comment>) request.getAttribute("comments");
         Story story = (Story) request.getAttribute("story");
         Rating userRating = (Rating) request.getAttribute("userRating");
@@ -186,12 +191,12 @@
                             <div class="likes-box">Likes: <%= story.getLikeCount() %></div>
                         </div>
                         <%
-                            if (user!=null) {
+                            if (reader!=null) {
                         %>
                         <div class="readbutton-container">
                             <a href="StoryController?submit=readStory&storyId=<%=story.getId()%>">Read</a>
                             <%
-                                if (user.getFavouriteStoryIds().contains(story.getId())) {
+                                if (reader.getFavouriteStoryIds().contains(story.getId())) {
                             %>
                             <a href="StoryController?submit=unlikeStory&storyId=<%=story.getId()%>">UnLike</a>
                             <%
