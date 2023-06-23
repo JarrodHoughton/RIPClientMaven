@@ -4,6 +4,8 @@
  */
 package Controllers;
 
+import ServiceLayers.EditorService_Impl;
+import ServiceLayers.EditorService_Interface;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,19 +20,31 @@ import java.util.HashMap;
  */
 @WebServlet(name = "EditorController", urlPatterns = {"/EditorController"})
 public class EditorController extends HttpServlet {
+    private EditorService_Interface editorService;
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    public EditorController() {
+        this.editorService = new EditorService_Impl();
+    }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        switch(request.getParameter("submit")) {
+            case "manageEditors":
+                request.setAttribute("editors", editorService.getAllEditors());
+                request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
+                break;
+            case "addEditor":
+                
+                break;
+            case "deleteEditor":
+                
+                break;
+            case "updateEditor":
+                
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
