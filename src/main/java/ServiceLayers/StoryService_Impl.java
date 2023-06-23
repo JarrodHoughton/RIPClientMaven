@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 public class StoryService_Impl implements StoryService_Interface {
 
