@@ -36,7 +36,7 @@
         <%
             if  (editor != null && editor.getUserType().equals("A")) {
         %>
-        <a href="EditController?submit=manageEditors">
+        <a href="EditorController?submit=manageEditors">
             <button>Manage Editors</button><br/>
         </a>
         <%

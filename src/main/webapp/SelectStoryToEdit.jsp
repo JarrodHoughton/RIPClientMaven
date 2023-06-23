@@ -8,12 +8,12 @@
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Base64"%>
-<%@page import="org.apache.commons.lang3.ArrayUtils"%>s
+<%@page import="org.apache.commons.lang3.ArrayUtils"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Edit Story Page</title>
+        <title>Edit Story</title>
     </head>
     <body>
         <%
@@ -48,7 +48,7 @@
                         if (genres != null) {
                             for (Genre genre : genres) {
                     %>
-                    <input type="checkbox" name="<%=genre.getId()%>" value="<%=genre.getId()%>" <%if (story.getGenreIds().contains(genre.getId())) {%>checked<%}%>> <%=genre.getName()%><br>
+                    <p><%=genre.getName()%></p><br>
                     <%      }
                         }
                     %>
@@ -56,9 +56,15 @@
                 <td><pre><%=story.getBlurb()%></pre></td>
                 <td><pre><%=story.getContent()%></pre></td>
                 <td>
+                    <a href="StoryController?submit=goToEditStoryForEditor&storyId=<%=story.getId()%>">
                     <button type="button">Edit</button>
+                    </a>
+                    <a href="StoryController?submit=submitStoryFromEditor&storyId=<%=story.getId()%>">
                     <button type="button">Approve</button>
+                    </a>
+                    <a href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
                     <button type="button">Deny</button>
+                    </a>
                 </td>
             </tr>
             <%

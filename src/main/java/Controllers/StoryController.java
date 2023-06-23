@@ -58,14 +58,21 @@ public class StoryController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getSession(false).getAttribute("user") != null) {
             Account account = ((Account)request.getSession(false).getAttribute("user"));
-            if (account.getUserType().equals("R") || account.getUserType().equals("W")) 
-            {
-                reader = (Reader) request.getSession(false).getAttribute("user");
-                writer = (Writer) request.getSession(false).getAttribute("user");
-            }
-            if (account.getUserType().equals("E") || account.getUserType().equals("A")) 
-            {
-                editor = (Editor) request.getSession(false).getAttribute("user");
+            switch (account.getUserType()) {
+                case "R":
+                    reader = (Reader) request.getSession(false).getAttribute("user");
+                    break;
+                case "W":
+                    writer = (Writer) request.getSession(false).getAttribute("user");
+                    break;
+                case "E":
+                    editor = (Editor) request.getSession(false).getAttribute("user");
+                    break;
+                case "A":
+                    editor = (Editor) request.getSession(false).getAttribute("user");
+                    break;
+                default:
+                    throw new AssertionError();
             }
         }
         switch (request.getParameter("submit")) {
@@ -165,8 +172,31 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
+            case "submitStoryFromEditor":
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                Story story = storyService.getStory(storyId);
+                story.setApproved(Boolean.TRUE);
+                story.setRejected(Boolean.FALSE);
+                request.setAttribute("message", storyService.updateStory(story));
+                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
+                break;
+            case "rejectStoryFromEditor":
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                story = storyService.getStory(storyId);
+                story.setRejected(Boolean.TRUE);
+                request.setAttribute("message", storyService.updateStory(story));
+                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
+                break;
+            case "goToEditStoryForEditor":
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                story = storyService.getStory(storyId);
+                request.setAttribute("story", story);
+                request.getRequestDispatcher("EditStoryPage.jsp").forward(request, response);
+                break;
             case "addStory":
-                Story story = new Story();
+                story = new Story();
                 System.out.println("Adding a stroy.");
                 if (writer != null) {
                     story.setAuthorId(writer.getId());

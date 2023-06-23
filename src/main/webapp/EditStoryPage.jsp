@@ -61,7 +61,7 @@
     <body>
         <%
             String message = (String) request.getAttribute("message");
-            Story submittedStory = (Story) request.getAttribute("submittedStory");
+            Story story = (Story) request.getAttribute("story");
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
             if (message!=null) {
         %>
@@ -87,7 +87,7 @@
             </nav>
         </div>
         <%
-        if (submittedStory!=null) {
+        if (story!=null) {
         %>
         <div class="space"></div>
         <div class="container mt-5">
@@ -126,9 +126,12 @@
                     <td><textarea><%=story.getBlurb()%></textarea></td>
                     <td><textarea><%=story.getContent()%></textarea></td>
                     <td>
-                        <button type="StoryController?submit=submitStoryFromEditor">Approve</button>
-                        <br>
-                        <button type="button">Deny</button>
+                        <a href="StoryController?submit=submitStoryFromEditor&storyId=<%=story.getId()%>">
+                            <button type="button">Approve</button>
+                        </a>
+                        <a href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
+                            <button type="button">Deny</button>
+                        </a>
                     </td>
                 </tr>
             </table>
