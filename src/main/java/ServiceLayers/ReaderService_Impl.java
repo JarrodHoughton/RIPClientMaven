@@ -4,6 +4,7 @@
  */
 package ServiceLayers;
 
+import Models.Reader;
 import Utils.GetProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.client.Client;
@@ -61,5 +62,13 @@ public class ReaderService_Impl implements ReaderService_Interface{
         webTarget = client.target(getVerifyTokenUri).resolveTemplate("readerId", readerId);
         response = webTarget.request(MediaType.APPLICATION_JSON).get();
         return response.readEntity(String.class);
-    }   
+    }
+    
+    @Override
+    public Reader getReader(String accountEmail) {
+        String getReaderUri = uri + "getReader/{accountEmail}";
+        webTarget = client.target(getReaderUri).resolveTemplate("accountEmail", accountEmail);
+        response = webTarget.request(MediaType.APPLICATION_JSON).get();
+        return response.readEntity(Reader.class);
+    }
 }

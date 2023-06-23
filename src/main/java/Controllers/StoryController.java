@@ -1,12 +1,6 @@
 package Controllers;
 
-import Models.Comment;
-import Models.Genre;
-import Models.Like;
-import Models.Rating;
-import Models.Reader;
-import Models.Story;
-import Models.Writer;
+import Models.*;
 import ServiceLayers.CommentService_Impl;
 import ServiceLayers.CommentService_Interface;
 import ServiceLayers.GenreService_Impl;
@@ -30,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -39,6 +35,9 @@ import java.util.List;
 @MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 public class StoryController extends HttpServlet {
 
+    private Reader reader;
+    private Writer writer;
+    private Editor editor;
     private StoryService_Interface storyService;
     private GenreService_Interface genreService;
     private CommentService_Interface commentService;
@@ -51,12 +50,30 @@ public class StoryController extends HttpServlet {
         this.commentService = new CommentService_Impl();
         this.likeService = new LikeService_Impl();
         this.ratingService = new RatingService_Impl();
+        this.reader = null;
+        this.writer = null;
+        this.editor = null;
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getSession(false).getAttribute("user") != null) {
+            Account account = ((Account)request.getSession(false).getAttribute("user"));
+            if (account.getUserType().equals("R") || account.getUserType().equals("W")) 
+            {
+                reader = (Reader) request.getSession(false).getAttribute("user");
+                writer = (Writer) request.getSession(false).getAttribute("user");
+            }
+            if (account.getUserType().equals("E") || account.getUserType().equals("A")) 
+            {
+                editor = (Editor) request.getSession(false).getAttribute("user");
+            }
+        }
         switch (request.getParameter("submit")) {
             case "viewStory":
                 Integer storyId = Integer.valueOf(request.getParameter("storyId"));
+                if (reader != null) {
+                    request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
+                }
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
@@ -68,12 +85,27 @@ public class StoryController extends HttpServlet {
                 break;
             case "likeStory":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
-                Integer readerId = ((Reader) request.getSession(false).getAttribute("user")).getId();
+                Integer readerId = reader.getId();
                 Like like = new Like();
                 like.setReaderId(readerId);
                 like.setStoryId(storyId);
-                String likeMessage = "Like added";
+                reader.getFavouriteStoryIds().add(storyId);
+                request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
                 request.setAttribute("likeMessage", likeService.addLike(like));
+                request.setAttribute("story", storyService.getStory(storyId));
+                request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
+                request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
+
+                break;
+            case "unlikeStory":
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                readerId = reader.getId();
+                like = new Like();
+                like.setReaderId(readerId);
+                like.setStoryId(storyId);
+                reader.getFavouriteStoryIds().remove(storyId);
+                request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
+                request.setAttribute("likeMessage", likeService.deleteLike(like));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
@@ -81,19 +113,23 @@ public class StoryController extends HttpServlet {
                 break;
             case "rateStory":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
-                readerId = ((Reader) request.getSession(false).getAttribute("user")).getId();
+                readerId = reader.getId();
                 Rating rating = new Rating();
                 rating.setReaderId(readerId);
                 rating.setStoryId(storyId);
                 rating.setValue(Integer.valueOf(request.getParameter("rate")));
-
-                request.setAttribute("ratingMessage", ratingService.addRating(rating));
+                if (Boolean.parseBoolean(request.getParameter("isAdding"))) {
+                    request.setAttribute("ratingMessage", ratingService.addRating(rating));
+                } else {
+                    request.setAttribute("ratingMessage", ratingService.updateRatingValue(rating));
+                }
+                request.setAttribute("userRating", ratingService.getRating(readerId, storyId));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
             case "commentStory":
-                readerId = ((Reader) request.getSession(false).getAttribute("user")).getId();
+                readerId = reader.getId();
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 String commentMessage = request.getParameter("comment");
                 Comment comment = new Comment();
@@ -103,7 +139,7 @@ public class StoryController extends HttpServlet {
                 comment.setReaderId(readerId);
                 comment.setStoryId(storyId);
                 request.setAttribute("commentMessage", commentService.addComment(comment));
-                String commentMessageDisplay = "Thank you for leaving a comment.";
+                request.setAttribute("userRating", ratingService.getRating(readerId, storyId));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
@@ -125,16 +161,15 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("searchValue", searchValue);
                 request.getRequestDispatcher("SearchResultsPage.jsp").forward(request, response);
                 break;
-            case "goToEditStories":
+            case "goToApproveStoriesPage":
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("ApproveStoryPage.jsp").forward(request, response);
                 break;
             case "addStory":
                 Story story = new Story();
                 System.out.println("Adding a stroy.");
-                Writer author = (Writer) request.getSession(false).getAttribute("user");
-                if (author != null) {
-                    story.setAuthorId(author.getId());
+                if (writer != null) {
+                    story.setAuthorId(writer.getId());
                 } else {
                     System.out.println("Author was null.");
                 }
@@ -179,21 +214,20 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             case "getStoriesForReaderLandingPage":
-                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
+                request.setAttribute("getStoriesForReaderLandingPageCalled", Boolean.TRUE);
                 request.setAttribute("topPicks", storyService.getTopPicks());
-//                request.setAttribute("recommendedStories", storyService.getRecommendations(genreIds));
-                request.getRequestDispatcher("index.jsp").forward(request, response);
+                request.setAttribute("recommendedStories", storyService.getRecommendations(reader.getFavouriteGenreIds()));
+                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                 break;
             case "getTopPicksForTest":
                 request.setAttribute("getTopPicksCalled", Boolean.TRUE);
                 request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("ImageTestWebPage.jsp").forward(request, response);
                 break;
-            case "getRecommendedStories":
-
-                break;
             case "manageStories":
-                request.getRequestDispatcher("createStory.jsp").forward(request, response);
+                request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
+                request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
+                request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();

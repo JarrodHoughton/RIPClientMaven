@@ -42,9 +42,9 @@ public class LikeService_Impl implements LikeService_Interface{
     
     @Override
     public String addLike(Like like) {
-        String addLikeUri = uri + "addlike";
-        webTarget = client.target(addLikeUri);
+        String addLikeUri = uri + "addLike";
         try {            
+            webTarget = client.target(addLikeUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -53,10 +53,14 @@ public class LikeService_Impl implements LikeService_Interface{
     }
 
     @Override
-    public String deleteLike(Integer likeId) {
-        String deleteLikeUri = uri + "deleteLike/{likeId}";
-        webTarget = client.target(deleteLikeUri).resolveTemplate("likeId", likeId);
-        response= webTarget.request().get();
+    public String deleteLike(Like like) {
+        try {
+            String deleteLikeUri = uri + "deleteLike";
+            webTarget = client.target(deleteLikeUri);
+            response= webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return response.readEntity(String.class);
     }
 

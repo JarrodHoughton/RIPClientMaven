@@ -63,12 +63,13 @@
     </head>
     <body>
         <%
-            Boolean getTopPicksCalled = (Boolean) request.getAttribute("getTopPicksCalled");
+            Boolean getStoriesCalled = (Boolean) request.getAttribute("getStoriesForReaderLandingPageCalled");
             List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
-            if (getTopPicksCalled == null) {
-                getTopPicksCalled = false;
+            List<Story> recommendedStories = (List<Story>) request.getAttribute("recommendedStories");
+            if (getStoriesCalled == null) {
+                getStoriesCalled = false;
             }
-            if (topPicks == null && !getTopPicksCalled) {
+            if (topPicks == null && recommendedStories == null && !getStoriesCalled) {
         %>
         <script>
             window.location.replace("StoryController?submit=getStoriesForReaderLandingPage");
@@ -86,31 +87,20 @@
             if  (user!=null && user.getUserType().equals("W")) {
                 writer = (Writer) user;
             }
-            
-            if  (reader!=null) {
-        %>
-        <h4><%=reader%></h4>
-        <h1>You have logged in as a Reader.</h1>
-        <%  } 
-            if (writer!=null) {
-        %>
-        <h4><%=writer%></h4>
-        <h1>You have logged in as a Writer.</h1>
-        <%
-            }
         %>
 
         <div id="navbar-container">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
                              style="filter: invert(1)">
                         READERS ARE INNOVATORS
                     </a>
                     <div class="d-flex align-items-center">
                         <form>
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                            <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue">
+                            <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                         <%
                         if (writer!=null) {
@@ -127,19 +117,14 @@
         <div class="space"></div>
 
         <div class="container mt-5">
-            <h2 class="text-center book-title">Top 10 picks</h2>
+            <h2 class="text-center book-title">Top 10 Picks</h2>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
                 if (topPicks != null) {
                     for (Story story : topPicks) {
-                        Byte[] imageBytes = story.getImage();
-                        byte[] imageData = new byte[imageBytes.length];
-                        for (int i = 0; i < imageBytes.length; i++) {
-                            imageData[i] = imageBytes[i];
-                        }
                 %>
+                <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                 <div class="col">
-                    <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                         <div class="card card-fixed">
 
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
@@ -148,15 +133,38 @@
                                 <h5 class="card-title"><%=story.getTitle()%></h5>
                             </div>
                         </div>
-                    </a>
                 </div>
+                </a>
                 <%
             }
         }
                 %>
             </div>
             <div class="other-space"></div>
-            <a href="ImageTestWebPage.jsp">Test Images</a>
+            <h2 class="text-center book-title">Recommended Stories</h2>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
+                <%
+                if (recommendedStories != null) {
+                    for (Story story : recommendedStories) {
+                %>
+                <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                <div class="col">
+                        <div class="card card-fixed">
+
+                            <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+
+                            <div class="card-body">
+                                <h5 class="card-title"><%=story.getTitle()%></h5>
+                            </div>
+                        </div>
+                </div>
+                </a>
+                <%
+            }
+        }
+                %>
+            </div>
+            <div class="other-space"></div>
         </div>   
 
 

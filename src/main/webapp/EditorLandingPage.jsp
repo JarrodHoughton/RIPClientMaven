@@ -23,7 +23,7 @@
         <%
             }
         %>
-        <a href="StoryController?submit=goToEditStories">
+        <a href="StoryController?submit=goToApproveStoriesPage">
             <button>Edit Stories</button>
         </a>
         <br/>

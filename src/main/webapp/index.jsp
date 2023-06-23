@@ -16,7 +16,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Reader Landing Page</title>
+        <title>Home Page</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <style>
@@ -79,14 +79,14 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
                              style="filter: invert(1)">
                         READERS ARE INNOVATORS
                     </a>
                     <div class="d-flex align-items-center">
                         <form>
-                            <input class="form-control me-2" type="search" placeholder="Search for genres, title, blurbs..." aria-label="Search" name="searchValue">
+                            <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue">
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                         <a class="btn btn-primary ms-2" href="login.jsp">Login</a>
@@ -104,14 +104,9 @@
                 <%
                 if (topPicks != null) {
                     for (Story story : topPicks) {
-                        Byte[] imageBytes = story.getImage();
-                        byte[] imageData = new byte[imageBytes.length];
-                        for (int i = 0; i < imageBytes.length; i++) {
-                            imageData[i] = imageBytes[i];
-                        }
                 %>
+                <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                 <div class="col">
-                    <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                         <div class="card card-fixed">
 
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
@@ -120,15 +115,14 @@
                                 <h5 class="card-title"><%=story.getTitle()%></h5>
                             </div>
                         </div>
-                    </a>
                 </div>
+                </a>
                 <%
-            }
-        }
+                    }
+                }
                 %>
             </div>
             <div class="other-space"></div>
-            <a href="ImageTestWebPage.jsp">Test Images</a>
         </div>
     </body>
 </html>

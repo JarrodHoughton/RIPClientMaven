@@ -4,6 +4,8 @@
  */
 package ServiceLayers;
 
+import Models.Reader;
+
 /**
  *
  * @author jarro
@@ -13,4 +15,5 @@ public interface ReaderService_Interface {
     public String setVerified(Integer readerId);
     public Boolean isVerified(Integer readerId);
     public String getVerifyToken(Integer readerId);
+    public Reader getReader(String accountEmail);
 }

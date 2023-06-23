@@ -16,4 +16,7 @@ import java.util.List;
 public interface RatingService_Interface {
     public String addRating(Rating rating);
     public List<Integer> getTopHighestRatedStoriesInTimePeriod(Timestamp startDate, Timestamp endDate, Integer numberOfEntries);
+    public String updateRatingValue(Rating rating);
+    public Boolean checkRatingExists(Rating rating);
+    public Rating getRating(Integer accountId, Integer storyId);
 }
