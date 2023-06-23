@@ -39,7 +39,7 @@
             %>
             <tr>
                 <td>Author/Writer</td>
-                <td><input type="text" value="<%=story.getTitle()%>"></td>
+                <td><p><%=story.getTitle()%></p></td>
                 <td>
                     <img src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image"><br>
                 </td>
@@ -53,9 +53,10 @@
                         }
                     %>
                 </td>
-                <td><textarea><%=story.getBlurb()%></textarea></td>
-                <td><textarea><%=story.getContent()%></textarea></td>
+                <td><pre><%=story.getBlurb()%></pre></td>
+                <td><pre><%=story.getContent()%></pre></td>
                 <td>
+                    <button type="button">Edit</button>
                     <button type="button">Approve</button>
                     <button type="button">Deny</button>
                 </td>
