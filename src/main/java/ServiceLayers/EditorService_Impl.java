@@ -88,4 +88,20 @@ public class EditorService_Impl implements EditorService_Interface{
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
+
+    @Override
+    public Boolean searchForEditor(String accountEmail) {
+        String searchForEditorUri = uri + "searchForEditor/{accountEmail}";
+        webTarget = client.target(searchForEditorUri).resolveTemplate("accountEmail", accountEmail);
+        response = webTarget.request().get();
+        return response.readEntity(Boolean.class);
+    }
+
+    @Override
+    public Editor getEditor(String accountEmail) {
+        String getEditorUri = uri + "getEditor/{accountEmail}";
+        webTarget = client.target(getEditorUri).resolveTemplate("accountEmail", accountEmail);
+        response = webTarget.request().get();
+        return response.readEntity(Editor.class);
+    }
 }
