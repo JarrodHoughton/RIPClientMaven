@@ -161,9 +161,9 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("searchValue", searchValue);
                 request.getRequestDispatcher("SearchResultsPage.jsp").forward(request, response);
                 break;
-            case "goToApproveStoriesPage":
+            case "goToSelectStoriesToEdit":
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
-                request.getRequestDispatcher("ApproveStoryPage.jsp").forward(request, response);
+                request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
             case "addStory":
                 Story story = new Story();

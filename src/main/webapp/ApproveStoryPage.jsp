@@ -61,7 +61,8 @@
     <body>
         <%
             String message = (String) request.getAttribute("message");
-            List<Story> submittedStories = (List<Story>) request.getAttribute("submittedStories");
+            Story submittedStory = (Story) request.getAttribute("submittedStory");
+            List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
             if (message!=null) {
         %>
         <h3><%=message%></h3>
@@ -86,32 +87,55 @@
             </nav>
         </div>
         <%
-        if (submittedStories!=null && !submittedStories.isEmpty()) {
+        if (submittedStory!=null) {
         %>
         <div class="space"></div>
         <div class="container mt-5">
             <!-- Spacing -->
             <h2 class="text-center book-title">Select a Story to Approve and Edit</h2>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
-                <%
-                    for (Story story : submittedStories) {
-                %>
-                <div class="col">
-                    <div class="card card-fixed">
-                        <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-                        <div class="card-body">
-                            <h5 class="card-title"><%=story.getTitle()%></h5>
-                        </div>
-                    </div>
-                </div>
-                <% 
-                        }
-                %>
-            </div>
+            <table border="1">
+                <tr>
+                    <th>Author</th>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Genres</th>
+                    <th>Blurb</th>
+                    <th>Story</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>Author/Writer</td>
+                    <td><input type="text" value="<%=story.getTitle()%>"></td>
+                    <td><img src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image"><br>
+                        <input type="file" accept="image/*">
+                    </td>
+                    <td>
+                        <%
+                            if (genres != null) {
+                                for (Genre genre : genres) {
+                        %>
+                        <input type="checkbox" name="<%=genre.getId()%>" value="<%=genre.getId()%>" <%if (story.getGenreIds().contains(genre.getId())) {%> checked <%}%>> <%=genre.getName()%><br>
+                        <%      }
+                            } else {
+                        %>
+                        <p>Failed to retrieve genres.</p>
+                        <%
+                            }
+                        %>
+                    </td>
+                    <td><textarea><%=story.getBlurb()%></textarea></td>
+                    <td><textarea><%=story.getContent()%></textarea></td>
+                    <td>
+                        <button type="StoryController?submit=submitStoryFromEditor">Approve</button>
+                        <br>
+                        <button type="button">Deny</button>
+                    </td>
+                </tr>
+            </table>
             <div class="other-space"></div>
         </div>
-            <% 
-                }
-            %>
+        <% 
+            }
+        %>
     </body>
 </html>

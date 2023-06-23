@@ -23,18 +23,18 @@
         <%
             }
         %>
-        <a href="StoryController?submit=goToApproveStoriesPage">
-            <button>Edit Stories</button>
+        <a href="StoryController?submit=goToSelectStoriesToEdit">
+            <button>Submitted Stories</button>
         </a>
         <br/>
         <a href="ApplicationController?submit=getWriterApplications">
-            <button >Approve Writers</button>
+            <button >Writer Applications</button>
         </a>
         <br/>
         <button>Get Data Report</button><br/>
         
         <%
-            if  (editor !=null && editor.getUserType().equals("A")) {
+            if  (editor != null && editor.getUserType().equals("A")) {
         %>
         <a href="ApplicationController?submit=manageEditors">
             <button>Manage Editors</button><br/>
