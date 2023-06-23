@@ -6,12 +6,11 @@ package ServiceLayers;
 
 import Models.Like;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  *
- * @author jarro
+ * @author 27713
  */
 public interface LikeService_Interface {
     public String addLike(Like like);
@@ -20,4 +19,5 @@ public interface LikeService_Interface {
     public List<Like> getLikesByStory(Integer storyId);
     public Integer getStoryLikesByDate(Integer storyId, Timestamp startDate, Timestamp endDate);    
     public List<Integer> getMostLikedBooks(Integer numberOfBooks, Timestamp startDate, Timestamp endDate);
+    public Boolean checkIfLikeExists(Like like);
 }

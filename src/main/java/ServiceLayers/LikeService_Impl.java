@@ -17,6 +17,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +50,7 @@ public class LikeService_Impl implements LikeService_Interface{
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Like not added";
         }
         return response.readEntity(String.class);
     }
@@ -60,26 +63,27 @@ public class LikeService_Impl implements LikeService_Interface{
             response= webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Like not deleted";
         }
         return response.readEntity(String.class);
     }
 
     @Override
     public List<Like> getLikesByReaderId(Integer accountId) {
-        List<Like> likes = null;
+        List<Like> likes = new ArrayList<>();
         try {            
             String likesByReaderUri = uri + "getLikesByReaderId/{accountId}";
             webTarget = client.target(likesByReaderUri).resolveTemplate("accountId",accountId);
             likes = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Like>>(){});
         } catch (IOException ex) {
-            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         return likes;
     }
 
     @Override
     public List<Like> getLikesByStory(Integer storyId) {
-        List<Like> likes = null;
+        List<Like> likes = new ArrayList<>();
         try {            
             String likesByStoryUri = uri + "getLikesByStory/{storyId}";
             webTarget = client.target(likesByStoryUri).resolveTemplate("storyId",storyId);
@@ -92,33 +96,49 @@ public class LikeService_Impl implements LikeService_Interface{
 
     @Override
     public Integer getStoryLikesByDate(Integer storyId, Timestamp startDate, Timestamp endDate) {        
-        String storyLikes = uri + "getStoryLikesByDate/{storyId}/{startDate}/{endDate}";
-        webTarget = client.target(storyLikes);
-        webTarget.resolveTemplate("storyId", storyId);
-        webTarget.resolveTemplate("startDate", startDate);
-        webTarget.resolveTemplate("endDate", endDate);
+        String storyLikesUri = uri + "getStoryLikesByDate/{storyId}/{startDate}/{endDate}";
+        HashMap<String, Object> details = new HashMap<>();
+        details.put("storyId", storyId);
+        details.put("startDate", startDate);
+        details.put("endDate", endDate);
+        webTarget = client.target(storyLikesUri).resolveTemplates(details);
         response = webTarget.request().get();
         return response.readEntity(Integer.class);
     }
 
     @Override
     public List<Integer> getMostLikedBooks(Integer numberOfBooks, Timestamp startDate, Timestamp endDate) {
-        List<Integer> bookIds = null;
+        List<Integer> bookIds = new ArrayList<>();
+        HashMap<String, Object> details = new HashMap<>();
         try {            
             String mostLikedBooksUri = uri + "getMostLikedBooks/{numberOfBooks}/{startDate}/{endDate}";
-            webTarget = client.target(mostLikedBooksUri);
-            webTarget.resolveTemplate("numberOfBooks", numberOfBooks);
-            webTarget.resolveTemplate("startDate", startDate);
-            webTarget.resolveTemplate("endDate", endDate);
+            details.put("numberOfBooks", numberOfBooks);
+            details.put("startDate", startDate);
+            details.put("endDate", endDate);
+            webTarget = client.target(mostLikedBooksUri).resolveTemplates(details);
             bookIds = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Integer>>(){});
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return bookIds;
     }
+    
+    @Override
+    public Boolean checkIfLikeExists(Like like) {
+        try {
+            String checkLikeExistsUri = uri + "checkIfLikeExists";
+            webTarget = client.target(checkLikeExistsUri);
+            response= webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return response.readEntity(Boolean.class);
+    }
 
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
+
+    
     
 }
