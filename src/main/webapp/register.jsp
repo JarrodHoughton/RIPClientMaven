@@ -101,7 +101,7 @@
             <input type="submit" value="register" name="submit">
         </form>
         <%
-            } else {
+            }
         %>
         <div class="alert alert-info" role="alert">
             <h4 class="alert-heading">You are already logged in.</h4>
