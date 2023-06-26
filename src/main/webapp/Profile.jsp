@@ -45,15 +45,15 @@
             }
         </style>
         <script>
-            window.onload = function() {
+            window.onload = function () {
                 document.getElementById("profileForm").style.display = "none";
             };
-            
+
             function toggleProfile() {
                 var profileDetails = document.getElementById("profileDetails");
                 var profileForm = document.getElementById("profileForm");
                 var editProfileBtn = document.getElementById("editProfileBtn");
-                
+
                 if (profileForm.style.display === "none") {
                     profileForm.style.display = "block";
                     profileDetails.style.display = "none";
@@ -77,6 +77,7 @@
         </nav>
         <% 
              Account user = (Account) request.getSession(false).getAttribute("user");
+             String message = (String) request.getAttribute("message");
              Reader reader = null;
              Writer writer = null;
              if  (user!=null && user.getUserType().equals("R")) {
@@ -88,9 +89,15 @@
              }
         %>
 
-
-
-
+        <%
+            if (message != null) {
+        %>
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><%= message %></h4>
+        </div> 
+        <%
+            }
+        %>
         <div class="container">
             <div class="main-body">
                 <div class="row">
@@ -162,6 +169,30 @@
                             </div>
                         </div>
                     </div>
+                    <%
+                        if (reader != null) {
+                    %>
+                    <form action="ApplicationController" method="post">
+                    <input type="hidden" name="readerId" value="<%=user.getId()%>">
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Motivation</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            <textarea type="text" class="form-control" name="motivation"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="row mb-3">
+                            <div class="col-sm-9 text-secondary">
+                                <button type="submit" class="btn btn-primary px-4" value="addApplication">Apply To Become A Writer</button>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                    <%
+                        }
+                    %>
                 </div>
             </div>
         </div>

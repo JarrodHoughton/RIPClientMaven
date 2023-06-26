@@ -193,7 +193,9 @@ public class LoginController extends HttpServlet {
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
             case "logout":
-                session = null;
+                if (session != null) {
+                    session.removeAttribute("user");
+                }
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
             default:
