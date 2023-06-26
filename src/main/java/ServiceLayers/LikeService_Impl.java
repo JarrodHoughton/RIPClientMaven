@@ -52,7 +52,11 @@ public class LikeService_Impl implements LikeService_Interface{
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Like not added";
         }
-        return response.readEntity(String.class);
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.readEntity(String.class);
+        } else {            
+            return "Like not added";
+        }
     }
 
     @Override
