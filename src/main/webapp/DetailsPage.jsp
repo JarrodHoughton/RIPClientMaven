@@ -152,7 +152,7 @@
             reader = (Reader) user;
         }
         
-        Boolean userViewedStory = (Boolean) request.getAttribute("userviewedStory");
+        Boolean userViewedStory = (Boolean) request.getAttribute("userViewedStory");
         if (userViewedStory == null) {
             userViewedStory = false;
         }

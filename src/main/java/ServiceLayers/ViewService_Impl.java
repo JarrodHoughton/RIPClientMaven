@@ -85,14 +85,18 @@ public class ViewService_Impl implements ViewService_Interface {
 
     @Override
     public Boolean isViewAlreadyAdded(View view) {
+        Boolean viewExists = false;
         try {
             String isViewAddedUri = uri + "isViewAlreadyAdded";
             webTarget = client.target(isViewAddedUri);
             response= webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(view)));
+            viewExists = response.readEntity(Boolean.class);
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
-        return response.readEntity(Boolean.class);
+        System.out.println("View Exists: " + viewExists);
+        return viewExists;
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
