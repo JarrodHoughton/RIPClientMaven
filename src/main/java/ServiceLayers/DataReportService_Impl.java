@@ -1,5 +1,7 @@
 package ServiceLayers;
 
+import Models.Editor;
+import Models.Genre;
 import Models.Story;
 import Models.Writer;
 import Utils.GetProperties;
@@ -10,15 +12,15 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DataReportService_Impl implements DataReportService_Interface {
 
@@ -38,79 +40,105 @@ public class DataReportService_Impl implements DataReportService_Interface {
 
     @Override
     public Integer getStoryLikesByDate(Integer storyId, String startDate, String endDate) {
-        String storyLikes = uri + "getStoryLikesByDate/{storyId}/{startDate}/{endDate}";
-        String storyIdNum = storyId.toString();
-        Map<String, Object> details = new HashMap<>();
-        details.put("storyId", storyIdNum);
-        details.put("startDate",startDate);
-        details.put("endDate", endDate);
-        webTarget = client.target(storyLikes).resolveTemplates(details);
+        String storyLikesUri = uri + "getStoryLikesByDate";
+
+        // Build the query parameters
+        UriBuilder uriBuilder = UriBuilder.fromUri(storyLikesUri)
+                .queryParam("storyId", storyId)
+                .queryParam("startDate", startDate)
+                .queryParam("endDate", endDate);
+
+        webTarget = client.target(uriBuilder);
+
         response = webTarget.request().get();
+
         return response.readEntity(Integer.class);
     }
-@Override
-public List<Story> getMostLikedStories(Integer numberOfStories, String startDate, String endDate) {
-    List<Story> listOfStories = null;
-    try {
-        String mostLikedStoriesUri = uri + "getMostLikedStories/{numberOfStories}/{startDate}/{endDate}";
-        String storyNum = numberOfStories.toString();
-        Map<String, Object> details = new HashMap<>(); 
-        details.put("numberOfStories", storyNum);
-        details.put("startDate",startDate);
-        details.put("endDate", endDate);
-        webTarget = client.target(mostLikedStoriesUri).resolveTemplates(details);
 
-        // Perform the HTTP GET request
-        response = webTarget.request().get();
+    @Override
+    public List<Story> getMostLikedStories(Integer numberOfStories, String startDate, String endDate) {
+        List<Story> listOfStories = null;
+        try {
+            String mostLikedStoriesUri = uri + "getMostLikedStories";
 
-        // Check if the response is successful
-        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            // Read the response entity as a list of Story objects
-            listOfStories = response.readEntity(new GenericType<List<Story>>() {});
-        } else {
-            // Handle the case when the response is not successful
-            // You can choose to log an error, throw an exception, or return a default value
-            System.err.println("Failed to retrieve most liked stories. Response status: " + response.getStatus());
+            // Build the query parameters
+            UriBuilder uriBuilder = UriBuilder.fromUri(mostLikedStoriesUri)
+                    .queryParam("numberOfStories", numberOfStories)
+                    .queryParam("startDate", startDate)
+                    .queryParam("endDate", endDate);
+
+            webTarget = client.target(uriBuilder);
+
+            // Perform the HTTP GET request
+            response = webTarget.request().get();
+
+            // Check if the response is successful
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                listOfStories = response.readEntity(new GenericType<List<Story>>() {});
+            } else {
+                System.err.println("Failed to retrieve most liked stories. Response status: " + response.getStatus());
+            }
+        } catch (ProcessingException | IllegalStateException ex) {
+            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+        } finally {
+            // Close the response to release resources
+            if (response != null) {
+                response.close();
+            }
         }
-    } catch (ProcessingException | IllegalStateException ex) {
-        // Handle exceptions related to the HTTP request or response processing
-        Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
-    } finally {
-        // Close the response to release resources
-        if (response != null) {
-            response.close();
-        }
+        return listOfStories;
     }
-    return listOfStories;
-}
-
-
 
     @Override
     public List<Story> getMostViewedStoriesInATimePeriod(Integer numberOfEntries, String startDate, String endDate) {
         List<Story> listOfStories = null;
         try {
-            String mostViewedStoriesUri = uri + "getmostviewedstories/{numberOfStories}/{startDate}/{endDate}";
-            webTarget = client.target(mostViewedStoriesUri);
-            webTarget = webTarget.resolveTemplate("numberOfStories", numberOfEntries);
-            webTarget = webTarget.resolveTemplate("startDate", startDate);
-            webTarget = webTarget.resolveTemplate("endDate", endDate);
-            String responseString = webTarget.request().get(String.class);
-            listOfStories = mapper.readValue(responseString, new TypeReference<List<Story>>() {});
-        } catch (IOException ex) {
-            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            String mostViewedStoriesUri = uri + "getMostViewedStories";
+
+            // Build the query parameters
+            UriBuilder uriBuilder = UriBuilder.fromUri(mostViewedStoriesUri)
+                    .queryParam("numberOfEntries", numberOfEntries)
+                    .queryParam("startDate", startDate)
+                    .queryParam("endDate", endDate);
+
+            webTarget = client.target(uriBuilder);
+
+            // Perform the HTTP GET request
+            response = webTarget.request().get();
+
+            // Check if the response is successful
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                listOfStories = response.readEntity(new GenericType<List<Story>>() {});
+            } else {
+                System.err.println("Failed to retrieve most viewed stories. Response status: " + response.getStatus());
+            }
+        } catch (ProcessingException | IllegalStateException ex) {
+            // Handle exceptions related to the HTTP request or response processing
+            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+        } finally {
+            // Close the response to release resources
+            if (response != null) {
+                response.close();
+            }
         }
         return listOfStories;
     }
 
     @Override
     public Integer getTheViewsOnAStoryInATimePeriod(Integer storyId, String startDate, String endDate) {
-        String storyViewsUri = uri + "getstoryviewsbydate/{storyId}/{startDate}/{endDate}";
-        webTarget = client.target(storyViewsUri);
-        webTarget = webTarget.resolveTemplate("storyId", storyId);
-        webTarget = webTarget.resolveTemplate("startDate", startDate);
-        webTarget = webTarget.resolveTemplate("endDate", endDate);
+        String storyViewsUri = uri + "getstoryviewsbydate";
+
+        // Build the query parameters
+        UriBuilder uriBuilder = UriBuilder.fromUri(storyViewsUri)
+                .queryParam("storyId", storyId)
+                .queryParam("startDate", startDate)
+                .queryParam("endDate", endDate);
+
+        webTarget = client.target(uriBuilder);
+
+        // Perform the HTTP GET request
         response = webTarget.request().get();
+
         return response.readEntity(Integer.class);
     }
 
@@ -118,62 +146,186 @@ public List<Story> getMostLikedStories(Integer numberOfStories, String startDate
     public List<Story> getTopHighestRatedStoriesInTimePeriod(String startDate, String endDate, Integer numberOfEntries) {
         List<Story> listOfStories = null;
         try {
-            String topRatedStoriesUri = uri + "getTopHighestRatedStories/{startDate}/{endDate}/{numberOfEntries}";
-            webTarget = client.target(topRatedStoriesUri);
-            webTarget = webTarget.resolveTemplate("startDate", startDate);
-            webTarget = webTarget.resolveTemplate("endDate", endDate);
-            webTarget = webTarget.resolveTemplate("numberOfEntries", numberOfEntries);
-            String responseString = webTarget.request().get(String.class);
-            listOfStories = mapper.readValue(responseString, new TypeReference<List<Story>>() {});
-        } catch (IOException ex) {
-            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            String topRatedStoriesUri = uri + "getTopHighestRatedStories";
+
+            // Build the query parameters
+            UriBuilder uriBuilder = UriBuilder.fromUri(topRatedStoriesUri)
+                    .queryParam("startDate", startDate)
+                    .queryParam("endDate", endDate)
+                    .queryParam("numberOfEntries", numberOfEntries);
+
+            webTarget = client.target(uriBuilder);
+
+            // Perform the HTTP GET request
+            response = webTarget.request().get();
+
+            // Check if the response is successful
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                // Read the response entity as a list of Story objects
+                listOfStories = response.readEntity(new GenericType<List<Story>>() {});
+            } else {
+                System.err.println("Failed to retrieve top rated stories. Response status: " + response.getStatus());
+            }
+        } catch (ProcessingException | IllegalStateException ex) {
+            // Handle exceptions related to the HTTP request or response processing
+            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+        } finally {
+            // Close the response to release resources
+            if (response != null) {
+                response.close();
+            }
         }
         return listOfStories;
+    }
+
+    @Override
+    public Double getAverageRatingOfAStoryInATimePeriod(Integer storyId, String startDate, String endDate) {
+        String storyRatingUri = uri + "getStoryRatingByDate";
+
+        // Build the query parameters
+        UriBuilder uriBuilder = UriBuilder.fromUri(storyRatingUri)
+                .queryParam("startDate", startDate)
+                .queryParam("endDate", endDate)
+                .queryParam("storyId", storyId);
+
+        webTarget = client.target(uriBuilder);
+
+        // Perform the HTTP GET request
+        response = webTarget.request().get();
+
+        return response.readEntity(Double.class);
     }
 
     @Override
     public List<Writer> getTopWriters(Integer numberOfWriters) {
         List<Writer> topWriters = null;
         try {
-            String topWritersUri = uri + "getTopWriters/{numberOfEntries}";
-            webTarget = client.target(topWritersUri);
-            webTarget = webTarget.resolveTemplate("numberOfEntries", numberOfWriters);
-            String responseString = webTarget.request().get(String.class);
-            topWriters = mapper.readValue(responseString, new TypeReference<List<Writer>>() {});
-        } catch (IOException ex) {
-            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            String topWritersUri = uri + "getTopWriters";
+            // Build the query parameters
+            UriBuilder uriBuilder = UriBuilder.fromUri(topWritersUri)
+                    .queryParam("numberOfWriters", numberOfWriters);
+
+            webTarget = client.target(uriBuilder);
+
+            // Perform the HTTP GET request
+            response = webTarget.request().get();
+
+            // Check if the response is successful
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                topWriters = response.readEntity(new GenericType<List<Writer>>() {});
+            } else {
+                System.err.println("Failed to retrieve top writers. Response status: " + response.getStatus());
+            }
+        } catch (ProcessingException | IllegalStateException ex) {
+            // Handle exceptions related to the HTTP request or response processing
+            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+        } finally {
+            // Close the response to release resources
+            if (response != null) {
+                response.close();
+            }
         }
         return topWriters;
     }
 
     @Override
-    public List<Writer> getTopWritersByDate(Integer numberOfWriters, String startDate, String endDate) {
-        List<Writer> topWriters = null;
+    public List<Genre> getTopGenres(String startDate, String endDate, Integer numberOfEntries) {
+        List<Genre> listOfTopGenres = null;
         try {
-            String topWritersByDateUri = uri + "getTopWritersByDate/{startDate}/{endDate}/{numberOfEntries}";
-            webTarget = client.target(topWritersByDateUri);
-            webTarget = webTarget.resolveTemplate("startDate", startDate);
-            webTarget = webTarget.resolveTemplate("endDate", endDate);
-            webTarget = webTarget.resolveTemplate("numberOfEntries", numberOfWriters);
-            String responseString = webTarget.request().get(String.class);
-            topWriters = mapper.readValue(responseString, new TypeReference<List<Writer>>() {});
-        } catch (IOException ex) {
-            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            String topRatedStoriesUri = uri + "getTopGenres";
+            // Build the query parameters
+            UriBuilder uriBuilder = UriBuilder.fromUri(topRatedStoriesUri)
+                    .queryParam("startDate", startDate)
+                    .queryParam("endDate", endDate)
+                    .queryParam("numberOfEntries", numberOfEntries);
+
+            webTarget = client.target(uriBuilder);
+
+            // Perform the HTTP GET request
+            response = webTarget.request().get();
+
+            // Check if the response is successful
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                // Read the response entity as a list of Genre objects
+                listOfTopGenres = response.readEntity(new GenericType<List<Genre>>() {});
+            } else {
+                System.err.println("Failed to retrieve top genres. Response status: " + response.getStatus());
+            }
+        } catch (ProcessingException | IllegalStateException ex) {
+            // Handle exceptions related to the HTTP request or response processing
+            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+        } finally {
+            // Close the response to release resources
+            if (response != null) {
+                response.close();
+            }
         }
-        return topWriters;
+        return listOfTopGenres;
     }
 
     @Override
-    public List<Integer> getTopEditors(Integer numberOfEditors) {
-        List<Integer> topEditors = null;
+    public Integer getGenreViewsByDate(String startDate, String endDate, Integer genreId) {
+        String genresViewsUri = uri + "getGenreViewsByDate";
+
+        // Build the query parameters
+        UriBuilder uriBuilder = UriBuilder.fromUri(genresViewsUri)
+                .queryParam("genreId", genreId)
+                .queryParam("startDate", startDate)
+                .queryParam("endDate", endDate);
+
+        webTarget = client.target(uriBuilder);
+
+        // Perform the HTTP GET request
+        response = webTarget.request().get();
+
+        return response.readEntity(Integer.class);
+    }
+
+    @Override
+    public Integer getTotalViewsByWriterId(Integer writerId) {
+        String totalViewsByWriterIdUri = uri + "getTotalViewsByWriterId";
+
+        // Build the query parameters
+        UriBuilder uriBuilder = UriBuilder.fromUri(totalViewsByWriterIdUri)
+                .queryParam("writerId", writerId);
+
+        webTarget = client.target(uriBuilder);
+
+        // Perform the HTTP GET request
+        response = webTarget.request().get();
+
+        return response.readEntity(Integer.class);
+    }
+
+    @Override
+    public List<Editor> getTopEditors(Integer numberOfEntries) {
+        List<Editor> topEditors = null;
         try {
-            String topEditorsUri = uri + "getTopEditors/{numberOfEntries}";
-            webTarget = client.target(topEditorsUri);
-            webTarget = webTarget.resolveTemplate("numberOfEntries", numberOfEditors);
-            String responseString = webTarget.request().get(String.class);
-            topEditors = mapper.readValue(responseString, new TypeReference<List<Integer>>() {});
-        } catch (IOException ex) {
-            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            String topEditorsUri = uri + "getTopEditors";
+
+            // Build the query parameters
+            UriBuilder uriBuilder = UriBuilder.fromUri(topEditorsUri)
+                    .queryParam("numberOfEntries", numberOfEntries);
+
+            webTarget = client.target(uriBuilder);
+
+            // Perform the HTTP GET request
+            response = webTarget.request().get();
+
+            // Check if the response is successful
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                topEditors = response.readEntity(new GenericType<List<Editor>>() {});
+            } else {
+                System.err.println("Failed to retrieve top editors. Response status: " + response.getStatus());
+            }
+        } catch (ProcessingException | IllegalStateException ex) {
+            // Handle exceptions related to the HTTP request or response processing
+            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+        } finally {
+            // Close the response to release resources
+            if (response != null) {
+                response.close();
+            }
         }
         return topEditors;
     }
