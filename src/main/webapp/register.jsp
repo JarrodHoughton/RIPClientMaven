@@ -69,9 +69,6 @@
             List<Genre> genres = (List<Genre>) request.getAttribute("genres");
             Account user = (Account) request.getSession(false).getAttribute("user");
         %>
-        <%
-            if (user != null) {
-        %>
         <div>Enter Login:</div>
         <form action="LoginController" method="post">
             Name:<input type="text" name="name" required><br>
@@ -109,8 +106,5 @@
         <div class="alert alert-info" role="alert">
             <h4 class="alert-heading">You are already logged in.</h4>
         </div>
-        <%
-            }
-        %>
     </body>
 </html>
