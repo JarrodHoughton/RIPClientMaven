@@ -152,6 +152,11 @@
             reader = (Reader) user;
         }
         
+        Boolean userViewedStory = (Boolean) request.getAttribute("userviewedStory");
+        if (userViewedStory == null) {
+            userViewedStory = false;
+        }
+        
         List<Comment> comments = (List<Comment>) request.getAttribute("comments");
         Story story = (Story) request.getAttribute("story");
         Rating userRating = (Rating) request.getAttribute("userRating");
@@ -195,17 +200,21 @@
                         %>
                         <div class="readbutton-container">
                             <a href="StoryController?submit=readStory&storyId=<%=story.getId()%>">Read</a>
-                            <%
-                                if (reader.getFavouriteStoryIds().contains(story.getId())) {
-                            %>
+                                    <%
+                                        if (userViewedStory) {
+                                    %>
+                            
+                                    <%
+                                        if (reader.getFavouriteStoryIds().contains(story.getId())) {
+                                    %>
                             <a href="StoryController?submit=unlikeStory&storyId=<%=story.getId()%>">UnLike</a>
-                            <%
-                                } else {
-                            %>
+                                    <%
+                                        } else {
+                                    %>
                             <a href="StoryController?submit=likeStory&storyId=<%=story.getId()%>">Like</a>
-                            <%
-                                }
-                            %>
+                                    <%
+                                        }
+                                    %>
                             <form class="rate" id="ratingForm" name="ratingForm" action="StoryController" method="get">
                                 <input type="radio" id="star5" name="rate" value="5" onclick="autoSubmit()" <%if (ratingExists && userRating.getValue()==5) {%> checked <%}%>>
                                 <label for="star5" title="text">5 stars</label>
@@ -221,6 +230,12 @@
                                 <input type="hidden" name="storyId" value="<%=story.getId()%>">
                             </form>
                         </div>
+                                <%
+                                    }
+                                %>
+                                <%
+                                    if (userViewedStory) {
+                                %>
                         <form action="StoryController" method="get">
                             <div>
                                 <textarea name="comment" id="comments" style="font-family:sans-serif;
@@ -231,6 +246,9 @@
                             <input type="hidden" name="storyId" value="<%=story.getId()%>">
                             <input type="submit" name="submit" value="commentStory">
                         </form>
+                                <%
+                                    }
+                                %>
                             <%
                                 }
                             %>

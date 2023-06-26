@@ -11,6 +11,8 @@ import ServiceLayers.LikeService_Impl;
 import ServiceLayers.LikeService_Interface;
 import ServiceLayers.RatingService_Impl;
 import ServiceLayers.RatingService_Interface;
+import ServiceLayers.ViewService_Impl;
+import ServiceLayers.ViewService_Interface;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -46,6 +48,7 @@ public class StoryController extends HttpServlet {
     private CommentService_Interface commentService;
     private LikeService_Interface likeService;
     private RatingService_Interface ratingService;
+    private ViewService_Interface viewService;
 
     public StoryController() {
         this.storyService = new StoryService_Impl();
@@ -53,6 +56,7 @@ public class StoryController extends HttpServlet {
         this.commentService = new CommentService_Impl();
         this.likeService = new LikeService_Impl();
         this.ratingService = new RatingService_Impl();
+        this.viewService = new ViewService_Impl();
         this.reader = null;
         this.writer = null;
         this.editor = null;
@@ -84,6 +88,10 @@ public class StoryController extends HttpServlet {
                 Integer storyId = Integer.valueOf(request.getParameter("storyId"));
                 if (reader != null) {
                     request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
+                    View view = new View();
+                    view.setReaderId(reader.getId());
+                    view.setStoryId(storyId);
+                    request.setAttribute("userViewedStory", viewService.isViewAlreadyAdded(view));
                 }
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
@@ -92,6 +100,10 @@ public class StoryController extends HttpServlet {
                 
             case "readStory":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
+                View view = new View();
+                view.setReaderId(reader.getId());
+                view.setStoryId(storyId);
+                viewService.addView(view);
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.getRequestDispatcher("ReadStory.jsp").forward(request, response);
                 break;

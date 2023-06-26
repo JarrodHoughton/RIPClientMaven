@@ -67,7 +67,10 @@
         </nav>
         <%
             List<Genre> genres = (List<Genre>) request.getAttribute("genres");
-            Reader user = (Reader) request.getAttribute("user");
+            Account user = (Account) request.getSession(false).getAttribute("user");
+        %>
+        <%
+            if (user != null) {
         %>
         <div>Enter Login:</div>
         <form action="LoginController" method="post">
@@ -82,18 +85,26 @@
                     Select Genres
                 </button>
                 <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="dropdownMenuButton">
-                    <% for(Genre genre: genres) { %>
+                    <% 
+                        if (genres != null) {
+                            for(Genre genre: genres) { 
+                    %>
                     <li>
                         <label>
                             <input type="checkbox" name="<%= genre.getId() %>" value="<%= genre.getId() %>"> <%= genre.getName() %>
                         </label>
                     </li>
-                    <% } %>
+                    <%      
+                            }
+                        } 
+                    %>
                 </ul>
             </div>
             <br>
             <input type="submit" value="register" name="submit">
         </form>
-
+        <%
+            }
+        %>
     </body>
 </html>

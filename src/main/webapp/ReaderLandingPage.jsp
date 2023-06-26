@@ -82,10 +82,10 @@
             Writer writer = null;
             if  (user!=null && user.getUserType().equals("R")) {
                 reader = (Reader) user;
-            }
-            
-            if  (user!=null && user.getUserType().equals("W")) {
+            } else if (user!=null && user.getUserType().equals("W")) {
                 writer = (Writer) user;
+            } else {
+                
             }
         %>
 
