@@ -66,8 +66,8 @@
                     <p>Email: <%= editor.getEmail() %></p>
 
                     <!-- Add an option to edit the editor's details or delete the editor's account -->
-                    <a href="/editEditor?id=<%= editor.getId() %>">Edit</a>
-                    <a href="/deleteEditor?id=<%= editor.getId() %>">Delete</a>
+                    <a href="EditorController?submit=goToUpdateEditorPage&editorId=<%= editor.getId() %>">Edit</a>
+                    <a href="EditorController?submit=deleteEditor&editorId=<%= editor.getId() %>">Delete</a>
                 </div>
             <% } %>
         <% } %>
@@ -88,8 +88,9 @@
 
             <label for="phoneNumber">Phone Number:</label>
             <input type="tel" name="phoneNumber" id="phoneNumber" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required><br>
-
-            <input type="submit" name="submit" value="addEditor">
+            
+            <input type="hidden" name="submit" value="addEditor">
+            <input type="submit">
         </form>
     </body>
 </html>

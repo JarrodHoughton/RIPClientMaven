@@ -99,8 +99,16 @@ public class EditorService_Impl implements EditorService_Interface{
 
     @Override
     public Editor getEditor(String accountEmail) {
-        String getEditorUri = uri + "getEditor/{accountEmail}";
+        String getEditorUri = uri + "getEditorByEmail/{accountEmail}";
         webTarget = client.target(getEditorUri).resolveTemplate("accountEmail", accountEmail);
+        response = webTarget.request().get();
+        return response.readEntity(Editor.class);
+    }
+
+    @Override
+    public Editor getEditor(Integer editorId) {
+        String getEditorUri = uri + "getEditorById/{editorId}";
+        webTarget = client.target(getEditorUri).resolveTemplate("editorId", editorId);
         response = webTarget.request().get();
         return response.readEntity(Editor.class);
     }

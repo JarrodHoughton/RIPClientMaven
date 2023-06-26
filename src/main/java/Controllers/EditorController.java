@@ -67,16 +67,25 @@ public class EditorController extends HttpServlet {
                 request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
                 break;
             case "updateEditor":
-                email = request.getParameter("email");
-                editor = editorService.getEditor(email);
-                editor.setPasswordHash(PasswordEncryptor.hashPassword(request.getParameter("password"), editor.getSalt()));
-                editor.setEmail(email);
+                editorId = Integer.valueOf(request.getParameter("editorId"));
+                password = request.getParameter("password");
+                editor = editorService.getEditor(editorId);
+                if (!password.isEmpty()) {
+                    editor.setPasswordHash(PasswordEncryptor.hashPassword(password, editor.getSalt()));
+                }
+                editor.setEmail(request.getParameter("email"));
                 editor.setName(request.getParameter("name"));
                 editor.setSurname(request.getParameter("surname"));
                 editor.setPhoneNumber(request.getParameter("phoneNumber"));
                 request.setAttribute("message", editorService.updateEditor(editor));
                 request.setAttribute("editors", editorService.getAllEditors());
                 request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
+                break;
+            case "goToUpdateEditorPage":
+                editorId = Integer.valueOf(request.getParameter("editorId"));
+                System.out.println("Editor ID: "+editorId);
+                request.setAttribute("editor", editorService.getEditor(editorId));
+                request.getRequestDispatcher("UpdateEditor.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();

@@ -14,6 +14,7 @@ import java.util.List;
 public interface EditorService_Interface {
     public List<Editor> getAllEditors();
     public Editor getEditor(String accountEmail);
+    public Editor getEditor(Integer editorId);
     public String addEditor(Editor editor);
     public String deleteEditor(Integer editorId);
     public String updateEditor(Editor editor);
