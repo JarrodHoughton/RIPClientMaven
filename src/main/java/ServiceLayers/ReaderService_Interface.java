@@ -16,4 +16,6 @@ public interface ReaderService_Interface {
     public Boolean isVerified(Integer readerId);
     public String getVerifyToken(Integer readerId);
     public Reader getReader(String accountEmail);
+    public String updateReaderDetails(Reader reader);
+    public Reader getReaderById(Integer readerId);
 }

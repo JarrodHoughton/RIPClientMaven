@@ -6,12 +6,16 @@ package ServiceLayers;
 
 import Models.Reader;
 import Utils.GetProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -70,5 +74,30 @@ public class ReaderService_Impl implements ReaderService_Interface{
         webTarget = client.target(getReaderUri).resolveTemplate("accountEmail", accountEmail);
         response = webTarget.request(MediaType.APPLICATION_JSON).get();
         return response.readEntity(Reader.class);
+    }
+
+    @Override
+    public Reader getReaderById(Integer readerId){
+        String getReaderByIdUri = uri + "getReaderById/{readerId}";
+        webTarget = client.target(getReaderByIdUri).resolveTemplate("readerId", readerId);
+        response = webTarget.request(MediaType.APPLICATION_JSON).get();
+        return response.readEntity(Reader.class);
+    }
+    
+    @Override
+    public String updateReaderDetails(Reader reader) {
+        String updateReaderUri = uri + "updateReaderDetails";
+        webTarget = client.target(updateReaderUri);
+        try {
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(ReaderService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "System failed to update reader details";
+        }
+        return response.readEntity(String.class);
+    }
+    
+    private String toJsonString(Object obj) throws JsonProcessingException {
+        return mapper.writeValueAsString(obj);
     }
 }

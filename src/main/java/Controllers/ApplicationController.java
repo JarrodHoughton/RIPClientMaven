@@ -4,6 +4,8 @@
  */
 package Controllers;
 
+import Models.Application;
+import Models.Reader;
 import ServiceLayers.ApplicationService_Impl;
 import ServiceLayers.ApplicationService_Interface;
 import ServiceLayers.WriterService_Impl;
@@ -24,6 +26,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ApplicationController extends HttpServlet {
     private ApplicationService_Interface applicationService;
     private WriterService_Interface writerService;
+    private Application application;
+    private Reader reader;
+    private Integer readerId;
 
     public ApplicationController() {
         this.applicationService = new ApplicationService_Impl();
@@ -38,7 +43,7 @@ public class ApplicationController extends HttpServlet {
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             case "approveApplication":
-                Integer readerId = Integer.valueOf(request.getParameter("readerId"));
+                readerId = Integer.valueOf(request.getParameter("readerId"));
                 String message = writerService.addWriter(readerId) + "<br>" + applicationService.deleteApplication(readerId);
                 request.setAttribute("message", message);
                 request.setAttribute("applications", applicationService.getApplications());
@@ -51,6 +56,12 @@ public class ApplicationController extends HttpServlet {
                 request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
+            case "applyForWriter":
+                reader = (Reader) request.getSession(false).getAttribute("user");
+                String motivation = request.getParameter("motivation");
+                application = new Application(readerId, motivation);
+                request.setAttribute("message", applicationService.addApplication(application));                
+                request.getRequestDispatcher("Profile.jsp").forward(request, response);
             default:
                 throw new AssertionError();
         }
