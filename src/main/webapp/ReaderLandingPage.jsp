@@ -103,6 +103,7 @@
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                         <a class="btn btn-primary ms-2" href="Profile.jsp">Profile</a>
+                        <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
                         <%
                         if (writer!=null) {
                         %>

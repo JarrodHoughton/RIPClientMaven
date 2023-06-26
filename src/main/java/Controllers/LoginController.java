@@ -192,6 +192,10 @@ public class LoginController extends HttpServlet {
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
+            case "logout":
+                session = null;
+                request.getRequestDispatcher("index.jsp").forward(request, response);
+                break;
             default:
                 throw new AssertionError();
         }
