@@ -59,7 +59,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
@@ -68,17 +68,14 @@
         <%
             List<Genre> genres = (List<Genre>) request.getAttribute("genres");
             Reader user = (Reader) request.getAttribute("user");
-            if  (genres!=null) {
         %>
-        <h1><%=genres%></h1>
-        <%}%>
         <div>Enter Login:</div>
         <form action="LoginController" method="post">
             Name:<input type="text" name="name" required><br>
             Surname:<input type="text" name="surname" required><br>
             Email:<input type="email" name="email" required><br>
             Password:<input type="password" name="password" maxlength="16" minlength="8" required><br>
-            Phone Number:<input type="number" name="phoneNumber" maxlength="10" minlength="10" required><br>
+            Phone Number:<input type="number" name="phoneNumber"pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" required><br>
 
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">

@@ -19,8 +19,18 @@
         <%
             List<Story> submittedStories = (List<Story>) request.getAttribute("submittedStories");
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
+            String message = (String) request.getAttribute("message");
         %>
-        <h1>Select stories page</h1>
+        <h1>Submitted Stories</h1>
+        <%
+            if (message != null) {
+        %>
+        <div>
+            <h4><%= message %></h4>
+        </div>
+        <%
+            }
+        %>
         <%
             if  (submittedStories != null) {
         %>
@@ -44,26 +54,31 @@
                     <img src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image"><br>
                 </td>
                 <td>
-                    <%
-                        if (genres != null) {
-                            for (Genre genre : genres) {
-                    %>
-                    <p><%=genre.getName()%></p><br>
-                    <%      }
-                        }
-                    %>
+                    <ul>
+                        <%
+                            if (genres != null) {
+                                for (Genre genre : genres) {
+                                    if  (story.getGenreIds().contains(genre.getId())) {
+                        %>
+                        <li><%=genre.getName()%></li>
+                            <%      
+                                        }   
+                                    }
+                                }
+                            %>
+                    </ul>
                 </td>
-                <td><pre><%=story.getBlurb()%></pre></td>
-                <td><pre><%=story.getContent()%></pre></td>
+                <td><textarea><%=story.getBlurb()%></textarea></td>
+                <td><textarea><%=story.getContent()%></textarea></td>
                 <td>
                     <a href="StoryController?submit=goToEditStoryForEditor&storyId=<%=story.getId()%>">
-                    <button type="button">Edit</button>
+                        <button type="button">Edit</button>
                     </a>
-                    <a href="StoryController?submit=submitStoryFromEditor&storyId=<%=story.getId()%>">
-                    <button type="button">Approve</button>
+                    <a href="StoryController?submit=submitStoryFromSelectStoryToEditPage&storyId=<%=story.getId()%>">
+                        <button type="button">Approve</button>
                     </a>
                     <a href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
-                    <button type="button">Deny</button>
+                        <button type="button">Deny</button>
                     </a>
                 </td>
             </tr>

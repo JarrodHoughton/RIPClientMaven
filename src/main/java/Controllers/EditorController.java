@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 @WebServlet(name = "EditorController", urlPatterns = {"/EditorController"})
 public class EditorController extends HttpServlet {

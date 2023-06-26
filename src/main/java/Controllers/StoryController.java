@@ -22,10 +22,12 @@ import jakarta.servlet.http.Part;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  *
@@ -157,9 +159,6 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
                 
-            case "submitStory":
-
-                break;
             case "viewAllStoriesInGenre":
                 Integer genreId = Integer.valueOf(request.getParameter("genreId"));
                 String genreName = request.getParameter("genreName");
@@ -181,9 +180,53 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
                 
-            case "submitStoryFromEditor":
+            case "submitEditedStoryFromEditor":
+                Story story = new Story();
+                story.setApproved(Boolean.TRUE);
+                story.setSubmitted(Boolean.TRUE);
+                System.out.println("Updating a story.");
+                Integer authorId = Integer.valueOf(request.getParameter("storyId"));
                 storyId = Integer.valueOf(request.getParameter("storyId"));
-                Story story = storyService.getStory(storyId);
+                story.setId(storyId);
+                story.setAuthorId(authorId);
+                Part filePart = request.getPart("image");
+                if (filePart.getSize()>0) {
+                    try (InputStream fis = filePart.getInputStream()) {
+                        byte[] imageData = new byte[(int) filePart.getSize()];
+                        fis.read(imageData);
+                        Byte[] image = ArrayUtils.toObject(imageData);
+                        story.setImage(image);
+                    }
+                } else {
+                    story.setImage(ArrayUtils.toObject(Base64.getDecoder().decode(request.getParameter("encodedImage"))));
+                    System.out.println("Used original image for story.");
+                }
+                story.setTitle(request.getParameter("title"));
+                story.setContent(request.getParameter("story"));
+                story.setBlurb(request.getParameter("summary"));
+                List<Genre> genres = genreService.getAllGenres();
+                List<Integer> genreIds = new ArrayList<>();
+                for (Genre genre : genres) {
+                    if (request.getParameter(String.valueOf(genre.getId())) != null) {
+                        genreIds.add(genre.getId());
+                    }
+                }
+                story.setGenreIds(genreIds);
+                String message;
+                if (genreIds.isEmpty()) {
+                    message = "Failed to update story: Please select genres for your story.";
+                } else {
+                    message = storyService.updateStory(story);
+                    System.out.println("Updated story.");
+                }
+                request.setAttribute("message", message);
+                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
+                break;
+                
+            case "submitStoryFromSelectStoryToEditPage":
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                story = storyService.getStory(storyId);
                 story.setApproved(Boolean.TRUE);
                 story.setRejected(Boolean.FALSE);
                 request.setAttribute("message", storyService.updateStory(story));
@@ -209,21 +252,18 @@ public class StoryController extends HttpServlet {
                 
             case "addStory":
                 story = new Story();
-                System.out.println("Adding a stroy.");
+                System.out.println("Adding a story.");
                 if (writer != null) {
                     story.setAuthorId(writer.getId());
                 } else {
                     System.out.println("Author was null.");
                 }
-                Part filePart = request.getPart("image");
+                filePart = request.getPart("image");
                 if (filePart != null) {
                     try (InputStream fis = filePart.getInputStream()) {
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
-                        Byte[] image = new Byte[imageData.length];
-                        for (int i = 0; i < imageData.length; i++) {
-                            image[i] = (Byte) imageData[i];
-                        }
+                        Byte[] image = ArrayUtils.toObject(imageData);
                         story.setImage(image);
                     }
                 } else {
@@ -232,15 +272,14 @@ public class StoryController extends HttpServlet {
                 story.setTitle(request.getParameter("title"));
                 story.setContent(request.getParameter("story"));
                 story.setBlurb(request.getParameter("summary"));
-                List<Genre> genres = genreService.getAllGenres();
-                List<Integer> genreIds = new ArrayList<>();
+                genres = genreService.getAllGenres();
+                genreIds = new ArrayList<>();
                 for (Genre genre : genres) {
                     if (request.getParameter(String.valueOf(genre.getId())) != null) {
                         genreIds.add(genre.getId());
                     }
                 }
                 story.setGenreIds(genreIds);
-                String message;
                 if (genreIds.isEmpty()) {
                     message = "Failed to create story: Please select genres for your story.";
                 } else {
@@ -279,7 +318,7 @@ public class StoryController extends HttpServlet {
                 throw new AssertionError();
         }
     }
-
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

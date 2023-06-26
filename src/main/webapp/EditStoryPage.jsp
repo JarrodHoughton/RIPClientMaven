@@ -58,6 +58,12 @@
             }
         </style>
     </head>
+    <script>
+        var loadFile = function (event) {
+            var image = document.getElementById('storyImage');
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+    </script>
     <body>
         <%
             String message = (String) request.getAttribute("message");
@@ -73,7 +79,7 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
                              style="filter: invert(1)">
                         READERS ARE INNOVATORS
@@ -92,7 +98,8 @@
         <div class="space"></div>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h2 class="text-center book-title">Select a Story to Approve and Edit</h2>
+            <h2 class="text-center book-title">Edit Story</h2>
+            <form action="StoryController" method="post"enctype="multipart/form-data">
             <table border="1">
                 <tr>
                     <th>Author</th>
@@ -103,38 +110,42 @@
                     <th>Story</th>
                     <th>Action</th>
                 </tr>
-                <tr>
-                    <td>Author/Writer</td>
-                    <td><input type="text" value="<%=story.getTitle()%>"></td>
-                    <td><img src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image"><br>
-                        <input type="file" accept="image/*">
-                    </td>
-                    <td>
-                        <%
-                            if (genres != null) {
-                                for (Genre genre : genres) {
-                        %>
-                        <input type="checkbox" name="<%=genre.getId()%>" value="<%=genre.getId()%>" <%if (story.getGenreIds().contains(genre.getId())) {%> checked <%}%>> <%=genre.getName()%><br>
-                        <%      }
-                            } else {
-                        %>
-                        <p>Failed to retrieve genres.</p>
-                        <%
-                            }
-                        %>
-                    </td>
-                    <td><textarea><%=story.getBlurb()%></textarea></td>
-                    <td><textarea><%=story.getContent()%></textarea></td>
-                    <td>
-                        <a href="StoryController?submit=submitStoryFromEditor&storyId=<%=story.getId()%>">
-                            <button type="button">Approve</button>
-                        </a>
-                        <a href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
-                            <button type="button">Deny</button>
-                        </a>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>Author/Writer</td>
+                        <td><input type="text" name="title" value="<%=story.getTitle()%>"></td>
+                        <td>
+                            <img id="storyImage" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image"><br>
+                            <input type="file" name="image" accept="image/*" onchange="loadFile(event)">
+                        </td>
+                        <td>
+                            <%
+                                if (genres != null) {
+                                    for (Genre genre : genres) {
+                            %>
+                            <input type="checkbox" name="<%=genre.getId()%>" value="<%=genre.getId()%>" <%if (story.getGenreIds().contains(genre.getId())) {%> checked <%}%>> <%=genre.getName()%><br>
+                            <%      }
+                                } else {
+                            %>
+                            <p>Failed to retrieve genres.</p>
+                            <%
+                                }
+                            %>
+                        </td>
+                        <td><textarea name="summary" rows="5" cols="50" required><%=story.getBlurb()%></textarea></td>
+                        <td><textarea name="story" rows="5" cols="50" required><%=story.getContent()%></textarea></td>
+                        <td>
+                            <input type="hidden" name="encodedImage" value="<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>">
+                            <input type="hidden" name="storyId" value="<%=story.getId()%>">
+                            <input type="hidden" name="authorId" value="<%=story.getAuthorId()%>">
+                            <input type="hidden" name="submit" value="submitEditedStoryFromEditor">
+                            <input type="submit">
+                            <a href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
+                                <button type="button">Deny</button>
+                            </a>
+                        </td>
+                    </tr>
             </table>
+            </form>
             <div class="other-space"></div>
         </div>
         <% 
