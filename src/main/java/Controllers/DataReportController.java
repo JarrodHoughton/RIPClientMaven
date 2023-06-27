@@ -18,6 +18,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @WebServlet(name = "DataReportController", urlPatterns = {"/DataReportController"})
 public class DataReportController extends HttpServlet {
@@ -43,6 +47,41 @@ public class DataReportController extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");
             return;
         }
+        
+    
+// Retrieve the date range parameters as strings
+String startDateParam = request.getParameter("startDate");
+String endDateParam = request.getParameter("endDate");
+
+// Check if the parameters are null
+if (startDateParam == null || endDateParam == null) {
+    // Handle the case when the parameters are missing
+    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Start date and/or end date parameters are missing");
+    return;
+}
+
+// Parse the strings into LocalDate objects
+LocalDate startDate = null;
+LocalDate endDate = null;
+try {
+    startDate = LocalDate.parse(startDateParam);
+    endDate = LocalDate.parse(endDateParam);
+} catch (DateTimeParseException e) {
+    // Handle the case when the date parsing fails
+    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid date format");
+    return;
+}
+
+// Create LocalDateTime objects with desired time values
+LocalDateTime startDateTime = startDate.atStartOfDay();
+LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+// Format the LocalDateTime objects into the desired format
+DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+String formattedStartDate = startDateTime.format(outputFormatter);
+String formattedEndDate = endDateTime.format(outputFormatter);
+
+
 
         switch (submitAction) {
             case "mosteditors":
@@ -76,13 +115,14 @@ public class DataReportController extends HttpServlet {
                 break;
 
             case "mostlikedstories":
-                Integer numberOfStories = 2;
+                Integer numberOfStories = 20;
+
 
                 dataLabel = "Story";
                 valueLabel = "Number of likes";
                 titleLabel = "The most liked stories";
 
-                List<Story> listOfStories = dataReportService.getMostLikedStories(numberOfStories, "2023-05-22 12:57:49", "2023-06-23 12:57:49");
+                List<Story> listOfStories = dataReportService.getMostLikedStories(numberOfStories, formattedStartDate, formattedEndDate );
 
                 if (listOfStories == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "No stories found");
@@ -94,7 +134,7 @@ public class DataReportController extends HttpServlet {
 
                 for (Story topStory : listOfStories) {
                     storyTitles.add(topStory.getTitle());
-                    listOfNumberOfStoryLikes.add(dataReportService.getStoryLikesByDate(topStory.getId(), "2023-05-22 12:57:49", "2023-06-30 12:57:49"));
+                    listOfNumberOfStoryLikes.add(dataReportService.getStoryLikesByDate(topStory.getId(), formattedStartDate, formattedEndDate));
                 }
 
                 request.setAttribute("dataLabels", storyTitles);
@@ -107,13 +147,14 @@ public class DataReportController extends HttpServlet {
                 break;
 
             case "topratedstories":
-                Integer numberOfTopRatedStories = 2;
+                Integer numberOfTopRatedStories = 20;
+
 
                 dataLabel = "Story title";
                 valueLabel = "Average rating";
                 titleLabel = "The top rated stories";
 
-                List<Story> listOfTopRatedStories = dataReportService.getTopHighestRatedStoriesInTimePeriod("2023-05-22 12:57:49", "2023-06-30 12:57:49", numberOfTopRatedStories);
+                List<Story> listOfTopRatedStories = dataReportService.getTopHighestRatedStoriesInTimePeriod(formattedStartDate, formattedEndDate, numberOfTopRatedStories);
 
                 if (listOfTopRatedStories == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "No stories found");
@@ -125,7 +166,7 @@ public class DataReportController extends HttpServlet {
 
                 for (Story topRatedStory : listOfTopRatedStories) {
                     topRatedStoryTitles.add(topRatedStory.getTitle());
-                    listOfAverageRatings.add(dataReportService.getAverageRatingOfAStoryInATimePeriod(topRatedStory.getId(), "2023-05-22 12:57:49", "2023-06-30 12:57:49"));
+                    listOfAverageRatings.add(dataReportService.getAverageRatingOfAStoryInATimePeriod(topRatedStory.getId(), formattedStartDate, formattedEndDate));
                 }
 
                 request.setAttribute("dataLabels", topRatedStoryTitles);
@@ -138,7 +179,7 @@ public class DataReportController extends HttpServlet {
                 break;
 
             case "topwriters":
-                Integer numberOfTopWriters = 2;
+                Integer numberOfTopWriters = 30;
 
                 dataLabel = "Writer";
                 valueLabel = "Number of views";
@@ -169,13 +210,13 @@ public class DataReportController extends HttpServlet {
                 break;
 
             case "topgenres":
-                Integer numberOfTopGenres = 2;
+                Integer numberOfTopGenres = 3;
 
                 dataLabel = "Genre";
                 valueLabel = "Number of views";
                 titleLabel = "The top genres";
 
-                List<Genre> listOfTopGenres = dataReportService.getTopGenres("2023-05-22 12:57:49", "2023-06-30 12:57:49", numberOfTopGenres);
+                List<Genre> listOfTopGenres = dataReportService.getTopGenres(formattedStartDate, formattedEndDate, numberOfTopGenres);
 
                 if (listOfTopGenres == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "No genres found");
@@ -187,7 +228,7 @@ public class DataReportController extends HttpServlet {
 
                 for (Genre topGenre : listOfTopGenres) {
                     genreNames.add(topGenre.getName());
-                    listOfNumberOfGenreViews.add(dataReportService.getGenreViewsByDate("2023-05-22 12:57:49", "2023-06-30 12:57:49", topGenre.getId()));
+                    listOfNumberOfGenreViews.add(dataReportService.getGenreViewsByDate(formattedStartDate, formattedEndDate, topGenre.getId()));
                 }
 
                 request.setAttribute("dataLabels", genreNames);
@@ -200,13 +241,13 @@ public class DataReportController extends HttpServlet {
                 break;
 
             case "mostviewedstories":
-                Integer numberOfStoriess = 2;
+                Integer numberOfStoriess = 10;
 
                 dataLabel = "Story";
                 valueLabel = "Number of views";
                 titleLabel = "The most viewed stories";
 
-                List<Story> listOfStoriess = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, "2023-05-22 12:57:49", "2023-06-30 12:57:49");
+                List<Story> listOfStoriess = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, formattedStartDate, formattedEndDate);
 
                 if (listOfStoriess == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "No stories found");
@@ -218,7 +259,7 @@ public class DataReportController extends HttpServlet {
 
                 for (Story topStoree : listOfStoriess) {
                     storyTitless.add(topStoree.getTitle());
-                    listOfNumberOfStoryViews.add(dataReportService.getTheViewsOnAStoryInATimePeriod(topStoree.getId(), "2023-05-22 12:57:49", "2023-06-30 12:57:49"));
+                    listOfNumberOfStoryViews.add(dataReportService.getTheViewsOnAStoryInATimePeriod(topStoree.getId(), formattedStartDate, formattedEndDate));
                 }
 
                 request.setAttribute("dataLabels", storyTitless);

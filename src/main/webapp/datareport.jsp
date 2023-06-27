@@ -1,3 +1,4 @@
+<%@page import="java.time.LocalDate"%>
 <%@ page import="java.util.List" %>
 <%@ page import="org.json.JSONArray" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -10,35 +11,58 @@
 <body>
     <h1>Data Report</h1>
 
+<form action="DataReportController" method="post">
+    <input type="hidden" name="submit" value="mosteditors">
+    <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
+    <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
+    <input type="submit" value="Show Most Editors Chart">
+</form>
+    
     <form action="DataReportController" method="post">
-        <input type="hidden" name="submit" value="mosteditors">
-        <input type="submit" value="Show Most Editors Chart">
+    <input type="hidden" name="submit" value="mostlikedstories">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" required>
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate" required>
+    <input type="submit" value="Show the most liked stories chart">
     </form>
     
     <form action="DataReportController" method="post">
-        <input type="hidden" name="submit" value="mostlikedstories">
-        <input type="submit" value="Show Most Liked Stories Chart">
+   <input type="hidden" name="submit" value="topwriters">
+    <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
+    <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
+    <input type="submit" value="Show the top writers chart">
     </form>
     
     <form action="DataReportController" method="post">
-        <input type="hidden" name="submit" value="topwriters">
-        <input type="submit" value="Show Top Writers Chart">
+     <input type="hidden" name="submit" value="topratedstories">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" required>
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate" required>
+    <input type="submit" value="Show the top rated stories">
     </form>
     
     <form action="DataReportController" method="post">
-        <input type="hidden" name="submit" value="topratedstories">
-        <input type="submit" value="Show Top Rated Stories Chart">
+    <input type="hidden" name="submit" value="topgenres">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" required>
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate" required>
+    <input type="submit" value="Show the top genres chart">
     </form>
     
     <form action="DataReportController" method="post">
-        <input type="hidden" name="submit" value="topgenres">
-        <input type="submit" value="Show Top Rated Genres Chart">
+    <input type="hidden" name="submit" value="mostviewedstories">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" required>
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate" required>
+    <input type="submit" value="Show the most viewed stories chart" onclick="combineDateTime()">
     </form>
     
-    <form action="DataReportController" method="post">
-        <input type="hidden" name="submit" value="mostviewedstories">
-        <input type="submit" value="Show Most Viewed Stories Chart">
-    </form>
+
+
 
     <% 
         List<String> dataLabels = (List<String>) request.getAttribute("dataLabels");
@@ -62,7 +86,7 @@
             data: {
                 labels: dataLabels,
                 datasets: [{
-                    label: '<%= dataLabelString %>',
+                    label: '<%= valueLabelString %>',
                     data: dataValues,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
