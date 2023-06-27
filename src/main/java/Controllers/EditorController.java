@@ -7,8 +7,11 @@ package Controllers;
 import Models.Editor;
 import Models.Genre;
 import Models.Reader;
+import Models.Story;
 import ServiceLayers.EditorService_Impl;
 import ServiceLayers.EditorService_Interface;
+import ServiceLayers.StoryService_Impl;
+import ServiceLayers.StoryService_Interface;
 import Utils.PasswordEncryptor;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -27,7 +30,7 @@ import java.util.List;
  */
 @WebServlet(name = "EditorController", urlPatterns = {"/EditorController"})
 public class EditorController extends HttpServlet {
-
+    private StoryService_Interface storyService;
     private EditorService_Interface editorService;
     private Editor editor;
     private HttpSession session;
@@ -36,6 +39,7 @@ public class EditorController extends HttpServlet {
         this.editorService = new EditorService_Impl();
         this.editor = null;
         this.session = null;
+        this.storyService = new StoryService_Impl();
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -46,6 +50,7 @@ public class EditorController extends HttpServlet {
                 request.setAttribute("editors", editorService.getAllEditors());
                 request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
                 break;
+                
             case "addEditor":
                 String message = "This email already exists.";
                 String password = request.getParameter("password");
@@ -64,12 +69,14 @@ public class EditorController extends HttpServlet {
                 request.setAttribute("editors", editorService.getAllEditors());
                 request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
                 break;
+                
             case "deleteEditor":
                 Integer editorId = Integer.valueOf(request.getParameter("editorId"));
                 request.setAttribute("message", editorService.deleteEditor(editorId));
                 request.setAttribute("editors", editorService.getAllEditors());
                 request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
                 break;
+                
             case "updateEditor":
                 editorId = Integer.valueOf(request.getParameter("editorId"));
                 password = request.getParameter("password");
@@ -85,6 +92,7 @@ public class EditorController extends HttpServlet {
                 request.setAttribute("editors", editorService.getAllEditors());
                 request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
                 break;
+                
             case "updateEditorFromProfile":
                 String currentPage = request.getParameter("currentPage");
                 password = request.getParameter("password");
@@ -101,12 +109,33 @@ public class EditorController extends HttpServlet {
                 request.setAttribute("editors", editorService.getAllEditors());
                 request.getRequestDispatcher(currentPage).forward(request, response);
                 break;
+                
             case "goToUpdateEditorPage":
                 editorId = Integer.valueOf(request.getParameter("editorId"));
                 System.out.println("Editor ID: " + editorId);
                 request.setAttribute("editor", editorService.getEditor(editorId));
                 request.getRequestDispatcher("UpdateEditor.jsp").forward(request, response);
                 break;
+                
+            case "updateEditorProfileFromEditStoryPage":
+                password = request.getParameter("password");
+                editor = (Editor) session.getAttribute("user");
+                if (!password.isEmpty()) {
+                    editor.setPasswordHash(PasswordEncryptor.hashPassword(password, editor.getSalt()));
+                }
+                editor.setEmail(request.getParameter("email"));
+                editor.setName(request.getParameter("name"));
+                editor.setSurname(request.getParameter("surname"));
+                editor.setPhoneNumber(request.getParameter("phoneNumber"));
+                session.setAttribute("user", editor);
+                request.setAttribute("message", editorService.updateEditor(editor));
+                request.setAttribute("editors", editorService.getAllEditors());
+                Integer storyId = Integer.valueOf(request.getParameter("storyId"));
+                Story story = storyService.getStory(storyId);
+                request.setAttribute("story", story);
+                request.getRequestDispatcher("EditStoryPage.jsp").forward(request, response);
+                break;
+                
             default:
                 throw new AssertionError();
         }

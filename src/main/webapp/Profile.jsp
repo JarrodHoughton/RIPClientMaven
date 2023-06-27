@@ -69,7 +69,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/ReaderLandingPage.jsp">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
@@ -105,7 +105,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="Admin" class="rounded-circle p-1 bg-primary" width="110">
+                                    <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
                                     <div class="mt-3">
                                         <h4><%=user.getName()%></h4><h4><%=user.getSurname()%></h4>
                                         <h4><%=user.getPhoneNumber()%></h4>

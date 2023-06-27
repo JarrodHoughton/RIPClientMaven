@@ -48,6 +48,7 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#profileDetails">
                     Profile
                 </button>
+                <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
                 <%
                     }
                 %>
