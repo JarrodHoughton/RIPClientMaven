@@ -53,8 +53,9 @@
                     <% } %>
                 </ul>
             </div>
-            <input type="submit" value="addStory" name="submit">
-            <input type="submit" value="saveToDraft" name="submit">
+            <input type="hidden" name="submit" value="addStory">
+            <input class="btn btn-success" type="submit" name="submitStory" value="Submit">
+            <input class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">
         </form>
     </body>
 </html>

@@ -16,6 +16,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,14 +30,17 @@ public class EditorController extends HttpServlet {
 
     private EditorService_Interface editorService;
     private Editor editor;
+    private HttpSession session;
 
     public EditorController() {
         this.editorService = new EditorService_Impl();
         this.editor = null;
+        this.session = null;
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        session = request.getSession(false);
         switch (request.getParameter("submit")) {
             case "manageEditors":
                 request.setAttribute("editors", editorService.getAllEditors());
@@ -81,9 +85,25 @@ public class EditorController extends HttpServlet {
                 request.setAttribute("editors", editorService.getAllEditors());
                 request.getRequestDispatcher("ManageEditors.jsp").forward(request, response);
                 break;
+            case "updateEditorFromProfile":
+                String currentPage = request.getParameter("currentPage");
+                password = request.getParameter("password");
+                editor = (Editor) session.getAttribute("user");
+                if (!password.isEmpty()) {
+                    editor.setPasswordHash(PasswordEncryptor.hashPassword(password, editor.getSalt()));
+                }
+                editor.setEmail(request.getParameter("email"));
+                editor.setName(request.getParameter("name"));
+                editor.setSurname(request.getParameter("surname"));
+                editor.setPhoneNumber(request.getParameter("phoneNumber"));
+                session.setAttribute("user", editor);
+                request.setAttribute("message", editorService.updateEditor(editor));
+                request.setAttribute("editors", editorService.getAllEditors());
+                request.getRequestDispatcher(currentPage).forward(request, response);
+                break;
             case "goToUpdateEditorPage":
                 editorId = Integer.valueOf(request.getParameter("editorId"));
-                System.out.println("Editor ID: "+editorId);
+                System.out.println("Editor ID: " + editorId);
                 request.setAttribute("editor", editorService.getEditor(editorId));
                 request.getRequestDispatcher("UpdateEditor.jsp").forward(request, response);
                 break;

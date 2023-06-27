@@ -22,6 +22,7 @@ public interface StoryService_Interface {
     public List<Story> getWritersSubmittedStories(List<Integer> storyIds, Integer writerId);
     public List<Story> getWritersDraftedStories(List<Integer> storyIds, Integer writerId);
     public String updateStory(Story story);
+    public String updateStories(List<Story> stories);
     public String deleteStory(Integer storyId);
     public String addStory(Story story);
 }

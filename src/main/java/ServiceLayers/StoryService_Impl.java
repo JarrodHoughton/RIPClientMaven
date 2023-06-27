@@ -59,6 +59,7 @@ public class StoryService_Impl implements StoryService_Interface {
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return stories;
     }
@@ -72,6 +73,7 @@ public class StoryService_Impl implements StoryService_Interface {
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return stories;
     }
@@ -84,6 +86,7 @@ public class StoryService_Impl implements StoryService_Interface {
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(story)));
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong updating a story on the system.";
         }
         return response.readEntity(String.class);
     }
@@ -104,6 +107,7 @@ public class StoryService_Impl implements StoryService_Interface {
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(story)));
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong adding a story to the system.";
         }
         return response.readEntity(String.class);
     }
@@ -118,6 +122,7 @@ public class StoryService_Impl implements StoryService_Interface {
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return stories;
     }
@@ -130,7 +135,8 @@ public class StoryService_Impl implements StoryService_Interface {
             webTarget = client.target(getSubmittedStoriesUri);
             submittedStories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
-            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.ALL, null, ex);
+            return null;
         }
         return submittedStories;
     }
@@ -144,6 +150,7 @@ public class StoryService_Impl implements StoryService_Interface {
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return stories;
     }
@@ -158,6 +165,7 @@ public class StoryService_Impl implements StoryService_Interface {
             recommendedStories = response.readEntity(StoriesHolder.class).getStories();
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return recommendedStories;
     }
@@ -175,6 +183,7 @@ public class StoryService_Impl implements StoryService_Interface {
             submittedStories = response.readEntity(StoriesHolder.class).getStories();
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return submittedStories;
     }
@@ -192,11 +201,25 @@ public class StoryService_Impl implements StoryService_Interface {
             draftedStories = response.readEntity(StoriesHolder.class).getStories();
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return draftedStories;
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
+    }
+
+    @Override
+    public String updateStories(List<Story> stories) {
+        try {
+            String updateStoriesUri = uri + "updateStories";
+            webTarget = client.target(updateStoriesUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(stories)));
+        } catch (IOException ex) {
+            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong updating the selected stories.";
+        }
+        return response.readEntity(String.class);
     }
 }

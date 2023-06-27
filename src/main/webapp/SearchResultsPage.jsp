@@ -65,6 +65,16 @@
     </head>
     <body>
         <% 
+            Account user = null;
+            if  (request.getSession(false) != null) {
+                user = (Account) request.getSession(false).getAttribute("user");
+            }
+            String homePageUrl = "http://localhost:8080/RIPClientMaven/";
+            if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) {
+                homePageUrl += "ReaderLandingPage.jsp";
+            } else {
+                homePageUrl += "index.jsp";
+            }
             List<Genre> genresFromSearch = (List<Genre>) request.getAttribute("genresFromSearch");
             List<Story> storiesFromSearch = (List<Story>) request.getAttribute("storiesFromSearch");
             String searchValue = (String) request.getAttribute("searchValue");
@@ -73,14 +83,14 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                    <a class="navbar-brand" href="<%=homePageUrl%>">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
                              style="filter: invert(1)">
                         READERS ARE INNOVATORS
                     </a>
                     <div class="d-flex align-items-center">
                         <form>
-                            <input class="form-control me-2" type="search" placeholder="Search for genres, titles, blurbs..." aria-label="Search" name="searchValue">
+                            <input class="form-control me-2" type="search" placeholder="Search for genres, titles, blurbs..." aria-label="Search" name="searchValue" required>
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                     </div>

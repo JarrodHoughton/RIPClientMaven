@@ -102,5 +102,13 @@ public class ViewService_Impl implements ViewService_Interface {
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
+
+    @Override
+    public Boolean viewExists(Integer readerId, Integer storyId) {
+        View view = new View();
+        view.setReaderId(readerId);
+        view.setStoryId(storyId);
+        return isViewAlreadyAdded(view);
+    }
     
 }

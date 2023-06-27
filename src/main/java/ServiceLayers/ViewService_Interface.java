@@ -18,4 +18,5 @@ public interface ViewService_Interface {
     public List<Integer> getMostViewedStoriesInATimePeriod(Integer numberOfEntries, Timestamp startDate, Timestamp endDate);
     public Integer getTheViewsOnAStoryInATimePeriod(Integer storyId, Timestamp startDate, Timestamp endDate);
     public Boolean isViewAlreadyAdded(View view);
+    public Boolean viewExists(Integer readerId, Integer storyId);
 }

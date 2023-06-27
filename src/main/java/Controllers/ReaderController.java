@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -25,19 +26,21 @@ public class ReaderController extends HttpServlet {
 
     private ReaderService_Interface readerService;
     private Reader reader;
+    private HttpSession session;
     
     public ReaderController(){
         this.readerService = new ReaderService_Impl();
-        reader = new Reader();
+        this.reader = null;
+        this.session = null;
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-                        
+        session = request.getSession(false);
         switch (request.getParameter("submit")){
             case "updateReader":
-                reader = (Reader)request.getSession(false).getAttribute("user");                
+                String currentPage = request.getParameter("currentPage");
+                reader = (Reader) session.getAttribute("user");                
                 String password = request.getParameter("password");                
                 if (!password.isEmpty()) {
                     reader.setPasswordHash(PasswordEncryptor.hashPassword(password, reader.getSalt()));
@@ -46,9 +49,9 @@ public class ReaderController extends HttpServlet {
                 reader.setName(request.getParameter("name"));
                 reader.setSurname(request.getParameter("surname"));
                 reader.setPhoneNumber(request.getParameter("phoneNumber"));
-                request.getSession(false).setAttribute("user", reader);
+                session.setAttribute("user", reader);
                 request.setAttribute("message", readerService.updateReaderDetails(reader));                
-                request.getRequestDispatcher("Profile.jsp").forward(request, response);
+                request.getRequestDispatcher(currentPage).forward(request, response);
                 break;
             
         }

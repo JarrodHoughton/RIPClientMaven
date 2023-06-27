@@ -4,13 +4,19 @@
  */
 package Controllers;
 
+import Models.Genre;
+import Models.Writer;
+import ServiceLayers.WriterService_Impl;
+import ServiceLayers.WriterService_Interface;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -19,19 +25,42 @@ import java.util.HashMap;
 @WebServlet(name = "WriterController", urlPatterns = {"/WriterController"})
 public class WriterController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private WriterService_Interface writerService;
+    private Integer writerId;
+    private Writer writer;
+    private String message;
+
+    public WriterController() {
+        this.writerService = new WriterService_Impl();
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        
+        switch (request.getParameter("submit")) {
+            case "goToBlockWriterPage":
+                request.setAttribute("writers", writerService.getAllWriters());
+                request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
+                break;
+            case "blockWriters":
+                List<Writer> writers = writerService.getAllWriters();
+                List<Integer> writerIds = new ArrayList<>();
+                for (Writer writer : writers) {
+                    if (request.getParameter(String.valueOf(writer.getId())) != null) {
+                        writerIds.add(writer.getId());
+                    }
+                }
+                if (writerIds.isEmpty()) {
+                    message = "No writers were selected.";
+                } else {
+                    message = writerService.blockWriters(writerIds);
+                }
+                request.setAttribute("writers", writerService.getAllWriters());
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -66,9 +66,25 @@
     </script>
     <body>
         <%
+            Account user = (Account) request.getSession(false).getAttribute("user");
             String message = (String) request.getAttribute("message");
             Story story = (Story) request.getAttribute("story");
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
+            String navBarRef = "http://localhost:8080/RIPClientMaven/";
+        %>
+
+        <%
+            if (user != null && !user.getUserType().equals("R")) {
+                
+                if (user.getUserType().equals("W")) {
+                    navBarRef += "ReaderLandingPage.jsp";
+                } else {
+                    navBarRef += "EditorLandingPage.jsp";
+                }
+                
+        %>
+
+        <%
             if (message!=null) {
         %>
         <h3><%=message%></h3>
@@ -79,7 +95,7 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                    <a class="navbar-brand" href="<%=navBarRef%>">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
                              style="filter: invert(1)">
                         READERS ARE INNOVATORS
@@ -100,16 +116,16 @@
             <!-- Spacing -->
             <h2 class="text-center book-title">Edit Story</h2>
             <form action="StoryController" method="post"enctype="multipart/form-data">
-            <table border="1">
-                <tr>
-                    <th>Author</th>
-                    <th>Title</th>
-                    <th>Image</th>
-                    <th>Genres</th>
-                    <th>Blurb</th>
-                    <th>Story</th>
-                    <th>Action</th>
-                </tr>
+                <table border="1">
+                    <tr>
+                        <th>Author</th>
+                        <th>Title</th>
+                        <th>Image</th>
+                        <th>Genres</th>
+                        <th>Blurb</th>
+                        <th>Story</th>
+                        <th>Action</th>
+                    </tr>
                     <tr>
                         <td>Author/Writer</td>
                         <td><input type="text" name="title" value="<%=story.getTitle()%>"></td>
@@ -137,18 +153,49 @@
                             <input type="hidden" name="encodedImage" value="<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>">
                             <input type="hidden" name="storyId" value="<%=story.getId()%>">
                             <input type="hidden" name="authorId" value="<%=story.getAuthorId()%>">
-                            <input type="hidden" name="submit" value="submitEditedStoryFromEditor">
-                            <input type="submit">
-                            <a href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
-                                <button type="button">Deny</button>
+                            <%
+                                if (user.getUserType().equals("E") || user.getUserType().equals("E")) {
+                            %>
+                            <input type="hidden" name="submit" value="approveEditedStoryFromEditor">
+                            <input class="btn btn-primary" type="submit" value="Approve">
+                            <a class="btn btn-danger" href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
+                                Deny
                             </a>
+                            <%
+                                }
+                            %>
+                            <%
+                                if (user.getUserType().equals("W")) {
+                            %>
+                            <input type="hidden" name="submit" value="updateEditedStoryFromWriter">
+                            <input class="btn btn-success" type="submit" name="submitStory" value="Submit">
+                            <input class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">
+                            <%
+                                }
+                            %>
+                            
                         </td>
                     </tr>
-            </table>
+                </table>
             </form>
             <div class="other-space"></div>
         </div>
         <% 
+            } else {
+        %>
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Story not found.</h4>
+        </div>
+        <%
+            }
+        %>
+        <%
+            } else {
+        %>
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">You do not have priviliges to edit a story.</h4>
+        </div>
+        <%
             }
         %>
     </body>

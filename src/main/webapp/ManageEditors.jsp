@@ -32,7 +32,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>

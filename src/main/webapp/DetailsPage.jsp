@@ -75,8 +75,8 @@
                 background-color: #ddd;
                 color: black;
             }
-            
-            
+
+
             /*Star rating*/
             *{
                 margin: 0;
@@ -121,37 +121,53 @@
             /* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
         </style>
         <script>
-            function autoSubmit(){
+            function autoSubmit() {
                 var ratingForm = document.getElementById("ratingForm");
                 var ratingValue = ratingForm.elements["rate"].value;
                 var storyId = ratingForm.elements["storyId"].value;
                 var isAdding = ratingForm.elements["isAdding"].value;
-                window.location.replace("StoryController?submit=rateStory&rate="+ratingValue+"&storyId="+storyId+"&isAdding="+isAdding);
+                window.location.replace("StoryController?submit=rateStory&rate=" + ratingValue + "&storyId=" + storyId + "&isAdding=" + isAdding);
             }
         </script>
         <!-- StarRating -->
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
-        <div class="header">
-            <h1>READERS ARE INNOVATORS</h1>
-        </div>
-
-        <div class="topnav">
-            <a href="#">Link</a>
-            <a href="#">Link</a>
-            <a href="#">Link</a>
-            <a href="#" style="float:right">Link</a>
+        <%
+            Reader reader = null;
+            Account user = null;
+            if  (request.getSession(false) != null) {
+                user = (Account) request.getSession(false).getAttribute("user");
+            }
+            String homePageUrl = "http://localhost:8080/RIPClientMaven/";
+            if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) {
+                homePageUrl += "ReaderLandingPage.jsp";
+                reader = (Reader) user;
+            } else {
+                homePageUrl += "index.jsp";
+            }
+        %>
+        <div id="navbar-container">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="<%=homePageUrl%>">
+                        <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
+                             style="filter: invert(1)">
+                        READERS ARE INNOVATORS
+                    </a>
+                    <div class="d-flex align-items-center">
+                        <form>
+                            <input class="form-control me-2" type="search" placeholder="Search for genres, titles, blurbs..." aria-label="Search" name="searchValue" required>
+                            <input type="hidden" name="submit" value="searchForGenreAndStories">
+                        </form>
+                    </div>
+                </div>
+            </nav>
         </div>
 
         <h1>Story Details</h1>
         <%
-        Reader reader = null;
-        Account user = (Account) request.getSession(false).getAttribute("user");
-        if  (user != null && (user.getUserType().equals("R")||user.getUserType().equals("W"))) {
-            reader = (Reader) user;
-        }
-        
         Boolean userViewedStory = (Boolean) request.getAttribute("userViewedStory");
         if (userViewedStory == null) {
             userViewedStory = false;
@@ -200,21 +216,21 @@
                         %>
                         <div class="readbutton-container">
                             <a href="StoryController?submit=readStory&storyId=<%=story.getId()%>">Read</a>
-                                    <%
-                                        if (userViewedStory) {
-                                    %>
-                            
-                                    <%
-                                        if (reader.getFavouriteStoryIds().contains(story.getId())) {
-                                    %>
+                            <%
+                                if (userViewedStory) {
+                            %>
+
+                            <%
+                                if (reader.getFavouriteStoryIds().contains(story.getId())) {
+                            %>
                             <a href="StoryController?submit=unlikeStory&storyId=<%=story.getId()%>">UnLike</a>
-                                    <%
-                                        } else {
-                                    %>
+                            <%
+                                } else {
+                            %>
                             <a href="StoryController?submit=likeStory&storyId=<%=story.getId()%>">Like</a>
-                                    <%
-                                        }
-                                    %>
+                            <%
+                                }
+                            %>
                             <form class="rate" id="ratingForm" name="ratingForm" action="StoryController" method="get">
                                 <input type="radio" id="star5" name="rate" value="5" onclick="autoSubmit()" <%if (ratingExists && userRating.getValue()==5) {%> checked <%}%>>
                                 <label for="star5" title="text">5 stars</label>
@@ -230,12 +246,12 @@
                                 <input type="hidden" name="storyId" value="<%=story.getId()%>">
                             </form>
                         </div>
-                                <%
-                                    }
-                                %>
-                                <%
-                                    if (userViewedStory) {
-                                %>
+                        <%
+                            }
+                        %>
+                        <%
+                            if (userViewedStory) {
+                        %>
                         <form action="StoryController" method="get">
                             <div>
                                 <textarea name="comment" id="comments" style="font-family:sans-serif;
@@ -246,12 +262,12 @@
                             <input type="hidden" name="storyId" value="<%=story.getId()%>">
                             <input type="submit" name="submit" value="commentStory">
                         </form>
-                                <%
-                                    }
-                                %>
-                            <%
-                                }
-                            %>
+                        <%
+                            }
+                        %>
+                        <%
+                            }
+                        %>
                     </div>
                 </div>
             </div>

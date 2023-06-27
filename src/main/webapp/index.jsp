@@ -61,7 +61,8 @@
             }
         </style>
 
-        <% List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
+        <% 
+            List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
            Boolean getTopPicksCalled = (Boolean) request.getAttribute("getTopPicksCalled");
            if (getTopPicksCalled == null) {
                 getTopPicksCalled = false;
@@ -86,7 +87,7 @@
                     </a>
                     <div class="d-flex align-items-center">
                         <form>
-                            <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue">
+                            <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue" required>
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                         <a class="btn btn-primary ms-2" href="login.jsp">Login</a>

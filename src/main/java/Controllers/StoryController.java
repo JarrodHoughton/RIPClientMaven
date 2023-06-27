@@ -49,6 +49,8 @@ public class StoryController extends HttpServlet {
     private LikeService_Interface likeService;
     private RatingService_Interface ratingService;
     private ViewService_Interface viewService;
+    private String message;
+    private Integer storyId;
 
     public StoryController() {
         this.storyService = new StoryService_Impl();
@@ -60,11 +62,13 @@ public class StoryController extends HttpServlet {
         this.reader = null;
         this.writer = null;
         this.editor = null;
+        this.message = null;
+        this.storyId = null;
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getSession(false).getAttribute("user") != null) {
-            user = ((Account)request.getSession(false).getAttribute("user"));
+        if (request.getSession(false) != null && request.getSession(false).getAttribute("user") != null) {
+            user = ((Account) request.getSession(false).getAttribute("user"));
             switch (user.getUserType()) {
                 case "R":
                     reader = (Reader) user;
@@ -82,22 +86,22 @@ public class StoryController extends HttpServlet {
                 default:
                     throw new AssertionError();
             }
+        } else {
+//            request.setAttribute("message", "You are currently not logged in.");
+//            request.getRequestDispatcher("index.jsp").forward(request, response);
         }
         switch (request.getParameter("submit")) {
             case "viewStory":
-                Integer storyId = Integer.valueOf(request.getParameter("storyId"));
+                storyId = Integer.valueOf(request.getParameter("storyId"));
                 if (reader != null) {
                     request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
-                    View view = new View();
-                    view.setReaderId(reader.getId());
-                    view.setStoryId(storyId);
-                    request.setAttribute("userViewedStory", viewService.isViewAlreadyAdded(view));
+                    request.setAttribute("userViewedStory", viewService.viewExists(reader.getId(), storyId));;
                 }
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
-                
+
             case "readStory":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 View view = new View();
@@ -107,14 +111,16 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.getRequestDispatcher("ReadStory.jsp").forward(request, response);
                 break;
-                
+
             case "likeStory":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
-                Integer readerId = ((Reader)user).getId();
+                Integer readerId = ((Reader) user).getId();
                 Like like = new Like();
                 like.setReaderId(readerId);
                 like.setStoryId(storyId);
                 reader.getFavouriteStoryIds().add(storyId);
+
+                request.setAttribute("userViewedStory", true);
                 request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
                 request.setAttribute("likeMessage", likeService.addLike(like));
                 request.setAttribute("story", storyService.getStory(storyId));
@@ -129,6 +135,8 @@ public class StoryController extends HttpServlet {
                 like.setReaderId(readerId);
                 like.setStoryId(storyId);
                 reader.getFavouriteStoryIds().remove(storyId);
+
+                request.setAttribute("userViewedStory", true);
                 request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
                 request.setAttribute("likeMessage", likeService.deleteLike(like));
                 request.setAttribute("story", storyService.getStory(storyId));
@@ -148,12 +156,14 @@ public class StoryController extends HttpServlet {
                 } else {
                     request.setAttribute("ratingMessage", ratingService.updateRatingValue(rating));
                 }
+
+                request.setAttribute("userViewedStory", true);
                 request.setAttribute("userRating", ratingService.getRating(readerId, storyId));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
-                
+
             case "commentStory":
                 readerId = reader.getId();
                 storyId = Integer.valueOf(request.getParameter("storyId"));
@@ -164,13 +174,15 @@ public class StoryController extends HttpServlet {
                 comment.setSurname(request.getParameter("surname"));
                 comment.setReaderId(readerId);
                 comment.setStoryId(storyId);
+
+                request.setAttribute("userViewedStory", true);
                 request.setAttribute("commentMessage", commentService.addComment(comment));
                 request.setAttribute("userRating", ratingService.getRating(readerId, storyId));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
-                
+
             case "viewAllStoriesInGenre":
                 Integer genreId = Integer.valueOf(request.getParameter("genreId"));
                 String genreName = request.getParameter("genreName");
@@ -178,7 +190,7 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("genreName", genreName);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
-                
+
             case "searchForGenreAndStories":
                 String searchValue = request.getParameter("searchValue");
                 request.setAttribute("storiesFromSearch", storyService.searchForStories(searchValue));
@@ -186,13 +198,13 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("searchValue", searchValue);
                 request.getRequestDispatcher("SearchResultsPage.jsp").forward(request, response);
                 break;
-                
+
             case "goToSelectStoriesToEdit":
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
-                
-            case "submitEditedStoryFromEditor":
+
+            case "approveEditedStoryFromEditor":
                 Story story = new Story();
                 story.setApproved(Boolean.TRUE);
                 story.setSubmitted(Boolean.TRUE);
@@ -202,7 +214,7 @@ public class StoryController extends HttpServlet {
                 story.setId(storyId);
                 story.setAuthorId(authorId);
                 Part filePart = request.getPart("image");
-                if (filePart.getSize()>0) {
+                if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
@@ -224,7 +236,6 @@ public class StoryController extends HttpServlet {
                     }
                 }
                 story.setGenreIds(genreIds);
-                String message;
                 if (genreIds.isEmpty()) {
                     message = "Failed to update story: Please select genres for your story.";
                 } else {
@@ -235,7 +246,7 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
-                
+
             case "submitStoryFromSelectStoryToEditPage":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story = storyService.getStory(storyId);
@@ -245,7 +256,7 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
-                
+
             case "rejectStoryFromEditor":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story = storyService.getStory(storyId);
@@ -254,16 +265,45 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
-                
-            case "goToEditStoryForEditor":
+
+            case "goToEditStoryPage":
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story = storyService.getStory(storyId);
                 request.setAttribute("story", story);
                 request.getRequestDispatcher("EditStoryPage.jsp").forward(request, response);
                 break;
-                
+
+            case "getStoriesForLandingPage":
+                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
+                request.setAttribute("topPicks", storyService.getTopPicks());
+                request.getRequestDispatcher("index.jsp").forward(request, response);
+                break;
+
+            case "getStoriesForReaderLandingPage":
+                request.setAttribute("getStoriesForReaderLandingPageCalled", Boolean.TRUE);
+                request.setAttribute("topPicks", storyService.getTopPicks());
+                request.setAttribute("recommendedStories", storyService.getRecommendations(reader.getFavouriteGenreIds()));
+                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
+                break;
+
+            case "getTopPicksForTest":
+                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
+                request.setAttribute("topPicks", storyService.getTopPicks());
+                request.getRequestDispatcher("ImageTestWebPage.jsp").forward(request, response);
+                break;
+
+            case "manageStories":
+                request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
+                request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
+                request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
+                break;
             case "addStory":
                 story = new Story();
+                if (request.getParameter("submitStory").equals("Save To Drafts")) {
+                    story.setSubmitted(false);
+                } else {
+                    story.setSubmitted(true);
+                }
                 System.out.println("Adding a story.");
                 if (writer != null) {
                     story.setAuthorId(writer.getId());
@@ -271,7 +311,7 @@ public class StoryController extends HttpServlet {
                     System.out.println("Author was null.");
                 }
                 filePart = request.getPart("image");
-                if (filePart != null) {
+                if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
@@ -297,31 +337,86 @@ public class StoryController extends HttpServlet {
                 } else {
                     message = storyService.addStory(story);
                 }
-                request.setAttribute("message", message);
+                
                 System.out.println("Finished adding a story.");
-                request.getRequestDispatcher("createStory.jsp").forward(request, response);
+                request.setAttribute("message", message);
+                request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
+                request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
+                request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
-                
-            case "getStoriesForLandingPage":
-                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
-                request.setAttribute("topPicks", storyService.getTopPicks());
-                request.getRequestDispatcher("index.jsp").forward(request, response);
+            case "deleteStoryFromManageStoryPage":
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                request.setAttribute("message", storyService.deleteStory(storyId));
+                request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
+                request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
+                request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
-                
-            case "getStoriesForReaderLandingPage":
-                request.setAttribute("getStoriesForReaderLandingPageCalled", Boolean.TRUE);
-                request.setAttribute("topPicks", storyService.getTopPicks());
-                request.setAttribute("recommendedStories", storyService.getRecommendations(reader.getFavouriteGenreIds()));
-                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
+            case "updateEditedStoryFromWriter":
+                story = new Story();
+                String submitStory = request.getParameter("submitStory");
+                if (submitStory.equals("Submit")) {
+                    story.setSubmitted(Boolean.TRUE);
+                }
+                System.out.println("Updating a story.");
+                authorId = Integer.valueOf(request.getParameter("storyId"));
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                story.setId(storyId);
+                story.setAuthorId(authorId);
+                filePart = request.getPart("image");
+                if (filePart.getSize() > 0) {
+                    try (InputStream fis = filePart.getInputStream()) {
+                        byte[] imageData = new byte[(int) filePart.getSize()];
+                        fis.read(imageData);
+                        Byte[] image = ArrayUtils.toObject(imageData);
+                        story.setImage(image);
+                    }
+                } else {
+                    story.setImage(ArrayUtils.toObject(Base64.getDecoder().decode(request.getParameter("encodedImage"))));
+                    System.out.println("Used original image for story.");
+                }
+                story.setTitle(request.getParameter("title"));
+                story.setContent(request.getParameter("story"));
+                story.setBlurb(request.getParameter("summary"));
+                genres = genreService.getAllGenres();
+                genreIds = new ArrayList<>();
+                for (Genre genre : genres) {
+                    if (request.getParameter(String.valueOf(genre.getId())) != null) {
+                        genreIds.add(genre.getId());
+                    }
+                }
+                story.setGenreIds(genreIds);
+                if (genreIds.isEmpty()) {
+                    message = "Failed to update story: Please select genres for your story.";
+                } else {
+                    message = storyService.updateStory(story);
+                    System.out.println("Updated story.");
+                }
+                request.setAttribute("message", message);
+                request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
+                request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
+                request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
-                
-            case "getTopPicksForTest":
-                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
-                request.setAttribute("topPicks", storyService.getTopPicks());
-                request.getRequestDispatcher("ImageTestWebPage.jsp").forward(request, response);
+
+            case "submitStoryFromWriter":
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                story = storyService.getStory(storyId);
+                story.setSubmitted(Boolean.TRUE);
+                request.setAttribute("message", storyService.updateStory(story));
+                request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
+                request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
+                request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
-                
-            case "manageStories":
+
+            case "moveStoriesToDrafts":
+                List<Story> writerSubmittedStories = storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId());
+                for (Story stry : writerSubmittedStories) {
+                    if (request.getParameter(String.valueOf(stry.getId())) != null) {
+                        stry.setSubmitted(false);
+                        stry.setRejected(false);
+                        stry.setApproved(false);
+                    }
+                }
+                request.setAttribute("message", storyService.updateStories(writerSubmittedStories));
                 request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
                 request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
                 request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
@@ -330,7 +425,7 @@ public class StoryController extends HttpServlet {
                 throw new AssertionError();
         }
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
