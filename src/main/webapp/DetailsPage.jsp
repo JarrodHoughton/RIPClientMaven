@@ -59,22 +59,6 @@
             .header h1 {
                 font-size: 50px;
             }
-            .topnav {
-                overflow: hidden;
-                background-color: #333;
-            }
-            .topnav a {
-                float: left;
-                display: block;
-                color: #f2f2f2;
-                padding: 14px 16px;
-                text-decoration: none;
-            }
-            .topnav a:hover {
-                background-color: #ddd;
-                color: black;
-            }
-
 
             /*Star rating*/
             *{

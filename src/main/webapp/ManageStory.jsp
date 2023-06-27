@@ -42,17 +42,17 @@
             String message = (String) request.getAttribute("message");
         %>
         <div class="container">
-            <div class="container mt-3">
+            <div class="container mt-5">
                 <%
                 if (message != null) {
                 %>
-                <div class="alert alert-primary" role="alert">
+                <div class="alert alert-primary mt-5" role="alert">
                     <h4 class="alert-heading"><%= message %></h4>
                 </div>
                 <%
                     }
                 %>
-                <div class="text-center mt-3">
+                <div class="text-center mt-5">
                     <h3>Submitted Stories</h3>
                 </div>
                 <%

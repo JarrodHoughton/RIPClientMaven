@@ -41,6 +41,7 @@
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
+                <div class="d-flex align-items-center">
                 <%
                     if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
                 %>
@@ -52,6 +53,7 @@
                 <%
                     }
                 %>
+                </div>
             </div>
         </nav>
         <%

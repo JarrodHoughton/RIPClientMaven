@@ -47,13 +47,13 @@
         <%
             if (message != null) {
         %>
-        <div class="alert alert-success" role="alert">
+        <div class="alert alert-success mt-5" role="alert">
             <h4 class="alert-heading"><%= message %></h4>
         </div> 
         <%
             }
         %>
-        <div class="container">
+        <div class="container mt-5">
             <h1>Block Writers</h1>
             <p>Select writers to block below.</p>
             <%
@@ -103,7 +103,7 @@
         <%
             } else {
         %>
-        <div class="alert alert-info" role="alert">
+        <div class="alert alert-info mt-5" role="alert">
             <h4 class="alert-heading">No writers are currently on the system.</h4>
         </div> 
         <%
@@ -112,7 +112,7 @@
         <%
             } else {
         %>
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger mt-5" role="alert">
             <h4 class="alert-heading">You are not currently logged in.</h4>
         </div> 
         <%
