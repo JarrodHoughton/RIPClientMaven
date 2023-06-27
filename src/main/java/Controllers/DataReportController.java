@@ -32,6 +32,7 @@ public class DataReportController extends HttpServlet {
 
     private String dataLabel;
     private String valueLabel;
+    private String titleLabel;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -45,8 +46,9 @@ public class DataReportController extends HttpServlet {
 
         switch (submitAction) {
             case "mosteditors":
-                dataLabel = "Editor";
+                dataLabel = "Name of editor";
                 valueLabel = "Number of approvals";
+                titleLabel = "The editors with the most approvals";
 
                 Integer numberOfEditors = 2;
 
@@ -69,7 +71,7 @@ public class DataReportController extends HttpServlet {
                 request.setAttribute("dataValues", listOfNumberOfApprovals);
                 request.setAttribute("dataLabelString", dataLabel);
                 request.setAttribute("valueLabelString", valueLabel);
-
+                request.setAttribute("charttitle", titleLabel);
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
                 break;
 
@@ -78,6 +80,7 @@ public class DataReportController extends HttpServlet {
 
                 dataLabel = "Story";
                 valueLabel = "Number of likes";
+                titleLabel = "The most liked stories";
 
                 List<Story> listOfStories = dataReportService.getMostLikedStories(numberOfStories, "2023-05-22 12:57:49", "2023-06-23 12:57:49");
 
@@ -86,18 +89,19 @@ public class DataReportController extends HttpServlet {
                     return;
                 }
 
-                List<String> storyTitless = new ArrayList<>();
+                List<String> storyTitles = new ArrayList<>();
                 List<Integer> listOfNumberOfStoryLikes = new ArrayList<>();
 
                 for (Story topStory : listOfStories) {
-                    storyTitless.add(topStory.getTitle());
+                    storyTitles.add(topStory.getTitle());
                     listOfNumberOfStoryLikes.add(dataReportService.getStoryLikesByDate(topStory.getId(), "2023-05-22 12:57:49", "2023-06-30 12:57:49"));
                 }
 
-                request.setAttribute("dataLabels", storyTitless);
+                request.setAttribute("dataLabels", storyTitles);
                 request.setAttribute("dataValues", listOfNumberOfStoryLikes);
                 request.setAttribute("dataLabelString", dataLabel);
                 request.setAttribute("valueLabelString", valueLabel);
+                request.setAttribute("charttitle", titleLabel);
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
 
                 break;
@@ -105,8 +109,9 @@ public class DataReportController extends HttpServlet {
             case "topratedstories":
                 Integer numberOfTopRatedStories = 2;
 
-                dataLabel = "Story";
+                dataLabel = "Story title";
                 valueLabel = "Average rating";
+                titleLabel = "The top rated stories";
 
                 List<Story> listOfTopRatedStories = dataReportService.getTopHighestRatedStoriesInTimePeriod("2023-05-22 12:57:49", "2023-06-30 12:57:49", numberOfTopRatedStories);
 
@@ -127,6 +132,7 @@ public class DataReportController extends HttpServlet {
                 request.setAttribute("dataValues", listOfAverageRatings);
                 request.setAttribute("dataLabelString", dataLabel);
                 request.setAttribute("valueLabelString", valueLabel);
+                request.setAttribute("charttitle", titleLabel);
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
 
                 break;
@@ -136,6 +142,7 @@ public class DataReportController extends HttpServlet {
 
                 dataLabel = "Writer";
                 valueLabel = "Number of views";
+                titleLabel = "The top writers";
 
                 List<Writer> listOfTopWriters = dataReportService.getTopWriters(numberOfTopWriters);
 
@@ -156,6 +163,7 @@ public class DataReportController extends HttpServlet {
                 request.setAttribute("dataValues", listOfNumberOfStories);
                 request.setAttribute("dataLabelString", dataLabel);
                 request.setAttribute("valueLabelString", valueLabel);
+                request.setAttribute("charttitle", titleLabel);
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
 
                 break;
@@ -165,6 +173,7 @@ public class DataReportController extends HttpServlet {
 
                 dataLabel = "Genre";
                 valueLabel = "Number of views";
+                titleLabel = "The top genres";
 
                 List<Genre> listOfTopGenres = dataReportService.getTopGenres("2023-05-22 12:57:49", "2023-06-30 12:57:49", numberOfTopGenres);
 
@@ -185,6 +194,7 @@ public class DataReportController extends HttpServlet {
                 request.setAttribute("dataValues", listOfNumberOfGenreViews);
                 request.setAttribute("dataLabelString", dataLabel);
                 request.setAttribute("valueLabelString", valueLabel);
+                request.setAttribute("charttitle", titleLabel);
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
 
                 break;
@@ -194,6 +204,7 @@ public class DataReportController extends HttpServlet {
 
                 dataLabel = "Story";
                 valueLabel = "Number of views";
+                titleLabel = "The most viewed stories";
 
                 List<Story> listOfStoriess = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, "2023-05-22 12:57:49", "2023-06-30 12:57:49");
 
@@ -202,18 +213,19 @@ public class DataReportController extends HttpServlet {
                     return;
                 }
 
-                List<String> storyTitles = new ArrayList<>();
+                List<String> storyTitless = new ArrayList<>();
                 List<Integer> listOfNumberOfStoryViews = new ArrayList<>();
 
                 for (Story topStoree : listOfStoriess) {
-                    storyTitles.add(topStoree.getTitle());
+                    storyTitless.add(topStoree.getTitle());
                     listOfNumberOfStoryViews.add(dataReportService.getTheViewsOnAStoryInATimePeriod(topStoree.getId(), "2023-05-22 12:57:49", "2023-06-30 12:57:49"));
                 }
 
-                request.setAttribute("dataLabels", storyTitles);
+                request.setAttribute("dataLabels", storyTitless);
                 request.setAttribute("dataValues", listOfNumberOfStoryViews);
                 request.setAttribute("dataLabelString", dataLabel);
                 request.setAttribute("valueLabelString", valueLabel);
+                request.setAttribute("charttitle", titleLabel);
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
 
                 break;
