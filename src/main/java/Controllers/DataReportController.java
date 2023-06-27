@@ -195,7 +195,7 @@ public class DataReportController extends HttpServlet {
                 dataLabel = "Story";
                 valueLabel = "Number of views";
 
-                List<Story> listOfStoriess = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, "2023-05-22 12:57:49", "2023-06-23 12:57:49");
+                List<Story> listOfStoriess = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, "2023-05-22 12:57:49", "2023-06-30 12:57:49");
 
                 if (listOfStoriess == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "No stories found");

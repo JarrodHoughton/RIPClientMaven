@@ -126,7 +126,7 @@ public class DataReportService_Impl implements DataReportService_Interface {
 
     @Override
     public Integer getTheViewsOnAStoryInATimePeriod(Integer storyId, String startDate, String endDate) {
-        String storyViewsUri = uri + "getstoryviewsbydate";
+        String storyViewsUri = uri + "getStoryViewsByDate";
 
         // Build the query parameters
         UriBuilder uriBuilder = UriBuilder.fromUri(storyViewsUri)
