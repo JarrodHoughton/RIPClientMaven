@@ -1,7 +1,7 @@
 <%--
-    Document   : ImageTestWebPage
+    Document   : Index
     Created on : 19 Jun 2023, 17:17:48
-    Author     : jarro
+    Author     : Jarrod
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -17,8 +17,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Home Page</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <style>
             /* Custom CSS to fix the navbar position */
             #navbar-container {
@@ -91,7 +92,10 @@
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
                         <a class="btn btn-primary ms-2" href="login.jsp">Login</a>
-                        <a class="btn btn-primary ms-2 referfriend" href="ReferFriend.jsp">Share</a>
+                        <!-- Button trigger share modal -->
+                        <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#referFriend">
+                            Share
+                        </button>
                     </div>
                 </div>
             </nav>
@@ -124,6 +128,42 @@
                 %>
             </div>
             <div class="other-space"></div>
+        </div>
+            
+        <!-- Modal Refer Friend Form -->
+        <div class="modal fade" id="referFriend" aria-labelledby="referFriend" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Apply To Be A Writer</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="MailController" method="post">
+                            <div class="form-floating">
+                                <label for="name" class="col-form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                            <div class="form-floating">
+                                <label for="email" class="col-form-label">Email</label>
+                                <input type="email" class="form-control" id="email"name="email">
+                            </div>
+                            <div class="form-floating">
+                                <label for="phoneNumber" class="col-form-label">Phone Number</label>
+                                <input type="number" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber">
+                            </div>
+                            <input type="hidden" name="submit" value="sendReferralEmail">
+                            <input type="hidden" name="currentPage" value="index.jsp">
+                            <button type="submit" class="btn btn-primary mb-3">Send</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" data-bs-target="#profileDetails" data-bs-toggle="modal">Profile Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

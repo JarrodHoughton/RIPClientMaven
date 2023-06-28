@@ -30,8 +30,8 @@
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
             String message = (String) request.getAttribute("message");
         %>
-        <div class="container">
-            <div class="container mt-3">
+        <div class="containermt-8">
+            <div class="container mt-5">
                 <%
                 if (message != null) {
                 %>
@@ -108,7 +108,7 @@
                 <%
                 } else {
                 %>
-                <div class="alert alert-primary" role="alert">
+                <div class="alert alert-primary mt-5" role="alert">
                     <h4 class="alert-heading">There are currently no stories to approve.</h4>
                 </div>
                 <%

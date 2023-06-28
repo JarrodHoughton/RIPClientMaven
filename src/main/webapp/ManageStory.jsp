@@ -41,7 +41,7 @@
             List<Story> draftedStories = (List<Story>) request.getAttribute("draftedStories");
             String message = (String) request.getAttribute("message");
         %>
-        <div class="container">
+        <div class="container mt-5">
             <div class="container mt-5">
                 <%
                 if (message != null) {

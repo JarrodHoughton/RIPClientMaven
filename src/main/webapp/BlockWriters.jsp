@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
-<%@page import="java.util.List"%>s
+<%@page import="java.util.List"%>
 <!DOCTYPE html>
 <html>
     <head>
