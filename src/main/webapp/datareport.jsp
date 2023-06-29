@@ -1,10 +1,6 @@
-<%@page import="Models.Writer"%>
-<%@page import="Models.Reader"%>
-<%@page import="Models.Account"%>
-<%@page import="java.time.LocalDate"%>
+<%@ page import="java.time.LocalDate" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.json.JSONArray" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,21 +19,10 @@
             right: 0;
             z-index: 9999;
         }
-        
-        
+
         #content-container {
             padding-top: 80px; /* Adjust the padding value as needed */
         }
-        
-        #content-container2{
-            padding-top: 700px; /* Adjust the padding value as needed */
-        }
-        
-        #content-container3{
-            padding-top: 2000px; /* Adjust the padding value as needed */
-        }
-        
-        
 
         .card {
             border: 1px solid #ddd;
@@ -72,156 +57,198 @@
 </head>
 
 <body>
-<%
-    Account user = (Account) request.getSession(false).getAttribute("user");
-    Reader reader = null;
-    Writer writer = null;
-    if (user != null && user.getUserType().equals("R")) {
-        reader = (Reader) user;
-    } else if (user != null && user.getUserType().equals("W")) {
-        writer = (Writer) user;
-    }
-%>
-
-<div id="navbar-container">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
-                <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
-                READERS ARE INNOVATORS
-            </a>
-            <div class="d-flex align-items-center">
-                <form>
-                    <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue" required>
-                    <input type="hidden" name="submit" value="searchForGenreAndStories">
-                </form>
-                <% if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) { %>
-                    <!-- Button trigger profile modal -->
-                    <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#profileDetails">
-                        Profile
-                    </button>
-                    <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
-                <% } %>
-                <% if (writer != null) { %>
-                    <a class="btn btn-primary ms-2" href="StoryController?submit=manageStories">Manage Stories</a>
-                <% } %>
-            </div>
+    <form action="DataReportController" method="post">
+        <div id="content-container1">
+            <input type="hidden" name="submit" value="showcharts">
+            <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
+            <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
+            <canvas id="dataChart1"></canvas>
         </div>
-    </nav>
-</div>
 
+        <div id="content-container2">
+            <input type="hidden" name="submit" value="showcharts">
+            <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
+            <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
+            <canvas id="dataChart2"></canvas>
+        </div>
 
-<div id="content-container">
-<form action="DataReportController" method="post">
-    <input type="hidden" name="submit" value="mosteditors">
-    <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
-    <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
-    <input type="submit" value="Show Most Editors Chart">
-</form>
-<%
-    // Set the chartNumber attribute in the request
-    int chartNumber = 1; // Set the desired chartNumber
-    request.setAttribute("chartNumber", chartNumber);
-%>
+        <div id="content-container3">
+            <label for="startDate1">Start Date:</label>
+            <input type="date" id="startDate1" name="startDate1" required>
+            <label for="endDate1">End Date:</label>
+            <input type="date" id="endDate1" name="endDate1" required>
+            <canvas id="dataChart3"></canvas>
+        </div>
 
-<%@ include file="chart.jsp" %>
+        <div id="content-container4">
+            <label for="startDate2">Start Date:</label>
+            <input type="date" id="startDate2" name="startDate2" required>
+            <label for="endDate2">End Date:</label>
+            <input type="date" id="endDate2" name="endDate2" required>
+            <canvas id="dataChart4"></canvas>
+        </div>
 
-    </div>
-    
-    
-<div id="content-container2">    
-    
-<form action="DataReportController" method="post">
-    <input type="hidden" name="submit" value="topwriters">
-    <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
-    <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
-    <input type="submit" value="Show the top writers chart">
-</form>
+        <div id="content-container5">
+            <label for="startDate3">Start Date:</label>
+            <input type="date" id="startDate3" name="startDate3" required>
+            <label for="endDate3">End Date:</label>
+            <input type="date" id="endDate3" name="endDate3">
+            <canvas id="dataChart5"></canvas>
+        </div>
 
-<%
-    // Set the chartNumber attribute in the request
-    int chartNumber2 =2; // Set the desired chartNumber
-    request.setAttribute("chartNumber", chartNumber2);
-%>
+        <div id="content-container6">
+            <label for="startDate4">Start Date:</label>
+            <input type="date" id="startDate4" name="startDate4" required>
+            <label for="endDate4">End Date:</label>
+            <input type="date" id="endDate4" name="endDate4" required>
+            <canvas id="dataChart6"></canvas>
+        </div>
 
-<%@ include file="chart.jsp" %>
+        <input type="submit" value="Show Charts">
+    </form>
 
-</div>
-    
+    <script>
+        function generateChart(chartNumber, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle) {
+            var canvas = document.getElementById("dataChart" + chartNumber);
+            var ctx = canvas.getContext("2d");
+            var existingChart = Chart.getChart(ctx);
 
-<div id="content-container2">    
+            // Destroy the existing chart if it exists
+            if (existingChart) {
+                existingChart.destroy();
+            }
 
-<form action="DataReportController" method="post">
-    <input type="hidden" name="submit" value="mostlikedstories">
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" required>
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate" name="endDate" required>
-    <input type="submit" value="Show the most liked stories chart">
-</form>
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dataLabels,
+                    datasets: [{
+                        label: valueLabelString,
+                        data: dataValues,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: valueLabelString
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: dataLabelString
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: chartTitle,
+                            position: 'top',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 
-<%
-    // Set the chartNumber attribute in the request
-    int chartNumber3 =3; // Set the desired chartNumber
-    request.setAttribute("chartNumber", chartNumber3);
-%>
+    <script>
+        var dataLabels1 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels1")) %>;
+        var dataValues1 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues1")) %>;
+        var dataLabelString1 = '<%= (String) request.getAttribute("dataLabelString1") %>';
+        var valueLabelString1 = '<%= (String) request.getAttribute("valueLabelString1") %>';
+        var chartTitle1 = '<%= (String) request.getAttribute("charttitle1") %>';
+        generateChart(1, dataLabels1, dataValues1, dataLabelString1, valueLabelString1, chartTitle1);
 
-<%@ include file="chart.jsp" %>
-</div>
+        var dataLabels2 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels4")) %>;
+        var dataValues2 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues4")) %>;
+        var dataLabelString2 = '<%= (String) request.getAttribute("dataLabelString4") %>';
+        var valueLabelString2 = '<%= (String) request.getAttribute("valueLabelString4") %>';
+        var chartTitle2 = '<%= (String) request.getAttribute("charttitle4") %>';
+        generateChart(2, dataLabels2, dataValues2, dataLabelString2, valueLabelString2, chartTitle2);
+        
+                var dataLabels3 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels2")) %>;
+        var dataValues3 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues2")) %>;
+        var dataLabelString3 = '<%= (String) request.getAttribute("dataLabelString2") %>';
+        var valueLabelString3 = '<%= (String) request.getAttribute("valueLabelString2") %>';
+        var chartTitle3 = '<%= (String) request.getAttribute("charttitle2") %>';
+        generateChart(3, dataLabels3, dataValues3, dataLabelString3, valueLabelString3, chartTitle3);
 
-    
-<div id="content-container2">  
-<form action="DataReportController" method="post">
-    <input type="hidden" name="submit" value="topratedstories">
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" required>
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate" name="endDate" required>
-    <input type="submit" value="Show the top rated stories">
-</form>
-<%
-    // Set the chartNumber attribute in the request
-    int chartNumber4 = 4; // Set the desired chartNumber
-    request.setAttribute("chartNumber", chartNumber4);
-%>
+        var dataLabels4 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels3")) %>;
+        var dataValues4 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues3")) %>;
+        var dataLabelString4 = '<%= (String) request.getAttribute("dataLabelString3") %>';
+        var valueLabelString4 = '<%= (String) request.getAttribute("valueLabelString3") %>';
+        var chartTitle4 = '<%= (String) request.getAttribute("charttitle3") %>';
+        generateChart(4, dataLabels4, dataValues4, dataLabelString4, valueLabelString4, chartTitle4);
 
-<%@ include file="chart.jsp" %></div>
+        var dataLabels5 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels5")) %>;
+        var dataValues5 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues5")) %>;
+        var dataLabelString5 = '<%= (String) request.getAttribute("dataLabelString5") %>';
+        var valueLabelString5 = '<%= (String) request.getAttribute("valueLabelString5") %>';
+        var chartTitle5 = '<%= (String) request.getAttribute("charttitle5") %>';
+        generateChart(5, dataLabels5, dataValues5, dataLabelString5, valueLabelString5, chartTitle5);
 
-<div id="content-container2">  
-<form action="DataReportController" method="post">
-    <input type="hidden" name="submit" value="topgenres">
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" required>
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate" name="endDate" required>
-    <input type="submit" value="Show the top genres chart">
-</form>
-<%
-    // Set the chartNumber attribute in the request
-    int chartNumber5 = 5; // Set the desired chartNumber
-    request.setAttribute("chartNumber", chartNumber5);
-%>
+        var dataLabels6 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels6")) %>;
+        var dataValues6 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues6")) %>;
+        var dataLabelString6 = '<%= (String) request.getAttribute("dataLabelString6") %>';
+        var valueLabelString6 = '<%= (String) request.getAttribute("valueLabelString6") %>';
+        var chartTitle6 = '<%= (String) request.getAttribute("charttitle6") %>';
+        generateChart(6, dataLabels6, dataValues6, dataLabelString6, valueLabelString6, chartTitle6);
 
-<%@ include file="chart.jsp" %></div>
-</div>
+        document.getElementById("startDate1").addEventListener("change", function () {
+            document.getElementById("content-container1").submit();
+        });
+        document.getElementById("endDate1").addEventListener("change", function () {
+            document.getElementById("content-container1").submit();
+        });
 
-<div id="content-container2"> 
-<form action="DataReportController" method="post">
-    <input type="hidden" name="submit" value="mostviewedstories">
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" required>
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate" name="endDate" required>
-    <input type="submit" value="Show the most viewed stories chart">
-</form>
-<%
-    // Set the chartNumber attribute in the request
-    int chartNumber6 = 6; // Set the desired chartNumber
-    request.setAttribute("chartNumber", chartNumber6);
-%>
+        document.getElementById("startDate2").addEventListener("change", function () {
+            document.getElementById("content-container2").submit();
+        });
+        document.getElementById("endDate2").addEventListener("change", function () {
+            document.getElementById("content-container2").submit();
+        });
 
-<%@ include file="chart.jsp" %></div></div>
+        document.getElementById("startDate3").addEventListener("change", function () {
+            document.getElementById("content-container3").submit();
+        });
+        document.getElementById("endDate3").addEventListener("change", function () {
+            document.getElementById("content-container3").submit();
+        });
 
-</div>
+        document.getElementById("startDate4").addEventListener("change", function () {
+            document.getElementById("content-container4").submit();
+        });
+        document.getElementById("endDate4").addEventListener("change", function () {
+            document.getElementById("content-container4").submit();
+        });
+
+        document.getElementById("startDate5").addEventListener("change", function () {
+            document.getElementById("content-container5").submit();
+        });
+        document.getElementById("endDate5").addEventListener("change", function () {
+            document.getElementById("content-container5").submit();
+        });
+
+        document.getElementById("startDate6").addEventListener("change", function () {
+            document.getElementById("content-container6").submit();
+        });
+        document.getElementById("endDate6").addEventListener("change", function () {
+            document.getElementById("content-container6").submit();
+        });
+    </script>
 </body>
 </html>
