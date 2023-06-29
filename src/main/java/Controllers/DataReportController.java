@@ -89,7 +89,7 @@ String formattedEndDate = endDateTime.format(outputFormatter);
                 valueLabel = "Number of approvals";
                 titleLabel = "The editors with the most approvals";
 
-                Integer numberOfEditors = 2;
+                Integer numberOfEditors = 3;
 
                 List<Editor> listOfEditors = dataReportService.getTopEditors(numberOfEditors);
 
@@ -272,7 +272,7 @@ String formattedEndDate = endDateTime.format(outputFormatter);
                 break;
 
             default:
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                request.getRequestDispatcher("datareport.jsp").forward(request, response);
                 break;
         }
     }
