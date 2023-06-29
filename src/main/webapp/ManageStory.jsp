@@ -83,7 +83,17 @@
                                 <td id="<%=story.getTitle()%>"><%=story.getTitle()%></td>
                                 <td>
                                     <div class="text-center">
+                                        <%
+                                            if (story.getImage()!=null) {
+                                        %>
                                         <img class="rounded" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                        <%
+                                            } else {
+                                        %>
+                                        <img class="rounded" id="storyImage" class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                        <%
+                                            }
+                                        %>
                                     </div>
                                 </td>
                                 <td>
@@ -159,7 +169,17 @@
                             <td><%=story.getTitle()%></td>
                             <td>
                                 <div class="text-center">
+                                    <%
+                                        if (story.getImage()!=null) {
+                                    %>
                                     <img class="rounded" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                    <%
+                                        } else {
+                                    %>
+                                    <img class="rounded" id="storyImage" class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                    <%
+                                        }
+                                    %>
                                 </div>
                             </td>
                             <td>

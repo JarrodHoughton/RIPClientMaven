@@ -66,7 +66,17 @@
                             <td><%=story.getTitle()%></td>
                             <td>
                                 <div class="text-center">
-                                    <img class="rounded" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                    <%
+                                        if (story.getImage()!=null) {
+                                    %>
+                                    <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                    <%
+                                        } else {
+                                    %>
+                                    <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                    <%
+                                        }
+                                    %>
                                 </div>
                             </td>
                             <td>

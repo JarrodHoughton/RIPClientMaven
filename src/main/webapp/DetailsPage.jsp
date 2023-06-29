@@ -140,7 +140,7 @@
                         READERS ARE INNOVATORS
                     </a>
                     <div class="d-flex align-items-center">
-                        <form>
+                        <form  action="StoryController" method="post">
                             <input class="form-control me-2" type="search" placeholder="Search for genres, titles, blurbs..." aria-label="Search" name="searchValue" required>
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
@@ -181,7 +181,17 @@
         <div class="container">
             <div class="story-container">
                 <div class="image-container">
-                    <img class="image" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                    <%
+                                if (story.getImage()!=null) {
+                    %>
+                    <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                    <%
+                        } else {
+                    %>
+                    <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                    <%
+                        }
+                    %>
                 </div>
                 <div class="details-container">
                     <h2 class="title"><%= story.getTitle() %></h2>
@@ -200,7 +210,7 @@
                         <div class="readbutton-container">
                             <a href="StoryController?submit=readStory&storyId=<%=story.getId()%>">Read</a>
                             <%
-                                if (userViewedStory) {
+                                if (userViewedStory || story.getAuthorId()==reader.getId()) {
                             %>
 
                             <%
@@ -233,12 +243,11 @@
                             }
                         %>
                         <%
-                            if (userViewedStory) {
+                            if (userViewedStory && story.getCommentsEnabled()) {
                         %>
                         <form action="StoryController" method="get">
                             <div>
-                                <textarea name="comment" id="comments" style="font-family:sans-serif;
-                                          font-size:1.2em;">
+                                <textarea name="comment" id="comments" style="font-family:sans-serif; font-size:1.2em;">
                                     Leave a comment!
                                 </textarea>
                             </div>
@@ -266,8 +275,7 @@
                     for (Comment comment : comments) {
                 %>
                 <div class="comment">
-                    <p class="comment-content"><%= comment.getName() + " " + comment.getSurname()%></p>
-                    <p class="comment-content"><%= comment.getDate() + " -> " + comment.getMessage() %></p>
+                    <p class="comment-content"><%= comment.getName() + " " + comment.getSurname() + ":" + comment.getDate() + " -> " + comment.getMessage() %></p>
                 </div>
                 <%
                     }

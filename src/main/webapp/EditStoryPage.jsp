@@ -16,6 +16,8 @@
         <title>Edit Story</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-NTWp1tUQpxgih3k9wV9iVDOZDHR9sYPm9/j1ZDrN8IEEeVn5k1vL/1XTmlfF4zXZ" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <style>
             /* Custom CSS to fix the navbar position */
             #navbar-container {
@@ -57,6 +59,16 @@
                 margin-bottom: 40px;
             }
         </style>
+        <script>
+            $('.dropdown').unbind('show.bs.dropdown');
+            $('.dropdown').unbind('hide.bs.dropdown');
+            $('.dropdown').bind('show.bs.dropdown', function () {
+                $('.fixed-table-body').css("overflow", "inherit");
+            });
+            $('.dropdown').bind('hide.bs.dropdown', function () {
+                $('.fixed-table-body').css("overflow", "auto");
+            });
+        </script>
     </head>
     <script>
         var loadFile = function (event) {
@@ -122,22 +134,55 @@
                         <th>Genres</th>
                         <th>Blurb</th>
                         <th>Story</th>
+                        <th>Comments Enabled</th>
                         <th>Action</th>
                     </tr>
                     <tr>
                         <td>Author/Writer</td>
                         <td><input type="text" name="title" value="<%=story.getTitle()%>"></td>
                         <td>
-                            <img id="storyImage" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image"><br>
+                            <%
+                                if (story.getImage()!= null) {
+                            %>
+                            <img id="storyImage" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                            <input type="hidden" name="encodedImage" value="<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>">
+                            <%
+                                } else {
+                            %>
+                            <img id="storyImage" class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                            <input type="hidden" name="encodedImage" value="book.svg">
+                            <%
+                                }
+                            %>
+                            <br>
                             <input type="file" name="image" accept="image/*" onchange="loadFile(event)">
                         </td>
                         <td>
                             <%
                                 if (genres != null) {
-                                    for (Genre genre : genres) {
                             %>
-                            <input type="checkbox" name="<%=genre.getId()%>" value="<%=genre.getId()%>" <%if (story.getGenreIds().contains(genre.getId())) {%> checked <%}%>> <%=genre.getName()%><br>
-                            <%      }
+<!--                            <div class="dropdown checkbox-dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Genres
+                                </button>
+                                <ul class="dropdown-menu checkbox-menu allow-focus position-static" aria-labelledby="dropdownMenuButton">
+                                    <% for(Genre genre: genres) { %>
+                                    <li>
+                                        <div class="form-check">
+                                            <label class="form-check-label" for="<%= genre.getId() %>"><%= genre.getName() %></label>
+                                            <input type="checkbox" class="form-check-input" name="<%= genre.getId() %>" value="<%= genre.getId() %>" id="<%= genre.getId() %>"<% if (story.getGenreIds().contains(genre.getId())) { %> checked <% } %>>
+                                        </div>
+                                    </li>
+                                    <% } %>
+                                </ul>
+                            </div>-->
+                            <% for(Genre genre: genres) { %>
+                            <div class="form-check">
+                                <label class="form-check-label" for="<%= genre.getId() %>"><%= genre.getName() %></label>
+                                <input type="checkbox" class="form-check-input" name="<%= genre.getId() %>" value="<%= genre.getId() %>" id="<%= genre.getId() %>"<% if (story.getGenreIds().contains(genre.getId())) { %> checked <% } %>>
+                            </div>
+                            <% } %>
+                            <%      
                                 } else {
                             %>
                             <p>Failed to retrieve genres.</p>
@@ -148,7 +193,12 @@
                         <td><textarea name="summary" rows="5" cols="50" required><%=story.getBlurb()%></textarea></td>
                         <td><textarea name="story" rows="5" cols="50" required><%=story.getContent()%></textarea></td>
                         <td>
-                            <input type="hidden" name="encodedImage" value="<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="commentsEnabled" name="commentsEnabled" value="true"<%if (story.getCommentsEnabled()) {%>checked<%}%>>
+                                <label class="form-check-label" for="commentsEnabled"></label>
+                            </div>
+                        </td>
+                        <td>
                             <input type="hidden" name="storyId" value="<%=story.getId()%>">
                             <input type="hidden" name="authorId" value="<%=story.getAuthorId()%>">
                             <%
@@ -178,97 +228,6 @@
             </form>
             <div class="other-space"></div>
         </div>
-        
-        <!-- Profile Pop Up Modal -->
-        <!-- Modal -->
-        <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
-                        <div class="mb-3 row">
-                            <label for="name" class="col col-form-label">First Name</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control-plaintext" id="name" name="name" value="<%=user.getName()%>" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="surname" class="col col-form-label">Last Name</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control-plaintext" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="email" class="col col-form-label">Email</label>
-                            <div class="col-8">
-                                <input type="email" class="form-control-plaintext" id="email" name="email" value="<%=user.getEmail()%>" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="phoneNumber" class="col col-form-label">Phone Number</label>
-                            <div class="col-8">
-                                <input type="tel" class="form-control-plaintext" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" data-bs-target="#profileForm" data-bs-toggle="modal">Edit Profile</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="profileForm" aria-labelledby="profileForm" tabindex="-1" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Update Profile</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="EditorController" method="post">
-                            <div class="mb-3">
-                                <label for="name" class="col-form-label">First Name</label>
-                                <input type="text" class="form-control" id="name" name="name" value="<%=user.getName()%>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="surname" class="col-form-label">Last Name</label>
-                                <input type="text" class="form-control" id="surname" name="surname" value="<%=user.getSurname()%>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="col-form-label">Email</label>
-                                <input type="email" class="form-control" id="email"name="email" value="<%=user.getEmail()%>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="phoneNumber" class="col-form-label">Phone Number</label>
-                                <input type="number" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="col-form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." maxlength="8" minlength="16">
-                            </div>
-                            <div class="mb-3">
-                                <label for="passwordRepeat" class="visually-hidden">Repeat-Password</label>
-                                <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." maxlength="8" minlength="16">
-                            </div>
-                            <input type="hidden" name="storyId" value="<%=story.getId()%>">
-                            <input type="hidden" name="submit" value="updateEditorProfileFromEditStoryPage">
-                            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-primary" data-bs-target="#profileDetails" data-bs-toggle="modal">Profile Details</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- End Of Modal -->
         <% 
             } else {
         %>

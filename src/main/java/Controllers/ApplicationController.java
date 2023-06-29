@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 @WebServlet(name = "ApplicationController", urlPatterns = {"/ApplicationController"})
 public class ApplicationController extends HttpServlet {
@@ -59,7 +59,9 @@ public class ApplicationController extends HttpServlet {
             case "applyForWriter":
                 reader = (Reader) request.getSession(false).getAttribute("user");
                 String motivation = request.getParameter("motivation");
-                application = new Application(readerId, motivation);
+                application = new Application();
+                application.setMotivation(motivation);
+                application.setReaderId(reader.getId());
                 request.setAttribute("message", applicationService.addApplication(application));                
                 request.getRequestDispatcher("Profile.jsp").forward(request, response);
             default:

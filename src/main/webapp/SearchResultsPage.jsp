@@ -89,7 +89,7 @@
                         READERS ARE INNOVATORS
                     </a>
                     <div class="d-flex align-items-center">
-                        <form>
+                        <form  action="StoryController" method="post">
                             <input class="form-control me-2" type="search" placeholder="Search for genres, titles, blurbs..." aria-label="Search" name="searchValue" required>
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
@@ -112,9 +112,17 @@
                 <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                 <div class="col">
                         <div class="card card-fixed">
-
+                            <%
+                                if (story.getImage()!=null) {
+                            %>
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-
+                            <%
+                                } else {
+                            %>
+                            <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                            <%
+                                }
+                            %>
                             <div class="card-body">
                                 <h5 class="card-title"><%=story.getTitle()%></h5>
                             </div>
@@ -128,10 +136,6 @@
             <div class="other-space"></div>
         </div>
         <%
-            } else {
-        %>
-        <h3>No results found in stories for "<%=searchValue%>"</h3>
-        <% 
             }
         %>
         
@@ -160,10 +164,13 @@
             <div class="other-space"></div>
         </div>
         <%
-            } else {
+            }
         %>
-        <h3>No results found in genres for "<%=searchValue%>"</h3>
-        <% 
+        <%
+            if (storiesFromSearch == null && genresFromSearch == null) {
+        %>
+        <h4>No results found for "<%=searchValue%>".</h4>
+        <%
             }
         %>
     </body>

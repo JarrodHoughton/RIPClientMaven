@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 public interface StoryService_Interface {
     public Story getStory(Integer storyId);

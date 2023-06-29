@@ -66,6 +66,15 @@
     <body>
         <% 
             Account user = (Account) request.getSession(false).getAttribute("user");
+            
+            if(user == null) {
+        %>
+        <script>
+            window.location.replace("index.jsp");
+        </script>
+        <%
+            }
+
             Reader reader = null;
             Writer writer = null;
             if  (user!=null && user.getUserType().equals("R")) {
@@ -101,7 +110,7 @@
                         READERS ARE INNOVATORS
                     </a>
                     <div class="d-flex align-items-center">
-                        <form>
+                        <form  action="StoryController" method="post">
                             <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue" required>
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
@@ -155,9 +164,17 @@
                 <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                     <div class="col">
                         <div class="card card-fixed">
-
+                            <%
+                                if (story.getImage()!=null) {
+                            %>
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-
+                            <%
+                                } else {
+                            %>
+                            <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                            <%
+                                }
+                            %>
                             <div class="card-body">
                                 <h5 class="card-title"><%=story.getTitle()%></h5>
                             </div>
@@ -179,9 +196,17 @@
                 <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                     <div class="col">
                         <div class="card card-fixed">
-
+                            <%
+                                if (story.getImage()!=null) {
+                            %>
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-
+                            <%
+                                } else {
+                            %>
+                            <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                            <%
+                                }
+                            %>
                             <div class="card-body">
                                 <h5 class="card-title"><%=story.getTitle()%></h5>
                             </div>
@@ -207,25 +232,25 @@
                     </div>
                     <div class="modal-body">
                         <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
-                        <div class="form-floating">
+                        <div class="mb-3 row">
                             <label for="name" class="col col-form-label">First Name</label>
                             <div class="col-8">
                                 <input type="text" class="form-control-plaintext" id="name" name="name" value="<%=user.getName()%>" readonly>
                             </div>
                         </div>
-                        <div class="form-floating">
+                        <div class="mb-3 row">
                             <label for="surname" class="col col-form-label">Last Name</label>
                             <div class="col-8">
                                 <input type="text" class="form-control-plaintext" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
                             </div>
                         </div>
-                        <div class="form-floating">
+                        <div class="mb-3 row">
                             <label for="email" class="col col-form-label">Email</label>
                             <div class="col-8">
                                 <input type="email" class="form-control-plaintext" id="email" name="email" value="<%=user.getEmail()%>" readonly>
                             </div>
                         </div>
-                        <div class="form-floating">
+                        <div class="mb-3 row">
                             <label for="phoneNumber" class="col col-form-label">Phone Number</label>
                             <div class="col-8">
                                 <input type="tel" class="form-control-plaintext" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
@@ -256,27 +281,27 @@
                     </div>
                     <div class="modal-body">
                         <form action="ReaderController" method="post">
-                            <div class="form-floating">
+                            <div class="mb-3">
                                 <label for="name" class="col-form-label">First Name</label>
                                 <input type="text" class="form-control" id="name" name="name" value="<%=user.getName()%>">
                             </div>
-                            <div class="form-floating">
+                            <div class="mb-3">
                                 <label for="surname" class="col-form-label">Last Name</label>
                                 <input type="text" class="form-control" id="surname" name="surname" value="<%=user.getSurname()%>">
                             </div>
-                            <div class="form-floating">
+                            <div class="mb-3">
                                 <label for="email" class="col-form-label">Email</label>
                                 <input type="email" class="form-control" id="email"name="email" value="<%=user.getEmail()%>">
                             </div>
-                            <div class="form-floating">
+                            <div class="mb-3">
                                 <label for="phoneNumber" class="col-form-label">Phone Number</label>
-                                <input type="number" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>">
+                                <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>">
                             </div>
-                            <div class="form-floating">
+                            <div class="mb-3">
                                 <label for="password" class="col-form-label">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Password..." maxlength="8" minlength="16">
                             </div>
-                            <div class="form-floating">
+                            <div class="mb-3">
                                 <label for="passwordRepeat" class="visually-hidden">Repeat-Password</label>
                                 <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." maxlength="8" minlength="16">
                             </div>
@@ -307,7 +332,7 @@
                     </div>
                     <div class="modal-body">
                         <form action="ApplicationController" method="post">
-                            <div class="form-floating">
+                            <div class="row mb-3">
                                 <textarea class="form-control" placeholder="Please enter your motivation to become a writer here..." name="motivation" id="motivation" style="height: 100px"></textarea>
                                 <label for="motivation" class="col-form-label">Motivation</label>
                             </div>
@@ -342,32 +367,32 @@
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Apply To Be A Writer</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <form action="MailController" method="post">
                     <div class="modal-body">
-                        <form action="MailController" method="post">
-                            <div class="form-floating">
-                                <label for="name" class="col-form-label">Name</label>
+                            <div class="row mb-3">
+                                <label for="name" class="col-form-label mb-3">Name</label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
-                            <div class="form-floating">
-                                <label for="email" class="col-form-label">Email</label>
+                            <div class="row mb-3">
+                                <label for="email" class="col-form-label mb-3">Email</label>
                                 <input type="email" class="form-control" id="email"name="email">
                             </div>
-                            <div class="form-floating">
-                                <label for="phoneNumber" class="col-form-label">Phone Number</label>
-                                <input type="number" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber">
+                            <div class="row mb-3">
+                                <label for="phoneNumber" class="col-form-label mb-3">Phone Number</label>
+                                <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber">
                             </div>
+                            <input type="hidden" name="currentPage" value="ReaderLandingPage.jsp">
                             <input type="hidden" name="submit" value="sendReferralEmail">
-                            <button type="submit" class="btn btn-primary mb-3">Send</button>
-                        </form>
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group" role="group">
-                            <button class="btn btn-primary" data-bs-target="#profileDetails" data-bs-toggle="modal">Profile Details</button>
+                            <button type="submit" class="btn btn-primary mb-3">Send</button>
                         </div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -33,7 +33,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 @WebServlet(name = "StoryController", urlPatterns = {"/StoryController"})
 @MultipartConfig(maxFileSize = 1024 * 1024 * 10)
@@ -193,8 +193,10 @@ public class StoryController extends HttpServlet {
 
             case "searchForGenreAndStories":
                 String searchValue = request.getParameter("searchValue");
-                request.setAttribute("storiesFromSearch", storyService.searchForStories(searchValue));
-                request.setAttribute("genresFromSearch", genreService.searchForGenres(searchValue));
+                if (isAlphaAndNumericOnly(searchValue)) {
+                    request.setAttribute("storiesFromSearch", storyService.searchForStories(searchValue));
+                    request.setAttribute("genresFromSearch", genreService.searchForGenres(searchValue));
+                }
                 request.setAttribute("searchValue", searchValue);
                 request.getRequestDispatcher("SearchResultsPage.jsp").forward(request, response);
                 break;
@@ -208,6 +210,11 @@ public class StoryController extends HttpServlet {
                 Story story = new Story();
                 story.setApproved(Boolean.TRUE);
                 story.setSubmitted(Boolean.TRUE);
+                if (request.getParameter("commentsEnabled") != null) {
+                    story.setCommentsEnabled(Boolean.TRUE);
+                } else {
+                    story.setCommentsEnabled(Boolean.FALSE);
+                }
                 System.out.println("Updating a story.");
                 Integer authorId = Integer.valueOf(request.getParameter("storyId"));
                 storyId = Integer.valueOf(request.getParameter("storyId"));
@@ -216,10 +223,12 @@ public class StoryController extends HttpServlet {
                 Part filePart = request.getPart("image");
                 if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
+                        String fileName = filePart.getSubmittedFileName();
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
                         Byte[] image = ArrayUtils.toObject(imageData);
                         story.setImage(image);
+                        story.setImageName(fileName.substring(fileName.indexOf(".")-1));
                     }
                 } else {
                     story.setImage(ArrayUtils.toObject(Base64.getDecoder().decode(request.getParameter("encodedImage"))));
@@ -310,13 +319,19 @@ public class StoryController extends HttpServlet {
                 } else {
                     System.out.println("Author was null.");
                 }
+                if (request.getParameter("commentsEnabled") != null) {
+                    story.setCommentsEnabled(Boolean.TRUE);
+                }
                 filePart = request.getPart("image");
                 if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
+                        
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
                         Byte[] image = ArrayUtils.toObject(imageData);
                         story.setImage(image);
+                        String fileName = filePart.getSubmittedFileName();
+                        story.setImageName(fileName.substring(fileName.indexOf(".")-1));
                     }
                 } else {
                     System.out.println("Image was null.");
@@ -352,26 +367,31 @@ public class StoryController extends HttpServlet {
                 request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
             case "updateEditedStoryFromWriter":
-                story = new Story();
                 String submitStory = request.getParameter("submitStory");
+                System.out.println("Updating a story.");
+                storyId = Integer.valueOf(request.getParameter("storyId"));
+                story = storyService.getStory(storyId);
                 if (submitStory.equals("Submit")) {
                     story.setSubmitted(Boolean.TRUE);
+                } else {
+                    story.setSubmitted(Boolean.FALSE);
                 }
-                System.out.println("Updating a story.");
-                authorId = Integer.valueOf(request.getParameter("storyId"));
-                storyId = Integer.valueOf(request.getParameter("storyId"));
-                story.setId(storyId);
-                story.setAuthorId(authorId);
+                if (request.getParameter("commentsEnabled") != null) {
+                    story.setCommentsEnabled(Boolean.TRUE);
+                } else {
+                    story.setCommentsEnabled(Boolean.FALSE);
+                }
                 filePart = request.getPart("image");
                 if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
+                        String fileName = filePart.getSubmittedFileName();
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
                         Byte[] image = ArrayUtils.toObject(imageData);
                         story.setImage(image);
+                        story.setImageName(fileName.substring(fileName.indexOf(".")-1));
                     }
                 } else {
-                    story.setImage(ArrayUtils.toObject(Base64.getDecoder().decode(request.getParameter("encodedImage"))));
                     System.out.println("Used original image for story.");
                 }
                 story.setTitle(request.getParameter("title"));
@@ -424,6 +444,16 @@ public class StoryController extends HttpServlet {
             default:
                 throw new AssertionError();
         }
+    }
+    
+    public Boolean isAlphaAndNumericOnly(String searchValue) {
+        Boolean alphaNumericOnly = true;
+        for (int i = 0; i < searchValue.length(); i++) {
+            if (!Character.isAlphabetic(searchValue.charAt(i)) && !Character.isDigit(searchValue.charAt(i))) {
+                alphaNumericOnly = false;
+            }
+        }
+        return alphaNumericOnly;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

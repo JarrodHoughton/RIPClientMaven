@@ -65,6 +65,7 @@
         <% 
             List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
            Boolean getTopPicksCalled = (Boolean) request.getAttribute("getTopPicksCalled");
+           String message = (String) request.getAttribute("message");
            if (getTopPicksCalled == null) {
                 getTopPicksCalled = false;
             }
@@ -76,7 +77,6 @@
         <% } %>
     </head>
     <body>
-
         <div id="navbar-container">
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -87,7 +87,7 @@
                         READERS ARE INNOVATORS
                     </a>
                     <div class="d-flex align-items-center">
-                        <form>
+                        <form action="StoryController" method="post">
                             <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue" required>
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
@@ -102,6 +102,15 @@
         </div>
 
         <div class="space"></div>
+        <%
+            if (message != null) {
+            %>
+            <div class="alert alert-primary mt-5" role="alert">
+                <h4 class="alert-heading"><%= message %></h4>
+            </div> 
+            <%
+                }
+            %>
         <div class="container mt-5">
             <!-- Spacing -->
             <h2 class="text-center book-title">Top 10 picks</h2>
@@ -111,16 +120,24 @@
                     for (Story story : topPicks) {
                 %>
                 <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                <div class="col">
+                    <div class="col">
                         <div class="card card-fixed">
-
+                            <%
+                                if (story.getImage()!=null) {
+                            %>
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-
+                            <%
+                                } else {
+                            %>
+                            <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                            <%
+                                }
+                            %>
                             <div class="card-body">
                                 <h5 class="card-title"><%=story.getTitle()%></h5>
                             </div>
                         </div>
-                </div>
+                    </div>
                 </a>
                 <%
                     }
@@ -129,39 +146,38 @@
             </div>
             <div class="other-space"></div>
         </div>
-            
+
         <!-- Modal Refer Friend Form -->
         <div class="modal fade" id="referFriend" aria-labelledby="referFriend" tabindex="-1" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Apply To Be A Writer</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <form action="MailController" method="post">
                     <div class="modal-body">
-                        <form action="MailController" method="post">
-                            <div class="form-floating">
-                                <label for="name" class="col-form-label">Name</label>
+                            <div class="row mb-3">
+                                <label for="name" class="col-form-label mb-3">Name</label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
-                            <div class="form-floating">
-                                <label for="email" class="col-form-label">Email</label>
+                            <div class="row mb-3">
+                                <label for="email" class="col-form-label mb-3">Email</label>
                                 <input type="email" class="form-control" id="email"name="email">
                             </div>
-                            <div class="form-floating">
-                                <label for="phoneNumber" class="col-form-label">Phone Number</label>
-                                <input type="number" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber">
+                            <div class="row mb-3">
+                                <label for="phoneNumber" class="col-form-label mb-3">Phone Number</label>
+                                <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber">
                             </div>
-                            <input type="hidden" name="submit" value="sendReferralEmail">
                             <input type="hidden" name="currentPage" value="index.jsp">
-                            <button type="submit" class="btn btn-primary mb-3">Send</button>
-                        </form>
+                            <input type="hidden" name="submit" value="sendReferralEmail">
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group" role="group">
-                            <button class="btn btn-primary" data-bs-target="#profileDetails" data-bs-toggle="modal">Profile Details</button>
+                            <button type="submit" class="btn btn-primary mb-3">Send</button>
                         </div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
