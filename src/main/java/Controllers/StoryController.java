@@ -216,7 +216,7 @@ public class StoryController extends HttpServlet {
                     story.setCommentsEnabled(Boolean.FALSE);
                 }
                 System.out.println("Updating a story.");
-                Integer authorId = Integer.valueOf(request.getParameter("storyId"));
+                Integer authorId = Integer.valueOf(request.getParameter("authorId"));
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story.setId(storyId);
                 story.setAuthorId(authorId);

@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 @WebServlet(name = "MailController", urlPatterns = {"/MailController"})
 public class MailController extends HttpServlet {

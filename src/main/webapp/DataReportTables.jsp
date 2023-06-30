@@ -56,10 +56,13 @@
         </nav>
         <div class="other-space"></div>
         <%
+            //check if user is logged in as an editor
             if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
                 List<Table> tables = (List<Table>) request.getAttribute("tables");
+                //check if tables is not null and has tables objs
                 if (tables != null && !tables.isEmpty()) {
                     List<String> tableNames = new ArrayList<>();
+                    //display all the tables in the list
                     for (Table table : tables) {
                         tableNames.add(table.getTableName());
                     }
