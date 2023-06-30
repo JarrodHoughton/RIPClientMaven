@@ -8,6 +8,8 @@ import Models.Application;
 import Models.Reader;
 import ServiceLayers.ApplicationService_Impl;
 import ServiceLayers.ApplicationService_Interface;
+import ServiceLayers.MailService_Impl;
+import ServiceLayers.MailService_Interface;
 import ServiceLayers.WriterService_Impl;
 import ServiceLayers.WriterService_Interface;
 import java.io.IOException;
@@ -17,6 +19,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -26,6 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ApplicationController extends HttpServlet {
     private ApplicationService_Interface applicationService;
     private WriterService_Interface writerService;
+    private MailService_Interface mailService;
     private Application application;
     private Reader reader;
     private Integer readerId;
@@ -33,6 +39,7 @@ public class ApplicationController extends HttpServlet {
     public ApplicationController() {
         this.applicationService = new ApplicationService_Impl();
         this.writerService = new WriterService_Impl();
+        this.mailService = new MailService_Impl();
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -42,16 +49,22 @@ public class ApplicationController extends HttpServlet {
                 request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
-            case "approveApplication":
-                readerId = Integer.valueOf(request.getParameter("readerId"));
-                String message = writerService.addWriter(readerId) + "<br>" + applicationService.deleteApplication(readerId);
+            case "approveApplications":
+                List<Integer> accountIds = new ArrayList<>();
+                for (String idString : request.getParameterValues("readerIds")) {
+                  accountIds.add(Integer.valueOf(idString));
+                }
+                String message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.TRUE);
                 request.setAttribute("message", message);
                 request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
-            case "rejectApplication":
-                readerId = Integer.valueOf(request.getParameter("readerId"));
-                message = applicationService.deleteApplication(readerId);
+            case "rejectApplications":
+                accountIds = new ArrayList<>();
+                for (String idString : request.getParameterValues("readerIds")) {
+                  accountIds.add(Integer.valueOf(idString));
+                }
+                message = applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.FALSE);
                 request.setAttribute("message", message);
                 request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
@@ -62,8 +75,10 @@ public class ApplicationController extends HttpServlet {
                 application = new Application();
                 application.setMotivation(motivation);
                 application.setReaderId(reader.getId());
+                application.setReaderName(reader.getName());
+                application.setReaderSurname(reader.getSurname());
                 request.setAttribute("message", applicationService.addApplication(application));                
-                request.getRequestDispatcher("Profile.jsp").forward(request, response);
+                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
             default:
                 throw new AssertionError();
         }

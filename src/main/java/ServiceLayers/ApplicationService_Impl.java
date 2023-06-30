@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 public class ApplicationService_Impl implements ApplicationService_Interface{
     private Client client;
@@ -62,6 +62,7 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(application)));
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong connecting to the server.";
         }
         return response.readEntity(String.class);
     }
@@ -71,6 +72,19 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
         String deleteApplicationUri = uri + "deleteApplication/{readerId}";
         webTarget = client.target(deleteApplicationUri).resolveTemplate("readerId", accountId);
         response = webTarget.request().get();
+        return response.readEntity(String.class);
+    }
+    
+    @Override
+    public String deleteApplications(List<Integer> accountIds) {
+        try {
+            String deleteApplicationsUri = uri + "deleteApplications";
+            webTarget = client.target(deleteApplicationsUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(accountIds)));
+        } catch (IOException ex) {
+            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong connecting to the server.";
+        }
         return response.readEntity(String.class);
     }
  

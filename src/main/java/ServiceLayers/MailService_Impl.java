@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,6 +44,7 @@ public class MailService_Impl implements MailService_Interface {
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(emailDetails)));
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong connecting to the server.";
         }
         return response.readEntity(String.class);
     }
@@ -55,6 +57,7 @@ public class MailService_Impl implements MailService_Interface {
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong connecting to the server.";
         }
         return response.readEntity(String.class);
     }
@@ -70,6 +73,35 @@ public class MailService_Impl implements MailService_Interface {
         referralDetails.put("recipientEmail", recipientEmail);
         referralDetails.put("recipientName", recipientName);
         webTarget = client.target(sendReferralEmailUri).resolveTemplates(referralDetails);
+        response = webTarget.request().get();
+        return response.readEntity(String.class);
+    }
+
+    @Override
+    public String notifyApprovedWriter(List<Integer> accountIds, Boolean approved) {
+        try {
+            String sendVerficationEmailUri = uri;
+            if (approved) {
+                sendVerficationEmailUri += "notifyApprovedWriters";
+            } else {
+                sendVerficationEmailUri += "notifyRejectedWriters";
+            }
+            webTarget = client.target(sendVerficationEmailUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(accountIds)));
+        } catch (IOException ex) {
+            Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong connecting to the server.";
+        }
+        return response.readEntity(String.class);
+    }
+
+    @Override
+    public String notifyWriterOfStorySubmission(Integer writerId, Boolean approved) {
+        String notifyUri = uri + "notifyWriterOfStorySubmission/{writerId}/{approved}";
+        HashMap<String, Object> notifDetails = new HashMap<>();
+        notifDetails.put("writerId", writerId);
+        notifDetails.put("approved", approved);
+        webTarget = client.target(notifyUri).resolveTemplates(notifDetails);
         response = webTarget.request().get();
         return response.readEntity(String.class);
     }

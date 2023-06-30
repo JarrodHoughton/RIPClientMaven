@@ -1,7 +1,7 @@
 <%-- 
     Document   : BlockWriters
     Created on : 26 Jun 2023, 17:40:49
-    Author     : jarro
+    Author     : Jarrod
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -25,6 +25,9 @@
                 align-items: center;
                 justify-content: center;
             }
+            .other-space{
+                margin-bottom: 100px;
+            }
         </style>
     </head>
     <body>
@@ -36,7 +39,7 @@
                 </a>
             </div>
         </nav>
-        <%  
+        <%
             Account user = (Account) request.getSession(false).getAttribute("user");
             String message = (String) request.getAttribute("message");
             List<Writer> writers = (List<Writer>) request.getAttribute("writers");
@@ -47,8 +50,9 @@
         <%
             if (message != null) {
         %>
+        <div class="other-space"></div>
         <div class="alert alert-success mt-5" role="alert">
-            <h4 class="alert-heading"><%= message %></h4>
+            <h4 class="alert-heading"><%= message%></h4>
         </div> 
         <%
             }
@@ -74,10 +78,10 @@
                                     <th>Submitted Stories</th>
                                 </tr>
                             </thead>
-                            <%
-                                    for (Writer writer:writers) {
-                            %>
                             <tbody>
+                                <%
+                                    for (Writer writer : writers) {
+                                %>
                                 <tr>
                                     <td>
                                         <input class="form-check-input me-1" type="checkbox" name="<%=writer.getId()%>" value="<%=writer.getId()%>" id="<%=writer.getId()%>">
@@ -89,10 +93,10 @@
                                     <td><%=writer.getPhoneNumber()%></td>
                                     <td><%=writer.getSubmittedStoryIds().size()%></td>
                                 </tr>
-                            </tbody>
-                            <%
+                                <%
                                     }
-                            %>
+                                %>
+                            </tbody>
                         </table>
                     </div>
                     <input type="hidden" id="id" name="submit" value="blockWriters">
@@ -101,7 +105,7 @@
             </div>
         </div>
         <%
-            } else {
+        } else {
         %>
         <div class="alert alert-info mt-5" role="alert">
             <h4 class="alert-heading">No writers are currently on the system.</h4>
@@ -110,7 +114,7 @@
             }
         %>
         <%
-            } else {
+        } else {
         %>
         <div class="alert alert-danger mt-5" role="alert">
             <h4 class="alert-heading">You are not currently logged in.</h4>

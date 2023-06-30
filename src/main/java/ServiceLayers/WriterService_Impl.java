@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 public class WriterService_Impl implements WriterService_Interface{
     private Client client;
@@ -95,6 +95,19 @@ public class WriterService_Impl implements WriterService_Interface{
         try {
             String blockWritersUri = uri + "blockWriters";
             webTarget = client.target(blockWritersUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(writerIds)));
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong connecting to server.";
+        }
+        return response.readEntity(String.class);
+    }
+    
+    @Override
+    public String addWriters(List<Integer> writerIds) {
+        try {
+            String addWritersUri = uri + "addWriters";
+            webTarget = client.target(addWritersUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(writerIds)));
         } catch (JsonProcessingException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
