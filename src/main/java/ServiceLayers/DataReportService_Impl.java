@@ -178,23 +178,37 @@ public class DataReportService_Impl implements DataReportService_Interface {
         return listOfStories;
     }
 
-    @Override
-    public Double getAverageRatingOfAStoryInATimePeriod(Integer storyId, String startDate, String endDate) {
-        String storyRatingUri = uri + "getStoryRatingByDate";
+@Override
+public Double getAverageRatingOfAStoryInATimePeriod(Integer storyId, String startDate, String endDate) {
+    String storyRatingUri = uri + "getStoryRatingByDate";
 
-        // Build the query parameters
-        UriBuilder uriBuilder = UriBuilder.fromUri(storyRatingUri)
-                .queryParam("startDate", startDate)
-                .queryParam("endDate", endDate)
-                .queryParam("storyId", storyId);
+    // Build the query parameters
+    UriBuilder uriBuilder = UriBuilder.fromUri(storyRatingUri)
+            .queryParam("startDate", startDate)
+            .queryParam("endDate", endDate)
+            .queryParam("storyId", storyId);
 
-        webTarget = client.target(uriBuilder);
+    webTarget = client.target(uriBuilder);
 
-        // Perform the HTTP GET request
-        response = webTarget.request().get();
+    // Perform the HTTP GET request
+    response = webTarget.request().get();
 
-        return response.readEntity(Double.class);
+    if (response.getStatus() == 200) {
+        String responseBody = response.readEntity(String.class);
+        try {
+            return Double.parseDouble(responseBody);
+        } catch (NumberFormatException e) {
+            // Handle the case when the response body cannot be parsed as a Double
+            // Log an error or throw an exception to handle the issue appropriately
+            return null; // or throw an exception
+        }
+    } else {
+        // Handle the case when the response has an error status
+        // Log an error or throw an exception to handle the issue appropriately
+        return null; // or throw an exception
     }
+}
+
 
     @Override
     public List<Writer> getTopWriters(Integer numberOfWriters) {
