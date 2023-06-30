@@ -71,7 +71,7 @@
         <div class="list-group">
             <a href="StoryController?submit=goToSelectStoriesToEdit" class="list-group-item list-group-item-action">Submitted Stories</a>
             <a href="ApplicationController?submit=getWriterApplications" class="list-group-item list-group-item-action">Writer Applications</a>
-            <a href="ApplicationController?submit=getWriterApplications" class="list-group-item list-group-item-action">Data Reports</a>
+            <a href="SelectReportData.jsp" class="list-group-item list-group-item-action">Data Reports</a>
             <a href="WriterController?submit=goToBlockWriterPage" class="list-group-item list-group-item-action">Manage Writers</a>
             <%
             if  (user != null && user.getUserType().equals("A")) {
@@ -148,15 +148,15 @@
                             </div>
                             <div class="mb-3">
                                 <label for="phoneNumber" class="col-form-label">Phone Number</label>
-                                <input type="number" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>">
+                                <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>">
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="col-form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." maxlength="8" minlength="16">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." maxlength="16" minlength="8">
                             </div>
                             <div class="mb-3">
                                 <label for="passwordRepeat" class="visually-hidden">Repeat-Password</label>
-                                <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." maxlength="8" minlength="16">
+                                <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." minlength="8" maxlength="16">
                             </div>
                             <input type="hidden" name="submit" value="updateEditorFromProfile">
                             <input type="hidden" name="currentPage" value="EditorLandingPage.jsp">

@@ -9,6 +9,8 @@ import ServiceLayers.StoryService_Impl;
 import ServiceLayers.StoryService_Interface;
 import ServiceLayers.LikeService_Impl;
 import ServiceLayers.LikeService_Interface;
+import ServiceLayers.MailService_Impl;
+import ServiceLayers.MailService_Interface;
 import ServiceLayers.RatingService_Impl;
 import ServiceLayers.RatingService_Interface;
 import ServiceLayers.ViewService_Impl;
@@ -23,12 +25,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
@@ -49,6 +47,7 @@ public class StoryController extends HttpServlet {
     private LikeService_Interface likeService;
     private RatingService_Interface ratingService;
     private ViewService_Interface viewService;
+    private MailService_Interface mailService;
     private String message;
     private Integer storyId;
 
@@ -59,6 +58,7 @@ public class StoryController extends HttpServlet {
         this.likeService = new LikeService_Impl();
         this.ratingService = new RatingService_Impl();
         this.viewService = new ViewService_Impl();
+        this.mailService = new MailService_Impl();
         this.reader = null;
         this.writer = null;
         this.editor = null;
@@ -220,6 +220,7 @@ public class StoryController extends HttpServlet {
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story.setId(storyId);
                 story.setAuthorId(authorId);
+                message = mailService.notifyWriterOfStorySubmission(authorId, Boolean.TRUE);
                 Part filePart = request.getPart("image");
                 if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
@@ -228,7 +229,7 @@ public class StoryController extends HttpServlet {
                         fis.read(imageData);
                         Byte[] image = ArrayUtils.toObject(imageData);
                         story.setImage(image);
-                        story.setImageName(fileName.substring(fileName.indexOf(".")-1));
+                        story.setImageName(fileName.substring(fileName.indexOf(".")));
                     }
                 } else {
                     story.setImage(ArrayUtils.toObject(Base64.getDecoder().decode(request.getParameter("encodedImage"))));
@@ -248,7 +249,7 @@ public class StoryController extends HttpServlet {
                 if (genreIds.isEmpty()) {
                     message = "Failed to update story: Please select genres for your story.";
                 } else {
-                    message = storyService.updateStory(story);
+                    message += "<br>" + storyService.updateStory(story);
                     System.out.println("Updated story.");
                 }
                 request.setAttribute("message", message);
@@ -261,7 +262,8 @@ public class StoryController extends HttpServlet {
                 story = storyService.getStory(storyId);
                 story.setApproved(Boolean.TRUE);
                 story.setRejected(Boolean.FALSE);
-                request.setAttribute("message", storyService.updateStory(story));
+                message = mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.TRUE) + "<br>" + storyService.updateStory(story);
+                request.setAttribute("message", message);
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
@@ -270,7 +272,8 @@ public class StoryController extends HttpServlet {
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story = storyService.getStory(storyId);
                 story.setRejected(Boolean.TRUE);
-                request.setAttribute("message", storyService.updateStory(story));
+                message = mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.FALSE);
+                request.setAttribute("message", message + "<br>" + storyService.updateStory(story));
                 request.setAttribute("submittedStories", storyService.getSubmittedStories());
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
@@ -283,7 +286,6 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "getStoriesForLandingPage":
-                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
                 request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
@@ -291,16 +293,12 @@ public class StoryController extends HttpServlet {
             case "getStoriesForReaderLandingPage":
                 request.setAttribute("getStoriesForReaderLandingPageCalled", Boolean.TRUE);
                 request.setAttribute("topPicks", storyService.getTopPicks());
-                request.setAttribute("recommendedStories", storyService.getRecommendations(reader.getFavouriteGenreIds()));
+                if (reader != null) {
+                    request.setAttribute("recommendedStories", storyService.getRecommendations(reader.getFavouriteGenreIds()));
+                }
                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                 break;
-
-            case "getTopPicksForTest":
-                request.setAttribute("getTopPicksCalled", Boolean.TRUE);
-                request.setAttribute("topPicks", storyService.getTopPicks());
-                request.getRequestDispatcher("ImageTestWebPage.jsp").forward(request, response);
-                break;
-
+                
             case "manageStories":
                 request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
                 request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
@@ -331,7 +329,7 @@ public class StoryController extends HttpServlet {
                         Byte[] image = ArrayUtils.toObject(imageData);
                         story.setImage(image);
                         String fileName = filePart.getSubmittedFileName();
-                        story.setImageName(fileName.substring(fileName.indexOf(".")-1));
+                        story.setImageName(fileName.substring(fileName.indexOf(".")));
                     }
                 } else {
                     System.out.println("Image was null.");
@@ -389,7 +387,7 @@ public class StoryController extends HttpServlet {
                         fis.read(imageData);
                         Byte[] image = ArrayUtils.toObject(imageData);
                         story.setImage(image);
-                        story.setImageName(fileName.substring(fileName.indexOf(".")-1));
+                        story.setImageName(fileName.substring(fileName.indexOf(".")));
                     }
                 } else {
                     System.out.println("Used original image for story.");

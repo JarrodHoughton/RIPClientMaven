@@ -203,6 +203,7 @@
                         <div class="rating-container">
                             <div class="rating-box">Rating: <%= story.getRating() %></div>
                             <div class="likes-box">Likes: <%= story.getLikeCount() %></div>
+                            <div class="row">Views: <%= story.getViewCount()%></div>
                         </div>
                         <%
                             if (reader!=null) {
@@ -243,7 +244,7 @@
                             }
                         %>
                         <%
-                            if (userViewedStory && story.getCommentsEnabled()) {
+                            if ((userViewedStory && story.getCommentsEnabled()) || story.getAuthorId()==reader.getId()) {
                         %>
                         <form action="StoryController" method="get">
                             <div>

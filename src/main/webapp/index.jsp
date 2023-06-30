@@ -64,12 +64,9 @@
 
         <% 
             List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
-           Boolean getTopPicksCalled = (Boolean) request.getAttribute("getTopPicksCalled");
            String message = (String) request.getAttribute("message");
-           if (getTopPicksCalled == null) {
-                getTopPicksCalled = false;
-            }
-   if (topPicks == null && !getTopPicksCalled) {
+           
+   if (topPicks == null) {
         %>
         <script>
             window.location.replace("StoryController?submit=getStoriesForLandingPage");

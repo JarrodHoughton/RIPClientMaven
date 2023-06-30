@@ -4,6 +4,8 @@
     Author     : faiza
 --%>
 
+<%@page import="org.apache.commons.lang3.ArrayUtils"%>
+<%@page import="java.util.Base64"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -12,13 +14,74 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Full Story Page</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
     </head>
+    <style>
+        .card-img-top-fixed {
+            width: 100%;
+            height: 400px; /* Adjust the height as per your requirement */
+            object-fit: cover;
+        }
+
+        .other-space{
+            margin-bottom: 100px;
+        }
+    </style>
     <body>
         <%
-            Story story = (Story) request.getAttribute("story");
+            Account user = (Account) request.getSession(false).getAttribute("user");
         %>
-        <h1><%=story.getTitle()%></h1>
-        <p><%=story.getContent()%></p>
-        
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/ReaderLandingPage.jsp">
+                    <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
+                    READERS ARE INNOVATORS
+                </a>
+                <div class="d-flex align-items-center">
+                    <%
+                        if (user != null && (user.getUserType().equals("W") || user.getUserType().equals("R"))) {
+                    %>
+                    <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
+                    <%
+                        }
+                    %>
+                </div>
+            </div>
+        </nav>
+        <%
+            Story story = (Story) request.getAttribute("story");
+            if (user != null && (user.getUserType().equals("W") || user.getUserType().equals("R"))) {
+        %>
+        <div class="other-space"></div>
+        <div class="container">
+            <div class="row mt-5">
+                <div class="col mt-5">
+                    <div class="card card-fixed border-light text-bg-dark bg-opacity-25">
+                        <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                        <div class="card-header">
+                            Full Story
+                        </div>
+                        <div class="card-body">
+                            <h1 class="card-title"><%=story.getTitle()%></h1>
+                            <p class="card-text"><%=story.getContent()%></p>
+                        </div>
+                        <div class="card-footer text-body-secondary">
+                            <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>" class="btn btn-primary">Back To Details Page</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%
+        } else {
+        %>
+        <div class="alert alert-primary mx-auto my-auto" role="alert">
+            <h4 class="alert-heading">You are currently not logged in.</h4>
+        </div>
+        <%
+            }
+        %>
     </body>
 </html>

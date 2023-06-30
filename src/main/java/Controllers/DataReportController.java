@@ -330,7 +330,7 @@ public class DataReportController extends HttpServlet {
     request.getRequestDispatcher("datareport.jsp").forward(request, response);
 
                 break;
-
+                
             default:
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
                 break;

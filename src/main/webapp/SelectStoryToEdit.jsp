@@ -16,6 +16,11 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <title>Edit Story</title>
     </head>
+    <style>
+        .other-space{
+            margin-bottom: 150px;
+        }
+    </style>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container">
@@ -30,6 +35,7 @@
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
             String message = (String) request.getAttribute("message");
         %>
+        <div class="other-space"></div>
         <div class="containermt-8">
             <div class="container mt-5">
                 <%
