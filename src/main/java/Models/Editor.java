@@ -8,7 +8,7 @@ import Models.Account;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 public class Editor extends Account{
     private Integer approvalCount;
@@ -21,6 +21,7 @@ public class Editor extends Account{
     public Editor() {
         super();
         super.setUserType("E");
+        this.approvalCount = 0;
     }
 
     public Integer getApprovalCount() {

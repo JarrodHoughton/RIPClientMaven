@@ -1,254 +1,282 @@
+<%@page import="Models.*"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.json.JSONArray" %>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Data Report</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
-    <style>
-        /* Custom CSS to fix the navbar position */
-        #navbar-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 9999;
-        }
-
-        #content-container {
-            padding-top: 80px; /* Adjust the padding value as needed */
-        }
-
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: #007bff;
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-        }
-
-        .card-fixed {
-            height: 400px;
-        }
-
-        .card-img-top-fixed {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-
-        .space {
-            margin-bottom: 100px;
-        }
-
-        .other-space {
-            margin-bottom: 40px;
-        }
-    </style>
-</head>
-
-<body>
-    <form action="DataReportController" method="post">
-        <div id="content-container1">
-            <input type="hidden" name="submit" value="showcharts">
-            <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
-            <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
-            <canvas id="dataChart1"></canvas>
-        </div>
-
-        <div id="content-container2">
-            <input type="hidden" name="submit" value="showcharts">
-            <input type="hidden" name="startDate" value="<%= LocalDate.now() %>">
-            <input type="hidden" name="endDate" value="<%= LocalDate.now() %>">
-            <canvas id="dataChart2"></canvas>
-        </div>
-
-        <div id="content-container3">
-            <label for="startDate1">Start Date:</label>
-            <input type="date" id="startDate1" name="startDate1" required>
-            <label for="endDate1">End Date:</label>
-            <input type="date" id="endDate1" name="endDate1" required>
-            <canvas id="dataChart3"></canvas>
-        </div>
-
-        <div id="content-container4">
-            <label for="startDate2">Start Date:</label>
-            <input type="date" id="startDate2" name="startDate2" required>
-            <label for="endDate2">End Date:</label>
-            <input type="date" id="endDate2" name="endDate2" required>
-            <canvas id="dataChart4"></canvas>
-        </div>
-
-        <div id="content-container5">
-            <label for="startDate3">Start Date:</label>
-            <input type="date" id="startDate3" name="startDate3" required>
-            <label for="endDate3">End Date:</label>
-            <input type="date" id="endDate3" name="endDate3">
-            <canvas id="dataChart5"></canvas>
-        </div>
-
-        <div id="content-container6">
-            <label for="startDate4">Start Date:</label>
-            <input type="date" id="startDate4" name="startDate4" required>
-            <label for="endDate4">End Date:</label>
-            <input type="date" id="endDate4" name="endDate4" required>
-            <canvas id="dataChart6"></canvas>
-        </div>
-
-        <input type="submit" value="Show Charts">
-    </form>
-
-    <script>
-        function generateChart(chartNumber, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle) {
-            var canvas = document.getElementById("dataChart" + chartNumber);
-            var ctx = canvas.getContext("2d");
-            var existingChart = Chart.getChart(ctx);
-
-            // Destroy the existing chart if it exists
-            if (existingChart) {
-                existingChart.destroy();
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Data Report</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <style>
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Custom CSS to fix the navbar position */
+            #navbar-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 9999;
             }
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: dataLabels,
-                    datasets: [{
-                        label: valueLabelString,
-                        data: dataValues,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: valueLabelString
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: dataLabelString
-                            }
+            .content-container {
+                padding-top: 80px; /* Adjust the padding value as needed */
+            }
+
+            .card {
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                transition: transform 0.3s;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                border-color: #007bff;
+                box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            }
+
+            .card-fixed {
+                height: 400px;
+            }
+
+            .card-img-top-fixed {
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+            }
+
+            .space {
+                margin-bottom: 100px;
+            }
+
+            .other-space {
+                margin-top: 50px;
+                margin-bottom: 50px;
+            }
+
+            .canvas {
+                width: 100%;
+                max-width: 600px;
+            }
+
+            .tableContainer {
+
+            }
+        </style>
+    </head>
+
+    <body>
+        <%
+            Account user = (Account) request.getSession(false).getAttribute("user");
+        %>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
+                    <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
+                    READERS ARE INNOVATORS
+                </a>
+                <div class="d-flex align-items-center">
+                    <%
+                        if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
+                    %>
+                    <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
+                    <%
                         }
+                    %>
+                </div>
+            </div>
+        </nav>
+        <div class="other-space"></div>
+        <%
+            if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
+        %>
+        <%
+            List<String> chartIds = (List<String>) request.getAttribute("chartIds");
+            List<String> chartTitles = (List<String>) request.getAttribute("chartTitles");
+            List<String> chartDataValuesAxisNames = (List<String>) request.getAttribute("chartDataValuesAxisNames");
+            List<String> chartDataLabelsAxisNames = (List<String>) request.getAttribute("chartDataLabelsAxisNames");
+            List<List<String>> chartDataLabels = (List<List<String>>) request.getAttribute("chartDataLabels");
+            List<List<String>> chartDataValues = (List<List<String>>) request.getAttribute("chartDataValues");
+            List<Table> tables = new ArrayList<>();
+        %>
+        <div class="container mt-5">
+            <h1>Data Report Charts</h1>
+        </div>
+        <%
+            for (int i = 0; i < chartIds.size(); i++) {
+        %>
+        <div class="container mt-5 mb-5">
+            <h4><%= chartTitles.get(i)%></h4>
+            <canvas class="canvas" id="<%= chartIds.get(i)%>"></canvas>
+        </div>
+        <%
+            }
+        %>
+
+        <script>
+            function generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle) {
+                console.log(chartId);
+                console.log(dataLabels);
+                console.log(dataValues);
+                console.log(dataLabelString);
+                console.log(valueLabelString);
+                console.log(chartTitle);
+
+                var canvas = document.getElementById(chartId);
+                var ctx = canvas.getContext("2d");
+//                var existingChart = Chart.getChart(ctx);
+
+                // Destroy the existing chart if it exists
+//                if (existingChart) {
+//                    existingChart.destroy();
+//                }
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: dataLabels,
+                        datasets: [{
+                                label: valueLabelString,
+                                data: dataValues,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
                     },
-                    plugins: {
-                        legend: {
-                            display: false
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: valueLabelString
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: dataLabelString
+                                }
+                            }
                         },
-                        title: {
-                            display: true,
-                            text: chartTitle,
-                            position: 'top',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: chartTitle,
+                                position: 'top',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
                             }
                         }
                     }
+                });
+            }
+
+            function downloadTables() {
+                var tables = document.getElementById("tablesContainer");
+                var printWindow = window.open('', '', 'left=0, top=0, width=800, height=500, toolbar=0, scrollbars=0, status=0');
+                printWindow.document.head.innerHTML = document.head.innerHTML;
+                printWindow.document.body.innerHTML = tables.innerHTML;
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+            }
+            <%
+                for (int i = 0; i < chartIds.size(); i++) {
+            %>
+            var dataLabels = <%= new JSONArray(chartDataLabels.get(i))%>;
+            var dataValues = <%= new JSONArray(chartDataValues.get(i))%>;
+            var dataLabelString = '<%= chartDataLabelsAxisNames.get(i)%>';
+            var valueLabelString = '<%= chartDataValuesAxisNames.get(i)%>';
+            var chartTitle = '<%= chartTitles.get(i)%>';
+            var chartId = '<%= chartIds.get(i)%>';
+            generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle);
+            <%
+                    //create the tables here:
+                    Table table = new Table();
+                    //Populate Table Title
+                    table.setTableName(chartTitles.get(i));
+                    //Populate Table Columns
+                    table.setColumns(List.of(chartDataLabelsAxisNames.get(i), chartDataValuesAxisNames.get(i)));
+                    //Populate Table Rows
+                    table.setData(List.of(chartDataLabels.get(i), chartDataValues.get(i)));
+                    table.setNumberOfRows(chartDataLabels.get(i).size());
+                    tables.add(table);
                 }
-            });
-        }
-    </script>
+            %>
+        </script>
+        <div class="container mt-5" id="tablesContainer">
+            <h1>Data Report Tables</h1>
+            <%
+                for (Table table : tables) {
+            %>
+            <h4><%= table.getTableName()%></h4>
+            <table class="table" id="<%= table.getTableName()%>">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                            <%
+                                for (String column : table.getColumns()) {
+                            %>
+                        <th><%= column%></th>
+                            <%
+                                }
+                            %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                        for (int i = 0; i < table.getNumberOfRows(); i++) {
 
-    <script>
-        var dataLabels1 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels1")) %>;
-        var dataValues1 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues1")) %>;
-        var dataLabelString1 = '<%= (String) request.getAttribute("dataLabelString1") %>';
-        var valueLabelString1 = '<%= (String) request.getAttribute("valueLabelString1") %>';
-        var chartTitle1 = '<%= (String) request.getAttribute("charttitle1") %>';
-        generateChart(1, dataLabels1, dataValues1, dataLabelString1, valueLabelString1, chartTitle1);
 
-        var dataLabels2 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels4")) %>;
-        var dataValues2 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues4")) %>;
-        var dataLabelString2 = '<%= (String) request.getAttribute("dataLabelString4") %>';
-        var valueLabelString2 = '<%= (String) request.getAttribute("valueLabelString4") %>';
-        var chartTitle2 = '<%= (String) request.getAttribute("charttitle4") %>';
-        generateChart(2, dataLabels2, dataValues2, dataLabelString2, valueLabelString2, chartTitle2);
-        
-                var dataLabels3 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels2")) %>;
-        var dataValues3 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues2")) %>;
-        var dataLabelString3 = '<%= (String) request.getAttribute("dataLabelString2") %>';
-        var valueLabelString3 = '<%= (String) request.getAttribute("valueLabelString2") %>';
-        var chartTitle3 = '<%= (String) request.getAttribute("charttitle2") %>';
-        generateChart(3, dataLabels3, dataValues3, dataLabelString3, valueLabelString3, chartTitle3);
-
-        var dataLabels4 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels3")) %>;
-        var dataValues4 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues3")) %>;
-        var dataLabelString4 = '<%= (String) request.getAttribute("dataLabelString3") %>';
-        var valueLabelString4 = '<%= (String) request.getAttribute("valueLabelString3") %>';
-        var chartTitle4 = '<%= (String) request.getAttribute("charttitle3") %>';
-        generateChart(4, dataLabels4, dataValues4, dataLabelString4, valueLabelString4, chartTitle4);
-
-        var dataLabels5 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels5")) %>;
-        var dataValues5 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues5")) %>;
-        var dataLabelString5 = '<%= (String) request.getAttribute("dataLabelString5") %>';
-        var valueLabelString5 = '<%= (String) request.getAttribute("valueLabelString5") %>';
-        var chartTitle5 = '<%= (String) request.getAttribute("charttitle5") %>';
-        generateChart(5, dataLabels5, dataValues5, dataLabelString5, valueLabelString5, chartTitle5);
-
-        var dataLabels6 = <%= new JSONArray((List<String>) request.getAttribute("dataLabels6")) %>;
-        var dataValues6 = <%= new JSONArray((List<Number>) request.getAttribute("dataValues6")) %>;
-        var dataLabelString6 = '<%= (String) request.getAttribute("dataLabelString6") %>';
-        var valueLabelString6 = '<%= (String) request.getAttribute("valueLabelString6") %>';
-        var chartTitle6 = '<%= (String) request.getAttribute("charttitle6") %>';
-        generateChart(6, dataLabels6, dataValues6, dataLabelString6, valueLabelString6, chartTitle6);
-
-        document.getElementById("startDate1").addEventListener("change", function () {
-            document.getElementById("content-container1").submit();
-        });
-        document.getElementById("endDate1").addEventListener("change", function () {
-            document.getElementById("content-container1").submit();
-        });
-
-        document.getElementById("startDate2").addEventListener("change", function () {
-            document.getElementById("content-container2").submit();
-        });
-        document.getElementById("endDate2").addEventListener("change", function () {
-            document.getElementById("content-container2").submit();
-        });
-
-        document.getElementById("startDate3").addEventListener("change", function () {
-            document.getElementById("content-container3").submit();
-        });
-        document.getElementById("endDate3").addEventListener("change", function () {
-            document.getElementById("content-container3").submit();
-        });
-
-        document.getElementById("startDate4").addEventListener("change", function () {
-            document.getElementById("content-container4").submit();
-        });
-        document.getElementById("endDate4").addEventListener("change", function () {
-            document.getElementById("content-container4").submit();
-        });
-
-        document.getElementById("startDate5").addEventListener("change", function () {
-            document.getElementById("content-container5").submit();
-        });
-        document.getElementById("endDate5").addEventListener("change", function () {
-            document.getElementById("content-container5").submit();
-        });
-
-        document.getElementById("startDate6").addEventListener("change", function () {
-            document.getElementById("content-container6").submit();
-        });
-        document.getElementById("endDate6").addEventListener("change", function () {
-            document.getElementById("content-container6").submit();
-        });
-    </script>
-</body>
+                    %>
+                    <tr>
+                        <td><%=(i + 1)%></td>
+                        <%
+                            for (List<String> columnData : table.getData()) {
+                        %>
+                        <td><%= columnData.get(i)%></td>
+                        <%
+                            }
+                        %>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </tbody>
+            </table>
+            <%
+                }
+            %>
+        </div>
+        <div class="mb-3 mt-4">
+            <button type="button" id="printTables" class="btn btn-primary btn-lg" onclick="downloadTables()">Download PDF</button>
+        </div>
+        <%
+        } else {
+        %>
+        <div class="alert alert-primary mx-auto my-auto" role="alert">
+            <h4 class="alert-heading">You are not currently logged in.</h4>
+        </div> 
+        <%
+            }
+        %>
+    </body>
 </html>

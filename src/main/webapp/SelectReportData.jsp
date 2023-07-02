@@ -16,6 +16,18 @@
         <title>Data Report</title>
     </head>
     <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
         .other-space{
             margin-bottom: 100px;
         }
@@ -41,7 +53,7 @@
                 </div>
             </div>
         </nav>
-        <div class="otheer-space"></div>
+        <div class="other-space"></div>
         <%
             if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
         %>
@@ -53,19 +65,19 @@
                     <div class="col-auto">
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOption" class="form-check-input" type="checkbox" value="" id="mostViewed">
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostViewedStories" id="mostViewedStories">
                                 <label class="form-check-label" for="mostViewed">
                                     Top 10 Most Viewed Stories
                                 </label>
                             </div>
                             <label class="form-label" for="startDate">Start Date</label>
-                            <input class="form-control" type="date" id="startDate" name="startDate4">
+                            <input class="form-control" type="date" id="startDate" name="startDate">
                             <label class="form-label" for="endDate">End Date</label>
-                            <input class="form-control" type="date" id="endDate" name="endDate4">
+                            <input class="form-control" type="date" id="endDate" name="endDate">
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOption" class="form-check-input" type="checkbox" value="" id="mostRated" >
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostRatedStories" id="mostRatedStories" >
                                 <label class="form-check-label" for="mostRated">
                                     Top 20 Most Rated Stories Of The Month
                                 </label>
@@ -73,7 +85,7 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOption" class="form-check-input" type="checkbox" value="" id="mostLiked" >
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories" >
                                 <label class="form-check-label" for="mostLiked">
                                     Top 20 Most Liked Stories
                                 </label>
@@ -96,7 +108,7 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOption" class="form-check-input" type="checkbox" value="" id="topGenres" >
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="topGenres" id="topGenres" >
                                 <label class="form-check-label" for="topGenres">
                                     Top 3 Genres Of The Month
                                 </label>
@@ -104,17 +116,17 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOption" class="form-check-input" type="checkbox" value="" id="topWriters">
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="topWriters" id="topWriters">
                                 <label class="form-check-label" for="topWriters">
-                                    Top 30 Writers(Based on views)
+                                    Top 30 Writers Of All Time(Based on views)
                                 </label>
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOption" class="form-check-input" type="checkbox" value="" id="topEditors">
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="topEditors" id="topEditors">
                                 <label class="form-check-label" for="topEditors">
-                                    Top 3 Editors
+                                    Top 3 Editors Of All Time
                                 </label>
                             </div>
                         </div>

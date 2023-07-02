@@ -13,13 +13,13 @@ import java.util.List;
 public class Table {
     private String tableName;
     private List<String> columns;
-    private List<List<Object>> data;
+    private List<List<String>> data;
     private Integer numberOfRows;
     
     public Table() {
     }
 
-    public Table(String tableName, Integer numberOfRows,List<String> columns, List<List<Object>> data) {
+    public Table(String tableName, Integer numberOfRows,List<String> columns, List<List<String>> data) {
         this.tableName = tableName;
         this.columns = columns;
         this.data = data;
@@ -34,11 +34,11 @@ public class Table {
         this.columns = headers;
     }
 
-    public List<List<Object>> getData() {
+    public List<List<String>> getData() {
         return data;
     }
 
-    public void setData(List<List<Object>> data) {
+    public void setData(List<List<String>> data) {
         this.data = data;
     }
 

@@ -22,7 +22,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "DataReportController", urlPatterns = {
     "/DataReportController"
@@ -37,83 +39,78 @@ public class DataReportController extends HttpServlet {
         this.editorService = new EditorService_Impl();
     }
 
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         String submitAction = request.getParameter("submit");
-        if (submitAction == null) {
-            // Handle the case when no submit parameter is provided
-            // You can choose to redirect or show an error message
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");
-            return;
-        }
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         switch (submitAction) {
             case "showcharts":
+                LocalDate startDate;
+                LocalDate endDate;
+                LocalDateTime startDateTime;
+                LocalDateTime endDateTime;
+                List<String> chartIds = new ArrayList<>();
+                List<String> chartTitles = new ArrayList<>();
+                List<String> chartDataValuesAxisNames = new ArrayList<>();
+                List<String> chartDataLabelsAxisNames = new ArrayList<>();
+                List<List<String>> chartDataLabels = new ArrayList<>();
+                List<List<String>> chartDataValues = new ArrayList<>();
+
+                String[] reportSelectionArray = request.getParameterValues("reportOptions");
+                List<String> reportSelection = Arrays.asList(reportSelectionArray);
+
+                System.out.println("Report Selection: " + reportSelection);
+
                 // Getting the editors with the most approvals
-                Integer numberOfEditors = 3;
-                String dataLabel1 = "Name of editor";
-                String valueLabel1 = "Number of approvals";
-                String titleLabel1 = "The editors with the most approvals";
-                List < Editor > listOfEditors = dataReportService.getTopEditors(numberOfEditors);
+                if (reportSelection.contains("topEditors")) {
+                    chartIds.add("topEditorsChart");
+                    chartDataLabelsAxisNames.add("Name of editor");
+                    chartDataValuesAxisNames.add("Number of approvals");
+                    chartTitles.add("The editors with the most approvals");
 
-                if (listOfEditors == null) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "No editors found");
-                    return;
-                }
+                    Integer numberOfEditors = 3;
+                    List<Editor> listOfEditors = dataReportService.getTopEditors(numberOfEditors);
 
-                List < String > editorNames = new ArrayList < > ();
-                List < Integer > listOfNumberOfApprovals = new ArrayList < > ();
+                    List<String> editorNames = new ArrayList<>();
+                    List<String> topEditorApprovalCounts = new ArrayList<>();
 
-                for (Editor topEditor: listOfEditors) {
-                    editorNames.add(topEditor.getName());
-                    listOfNumberOfApprovals.add(topEditor.getApprovalCount());
-                }
-
-                request.setAttribute("dataLabels1", editorNames);
-                request.setAttribute("dataValues1", listOfNumberOfApprovals);
-                request.setAttribute("dataLabelString1", dataLabel1);
-                request.setAttribute("valueLabelString1", valueLabel1);
-                request.setAttribute("charttitle1", titleLabel1);
-
-                // Getting the stories with the most likes
-                Integer numberOfStories = 20;
-                String dataLabel2 = "Story";
-                String valueLabel2 = "Number of likes";
-                String titleLabel2 = "The most liked stories";
-                String startDateParam1 = request.getParameter("startDate1");
-                String endDateParam1 = request.getParameter("endDate1");
-
-                List<Story> listOfStories;
-                List<String> storyTitles;
-                List<Integer> listOfNumberOfStoryLikes;
-
-                if (startDateParam1 == null || endDateParam1 == null || startDateParam1.isEmpty()
-                        || endDateParam1.isEmpty()) {
-                    listOfStories = new ArrayList<>();
-                    storyTitles = new ArrayList<>();
-                    listOfNumberOfStoryLikes = new ArrayList<>();
-                } else {
-                    LocalDate startDate1 = null;
-                    LocalDate endDate1 = null;
-
-                    try {
-                        startDate1 = LocalDate.parse(startDateParam1);
-                        endDate1 = LocalDate.parse(endDateParam1);
-                    } catch (DateTimeParseException e) {
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid date format");
-                        return;
+                    if (listOfEditors == null) {
+                        listOfEditors = new ArrayList<>();
                     }
 
-                    LocalDateTime startDateTime1 = startDate1.atStartOfDay();
-                    LocalDateTime endDateTime1 = endDate1.atTime(23, 59, 59);
+                    for (Editor topEditor : listOfEditors) {
+                        editorNames.add(topEditor.getName());
+                        topEditorApprovalCounts.add(String.valueOf(topEditor.getApprovalCount()));
+                    }
+                    chartDataLabels.add(editorNames);
+                    chartDataValues.add(topEditorApprovalCounts);
+                }
 
-                    String formattedStartDate1 = startDateTime1.format(outputFormatter);
-                    String formattedEndDate1 = endDateTime1.format(outputFormatter);
+                // Getting the stories with the most likes
+                if (reportSelection.contains("mostLikedStories")) {
+                    //get the month selected
+                    Integer monthSelected = Integer.valueOf(request.getParameter("monthOfMostLikedStories"));
 
-                    listOfStories = dataReportService.getMostLikedStories(numberOfStories, formattedStartDate1,
-                            formattedEndDate1);
+                    //get the appropriate start and end date of that month
+                    startDate = LocalDate.of(LocalDate.now().getYear(), monthSelected, 1);
+                    endDate = LocalDate.of(LocalDate.now().getYear(), monthSelected, LocalDate.now().withMonth(monthSelected).lengthOfMonth());
+
+                    startDateTime = startDate.atTime(0, 0, 0);
+                    endDateTime = endDate.atTime(23, 59, 59);
+                    Integer numberOfStories = 20;
+
+                    //
+                    chartIds.add("mostLikedStoriesChart");
+                    chartDataLabelsAxisNames.add("Story");
+                    chartDataValuesAxisNames.add("Number of likes");
+                    chartTitles.add("The most liked stories");
+
+                    List<Story> listOfStories;
+                    List<String> storyTitles;
+                    List<String> listOfNumberOfStoryLikes;
+
+                    listOfStories = dataReportService.getMostLikedStories(numberOfStories, startDateTime.format(outputFormatter), endDateTime.format(outputFormatter));
 
                     if (listOfStories == null) {
                         listOfStories = new ArrayList<>();
@@ -124,228 +121,191 @@ public class DataReportController extends HttpServlet {
 
                     for (Story topStory : listOfStories) {
                         storyTitles.add(topStory.getTitle());
-                        listOfNumberOfStoryLikes.add(dataReportService.getStoryLikesByDate(topStory.getId(),
-                                formattedStartDate1, formattedEndDate1));
+                        listOfNumberOfStoryLikes.add(String.valueOf(dataReportService.getStoryLikesByDate(topStory.getId(),
+                                startDateTime.format(outputFormatter), endDateTime.format(outputFormatter))));
                     }
+
+                    chartDataLabels.add(storyTitles);
+                    chartDataValues.add(listOfNumberOfStoryLikes);
                 }
 
-                request.setAttribute("dataLabels2", storyTitles);
-                request.setAttribute("dataValues2", listOfNumberOfStoryLikes);
-                request.setAttribute("dataLabelString2", dataLabel2);
-                request.setAttribute("valueLabelString2", valueLabel2);
-                request.setAttribute("charttitle2", titleLabel2);
+                //Getting the top rated stories
+                if (reportSelection.contains("mostRatedStories")) {
+                    Integer numberOfTopRatedStories = 20;
 
+                    chartIds.add("mostRatedStoriesChart");
+                    chartDataLabelsAxisNames.add("Story");
+                    chartDataValuesAxisNames.add("Average rating");
+                    chartTitles.add("Top rated stories");
 
-    //Getting the top rated stories
-    Integer numberOfTopRatedStories = 20;
-    String dataLabel3 = "Story";
-    String valueLabel3 = "Average rating";
-    String titleLabel3 = "Top rated stories";
-    String startDateParam2 = request.getParameter("startDate2");
-    String endDateParam2 = request.getParameter("endDate2");
+                    List<Story> listOfTopRatedStories;
+                    List<String> topRatedStoryTitles = new ArrayList<>();
+                    List<String> listOfAverageRatings = new ArrayList<>();
 
-    List<Story> listOfTopRatedStories;
-    List<String> topRatedStoryTitles;
-    List<Double> listOfAverageRatings = new ArrayList<>();
+                    startDate = LocalDate.now().withDayOfMonth(1);
+                    endDate = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
 
-    if (startDateParam2 == null || endDateParam2 == null || startDateParam2.isEmpty()
-            || endDateParam2.isEmpty()) {
-        listOfTopRatedStories = new ArrayList<>();
-        topRatedStoryTitles = new ArrayList<>();
-    } else {
-        LocalDate startDate2 = null;
-        LocalDate endDate2 = null;
+                    startDateTime = startDate.atStartOfDay();
+                    endDateTime = endDate.atTime(23, 59, 59);
 
-        try {
-            startDate2 = LocalDate.parse(startDateParam2);
-            endDate2 = LocalDate.parse(endDateParam2);
-        } catch (DateTimeParseException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid date format");
-            return;
-        }
+                    listOfTopRatedStories = dataReportService.getTopHighestRatedStoriesInTimePeriod(startDateTime.format(outputFormatter), endDateTime.format(outputFormatter), numberOfTopRatedStories);
 
-        LocalDateTime startDateTime2 = startDate2.atStartOfDay();
-        LocalDateTime endDateTime2 = endDate2.atTime(23, 59, 59);
-        String formattedStartDate2 = startDateTime2.format(outputFormatter);
-        String formattedEndDate2 = endDateTime2.format(outputFormatter);
+                    if (listOfTopRatedStories == null) {
+                        listOfTopRatedStories = new ArrayList<>();
+                    }
 
-        listOfTopRatedStories = dataReportService.getTopHighestRatedStoriesInTimePeriod(formattedStartDate2, formattedEndDate2,numberOfTopRatedStories);
+                    for (Story topRatedStory : listOfTopRatedStories) {
+                        topRatedStoryTitles.add(topRatedStory.getTitle());
+                        listOfAverageRatings.add(String.valueOf(dataReportService.getAverageRatingOfAStoryInATimePeriod(topRatedStory.getId(), startDateTime.format(outputFormatter), endDateTime.format(outputFormatter))));
 
-        if (listOfTopRatedStories == null) {
-            listOfTopRatedStories = new ArrayList<>();
-        }
+                    }
 
-        topRatedStoryTitles = new ArrayList<>();
-       
-
-        for (Story topRatedStory : listOfTopRatedStories) {
-            topRatedStoryTitles.add(topRatedStory.getTitle());
-            listOfAverageRatings.add(dataReportService.getAverageRatingOfAStoryInATimePeriod(topRatedStory.getId(), startDateParam2, endDateParam2));
-
-        }
-    }
-
-    request.setAttribute("dataLabels3", topRatedStoryTitles);
-    request.setAttribute("dataValues3", listOfAverageRatings);
-    request.setAttribute("dataLabelString3", dataLabel3);
-    request.setAttribute("valueLabelString3", valueLabel3);
-    request.setAttribute("charttitle3", titleLabel3);
-
-   //Getting the top writers
-                Integer numberOfTopWriters = 30;
-                String dataLabel4 = "Writer";
-                String valueLabel4 = "Number of views";
-                String titleLabel4 = "The top writers";
-
-                List < Writer > listOfTopWriters = dataReportService.getTopWriters(numberOfTopWriters);
-
-                if (listOfTopWriters == null) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "No writers found");
-                    return;
+                    chartDataLabels.add(topRatedStoryTitles);
+                    chartDataValues.add(listOfAverageRatings);
                 }
 
-                List < String > writerNames = new ArrayList < > ();
-                List < Integer > listOfNumberOfStories = new ArrayList < > ();
+                //Getting the top writers
+                if (reportSelection.contains("topWriters")) {
+                    Integer numberOfTopWriters = 30;
+                    chartIds.add("topWritersChart");
+                    chartDataLabelsAxisNames.add("Writer");
+                    chartDataValuesAxisNames.add("Number of views");
+                    chartTitles.add("The top writers");
 
-                for (Writer topWriter: listOfTopWriters) {
-                    writerNames.add(topWriter.getName());
-                    listOfNumberOfStories.add(dataReportService.getTotalViewsByWriterId(topWriter.getId()));
+                    List< Writer> listOfTopWriters = dataReportService.getTopWriters(numberOfTopWriters);
+
+                    if (listOfTopWriters == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "No writers found");
+                        return;
+                    }
+
+                    List<String> writerNames = new ArrayList<>();
+                    List<String> listOfNumberOfStories = new ArrayList<>();
+
+                    for (Writer topWriter : listOfTopWriters) {
+                        writerNames.add(topWriter.getName());
+                        listOfNumberOfStories.add(String.valueOf(dataReportService.getTotalViewsByWriterId(topWriter.getId())));
+                    }
+
+                    chartDataLabels.add(writerNames);
+                    chartDataValues.add(listOfNumberOfStories);
                 }
-
-                request.setAttribute("dataLabels4", writerNames);
-                request.setAttribute("dataValues4", listOfNumberOfStories);
-                request.setAttribute("dataLabelString4", dataLabel4);
-                request.setAttribute("valueLabelString4", valueLabel4);
-                request.setAttribute("charttitle4", titleLabel4);
 
                 //Getting the top genres
-    Integer numberOfTopGenres = 3;
-    String dataLabel5 = "Genre";
-    String valueLabel5 = "Number of views";
-    String titleLabel5 = "The top genres";
-    String startDateParam3 = request.getParameter("startDate3");
-    String endDateParam3 = request.getParameter("endDate3");
+                if (reportSelection.contains("topGenres")) {
+                    Integer numberOfTopGenres = 3;
 
-    List<Genre> listOfTopGenres;
-    List<String> genreNames;
-    List<Integer> listOfNumberOfGenreViews;
+                    chartIds.add("topGenresChart");
+                    chartDataLabelsAxisNames.add("Genre");
+                    chartDataValuesAxisNames.add("Number of views");
+                    chartTitles.add("The top genres");
 
-    if (startDateParam3 == null || endDateParam3 == null || startDateParam3.isEmpty()
-            || endDateParam3.isEmpty()) {
-        listOfTopGenres = new ArrayList<>();
-        genreNames = new ArrayList<>();
-        listOfNumberOfGenreViews = new ArrayList<>();
-    } else {
-        LocalDate startDate3 = null;
-        LocalDate endDate3 = null;
+                    List<Genre> listOfTopGenres;
+                    List<String> genreNames;
+                    List<String> listOfNumberOfGenreViews;
 
-        try {
-            startDate3 = LocalDate.parse(startDateParam3);
-            endDate3 = LocalDate.parse(endDateParam3);
-        } catch (DateTimeParseException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid date format");
-            return;
-        }
+                    startDate = LocalDate.now().withDayOfMonth(1);
+                    endDate = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
 
-        LocalDateTime startDateTime3 = startDate3.atStartOfDay();
-        LocalDateTime endDateTime3 = endDate3.atTime(23, 59, 59);
-        String formattedStartDate3 = startDateTime3.format(outputFormatter);
-        String formattedEndDate3 = endDateTime3.format(outputFormatter);
+                    startDateTime = startDate.atStartOfDay();
+                    endDateTime = endDate.atTime(23, 59, 59);
 
-        listOfTopGenres = dataReportService.getTopGenres(formattedStartDate3, formattedEndDate3, numberOfTopGenres);
+                    listOfTopGenres = dataReportService.getTopGenres(startDateTime.format(outputFormatter), endDateTime.format(outputFormatter), numberOfTopGenres);
 
-        if (listOfTopGenres == null) {
-            listOfTopGenres = new ArrayList<>();
-        }
+                    if (listOfTopGenres == null) {
+                        listOfTopGenres = new ArrayList<>();
+                    }
 
-        genreNames = new ArrayList<>();
-        listOfNumberOfGenreViews = new ArrayList<>();
+                    genreNames = new ArrayList<>();
+                    listOfNumberOfGenreViews = new ArrayList<>();
 
-        for (Genre topGenre : listOfTopGenres) {
-            genreNames.add(topGenre.getName());
-            listOfNumberOfGenreViews.add(dataReportService.getGenreViewsByDate(formattedStartDate3, formattedEndDate3, topGenre.getId()));
-        }
-    }
+                    for (Genre topGenre : listOfTopGenres) {
+                        genreNames.add(topGenre.getName());
+                        listOfNumberOfGenreViews.add(String.valueOf(dataReportService.getGenreViewsByDate(startDateTime.format(outputFormatter), endDateTime.format(outputFormatter), topGenre.getId())));
+                    }
 
-    request.setAttribute("dataLabels5", genreNames);
-    request.setAttribute("dataValues5", listOfNumberOfGenreViews);
-    request.setAttribute("dataLabelString5", dataLabel5);
-    request.setAttribute("valueLabelString5", valueLabel5);
-    request.setAttribute("charttitle5", titleLabel5);
+                    chartDataLabels.add(genreNames);
+                    chartDataValues.add(listOfNumberOfGenreViews);
+                }
 
-                //Getting the most viewed stories
-    Integer numberOfStoriess = 10;
-    String dataLabel6 = "Story";
-    String valueLabel6 = "Number of views";
-    String titleLabel6 = "The most viewed stories";
-    String startDateParam4 = request.getParameter("startDate4");
-    String endDateParam4 = request.getParameter("endDate4");
+                if (reportSelection.contains("mostViewedStories")) {
+                    //Getting the most viewed stories
+                    Integer numberOfStoriess = 10;
+                    String startDateString = request.getParameter("startDate");
+                    String endDateString = request.getParameter("endDate");
 
-    List<Story> listOfStoriess;
-    List<String> storyTitless;
-    List<Integer> listOfNumberOfStoryViews;
+                    chartIds.add("mostViewedStoriesChart");
+                    chartDataLabelsAxisNames.add("Story");
+                    chartDataValuesAxisNames.add("Number of views");
+                    chartTitles.add("The most viewed stories");
 
-    if (startDateParam4 == null || endDateParam4 == null || startDateParam4.isEmpty()
-            || endDateParam4.isEmpty()) {
-        listOfStoriess = new ArrayList<>();
-        storyTitless = new ArrayList<>();
-        listOfNumberOfStoryViews = new ArrayList<>();
-    } else {
-        LocalDate startDate4 = null;
-        LocalDate endDate4 = null;
+                    startDate = null;
+                    endDate = null;
 
-        try {
-            startDate4 = LocalDate.parse(startDateParam4);
-            endDate4 = LocalDate.parse(endDateParam4);
-        } catch (DateTimeParseException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid date format");
-            return;
-        }
+                    try {
+                        startDate = LocalDate.parse(startDateString);
+                        endDate = LocalDate.parse(endDateString);
+                    } catch (DateTimeParseException e) {
+                        Logger.getLogger(DataReportController.class.getName()).log(Level.SEVERE, "Error occurred while checking if the view is already added", e);
+                        return;
+                    }
 
-        LocalDateTime startDateTime4 = startDate4.atStartOfDay();
-        LocalDateTime endDateTime4 = endDate4.atTime(23, 59, 59);
-        String formattedStartDate4 = startDateTime4.format(outputFormatter);
-        String formattedEndDate4 = endDateTime4.format(outputFormatter);
+                    startDateTime = startDate.atStartOfDay();
+                    endDateTime = endDate.atTime(23, 59, 59);
 
-        listOfStories = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, formattedStartDate4, formattedEndDate4);
+                    List<Story> listOfStories = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, startDateTime.format(outputFormatter), endDateTime.format(outputFormatter));
+                    List<String> storyTitless;
+                    List<String> listOfNumberOfStoryViews;
 
-        if (listOfStories == null) {
-            listOfStories = new ArrayList<>();
-        }
+                    if (listOfStories == null) {
+                        listOfStories = new ArrayList<>();
+                    }
 
-        storyTitless = new ArrayList<>();
-        listOfNumberOfStoryViews = new ArrayList<>();
+                    storyTitless = new ArrayList<>();
+                    listOfNumberOfStoryViews = new ArrayList<>();
 
-        for (Story topStory : listOfStories) {
-            storyTitless.add(topStory.getTitle());
-            listOfNumberOfStoryViews.add(dataReportService.getTheViewsOnAStoryInATimePeriod(topStory.getId(), formattedStartDate4, formattedEndDate4));
-        }
-    }
+                    for (Story topStory : listOfStories) {
+                        storyTitless.add(topStory.getTitle());
+                        listOfNumberOfStoryViews.add(String.valueOf(dataReportService.getTheViewsOnAStoryInATimePeriod(topStory.getId(), startDateTime.format(outputFormatter), endDateTime.format(outputFormatter))));
+                    }
 
-    request.setAttribute("dataLabels6", storyTitles);
-    request.setAttribute("dataValues6", listOfNumberOfStoryViews);
-    request.setAttribute("dataLabelString6", dataLabel6);
-    request.setAttribute("valueLabelString6", valueLabel6);
-    request.setAttribute("charttitle6", titleLabel6);
-    request.getRequestDispatcher("datareport.jsp").forward(request, response);
+                    chartDataLabels.add(storyTitless);
+                    chartDataValues.add(listOfNumberOfStoryViews);
+                }
 
-                break;
-                
-            default:
+                System.out.println(chartIds);
+                System.out.println(chartTitles);
+                System.out.println(chartDataValuesAxisNames);
+                System.out.println(chartDataLabelsAxisNames);
+                System.out.println(chartDataLabels);
+                System.out.println(chartDataValues);
+
+                request.setAttribute("chartIds", chartIds);
+                request.setAttribute("chartTitles", chartTitles);
+                request.setAttribute("chartDataValuesAxisNames", chartDataValuesAxisNames);
+                request.setAttribute("chartDataLabelsAxisNames", chartDataLabelsAxisNames);
+                request.setAttribute("chartDataLabels", chartDataLabels);
+                request.setAttribute("chartDataValues", chartDataValues);
                 request.getRequestDispatcher("datareport.jsp").forward(request, response);
                 break;
+            case "goToDataReportTables":
+
+                break;
+            default:
+                request.getRequestDispatcher("datareport.jsp").forward(request, response);
         }
+
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
