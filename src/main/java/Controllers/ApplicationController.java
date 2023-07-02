@@ -29,6 +29,7 @@ import java.util.List;
  */
 @WebServlet(name = "ApplicationController", urlPatterns = {"/ApplicationController"})
 public class ApplicationController extends HttpServlet {
+
     private ApplicationService_Interface applicationService;
     private WriterService_Interface writerService;
     private MailService_Interface mailService;
@@ -41,7 +42,7 @@ public class ApplicationController extends HttpServlet {
         this.writerService = new WriterService_Impl();
         this.mailService = new MailService_Impl();
     }
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         switch (request.getParameter("submit")) {
@@ -51,21 +52,30 @@ public class ApplicationController extends HttpServlet {
                 break;
             case "approveApplications":
                 List<Integer> accountIds = new ArrayList<>();
-                for (String idString : request.getParameterValues("readerIds")) {
-                  accountIds.add(Integer.valueOf(idString));
+                String[] readerIdsStrings = request.getParameterValues("readerIds");
+                String message = "No applications have been selected.";
+                if (readerIdsStrings != null) {
+                    for (String idString : readerIdsStrings) {
+                        accountIds.add(Integer.valueOf(idString));
+                    }
+                    message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.TRUE);
+
                 }
-                String message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.TRUE);
                 request.setAttribute("message", message);
                 request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
             case "rejectApplications":
                 accountIds = new ArrayList<>();
-                for (String idString : request.getParameterValues("readerIds")) {
-                  accountIds.add(Integer.valueOf(idString));
-                }
-                message = applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.FALSE);
-                request.setAttribute("message", message);
+                readerIdsStrings = request.getParameterValues("readerIds");
+                message = "No applications have been selected.";
+                if (readerIdsStrings != null) {
+                    for (String idString : readerIdsStrings) {
+                        accountIds.add(Integer.valueOf(idString));
+                    }
+                    message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.TRUE);
+
+                }request.setAttribute("message", message);
                 request.setAttribute("applications", applicationService.getApplications());
                 request.getRequestDispatcher("ApproveWriterPage.jsp").forward(request, response);
                 break;
@@ -77,7 +87,7 @@ public class ApplicationController extends HttpServlet {
                 application.setReaderId(reader.getId());
                 application.setReaderName(reader.getName());
                 application.setReaderSurname(reader.getSurname());
-                request.setAttribute("message", applicationService.addApplication(application));                
+                request.setAttribute("message", applicationService.addApplication(application));
                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
             default:
                 throw new AssertionError();

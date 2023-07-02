@@ -122,11 +122,17 @@
                 %>
             </div>
         <div class="btn-group">
-                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId %>&genreName=<%= genreName %>&offset=<%= (offset+offsetAmount) %>">Next</a>
                 <%
                     if (offset!=null && offset>0) {
                 %>
                 <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId %>&genreName=<%= genreName %>&offset=<%= (offset-offsetAmount) %>">Previous</a>
+                <%
+                    }
+                %>
+                <%
+                    if (storiesInGenre.size()==offsetAmount) {
+                %>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId %>&genreName=<%= genreName %>&offset=<%= (offset+offsetAmount) %>">Next</a>
                 <%
                     }
                 %>

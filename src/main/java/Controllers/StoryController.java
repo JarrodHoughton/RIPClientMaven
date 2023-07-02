@@ -193,15 +193,17 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, 0));
                 request.setAttribute("genreName", genreName);
                 request.setAttribute("genreId", genreId);
+                request.setAttribute("offset", 0);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
             case "nextPageOfStoriesInGenre":
-                Integer offset = Integer.valueOf(request.getParameter("Offset"));
+                Integer offset = Integer.valueOf(request.getParameter("offset"));
                 genreId = Integer.valueOf(request.getParameter("genreId"));
                 genreName = request.getParameter("genreName");
                 request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, offset));
                 request.setAttribute("genreName", genreName);
                 request.setAttribute("offset", offset);
+                request.setAttribute("genreId", genreId);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
             case "searchForGenreAndStories":
@@ -464,7 +466,7 @@ public class StoryController extends HttpServlet {
     public Boolean isAlphaAndNumericOnly(String searchValue) {
         Boolean alphaNumericOnly = true;
         for (int i = 0; i < searchValue.length(); i++) {
-            if (!Character.isAlphabetic(searchValue.charAt(i)) && !Character.isDigit(searchValue.charAt(i))) {
+            if (!Character.isAlphabetic(searchValue.charAt(i)) && !Character.isDigit(searchValue.charAt(i)) && !Character.isWhitespace(searchValue.charAt(i))) {
                 alphaNumericOnly = false;
             }
         }

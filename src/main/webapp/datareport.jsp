@@ -228,7 +228,7 @@
                 for (Table table : tables) {
             %>
             <h4><%= table.getTableName()%></h4>
-            <table class="table" id="<%= table.getTableName()%>">
+            <table class="table mt-3 mb-3" id="<%= table.getTableName()%>">
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
