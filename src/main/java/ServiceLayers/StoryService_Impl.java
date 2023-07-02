@@ -17,7 +17,10 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,11 +68,17 @@ public class StoryService_Impl implements StoryService_Interface {
     }
 
     @Override
-    public List<Story> getStoriesInGenre(Integer genreId) {
+    public List<Story> getStoriesInGenre(Integer genreId, Integer numberOfStories, Integer offset) {
         List<Story> stories = null;
         try {
-            String getStoriesInGenreUri = uri + "getStoriesInGenre/{genreId}";
-            webTarget = client.target(getStoriesInGenreUri).resolveTemplate("genreId", genreId);
+            String getStoriesInGenrePath = uri + "getStoriesInGenre";
+            // Build the query parameters
+            URI getStoriesInGenreUri = UriBuilder.fromPath(getStoriesInGenrePath)
+                .queryParam("genreId", genreId)
+                .queryParam("numberOfStories", numberOfStories)
+                .queryParam("offset", offset)
+                .build();
+            webTarget = client.target(getStoriesInGenreUri);
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,11 +137,14 @@ public class StoryService_Impl implements StoryService_Interface {
     }
     
     @Override
-    public List<Story> getSubmittedStories() {
+    public List<Story> getSubmittedStories(Integer numberOfStories, Integer offset) {
         List<Story> submittedStories = null;
         try {
-            String getSubmittedStoriesUri = uri + "getSubmittedStories";
-            webTarget = client.target(getSubmittedStoriesUri);
+            String getSubmittedStoriesUri = uri + "getSubmittedStories/{numberOfStories}/{offset}";
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("numberOfStories", numberOfStories);
+            params.put("offset", offset);
+            webTarget = client.target(getSubmittedStoriesUri).resolveTemplates(params);
             submittedStories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.ALL, null, ex);

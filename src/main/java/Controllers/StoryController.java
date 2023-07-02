@@ -186,7 +186,7 @@ public class StoryController extends HttpServlet {
             case "viewAllStoriesInGenre":
                 Integer genreId = Integer.valueOf(request.getParameter("genreId"));
                 String genreName = request.getParameter("genreName");
-                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId));
+                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, 0));
                 request.setAttribute("genreName", genreName);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
@@ -202,7 +202,7 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "goToSelectStoriesToEdit":
-                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.setAttribute("submittedStories", storyService.getSubmittedStories(20, 0));
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
 
@@ -253,7 +253,7 @@ public class StoryController extends HttpServlet {
                     System.out.println("Updated story.");
                 }
                 request.setAttribute("message", message);
-                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.setAttribute("submittedStories", storyService.getSubmittedStories(20, 0));
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
 
@@ -264,7 +264,7 @@ public class StoryController extends HttpServlet {
                 story.setRejected(Boolean.FALSE);
                 message = mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.TRUE) + "<br>" + storyService.updateStory(story);
                 request.setAttribute("message", message);
-                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.setAttribute("submittedStories", storyService.getSubmittedStories(20, 0));
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
 
@@ -274,7 +274,7 @@ public class StoryController extends HttpServlet {
                 story.setRejected(Boolean.TRUE);
                 message = mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.FALSE);
                 request.setAttribute("message", message + "<br>" + storyService.updateStory(story));
-                request.setAttribute("submittedStories", storyService.getSubmittedStories());
+                request.setAttribute("submittedStories", storyService.getSubmittedStories(20, 0));
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
                 break;
 
