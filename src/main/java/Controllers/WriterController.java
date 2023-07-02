@@ -6,6 +6,8 @@ package Controllers;
 
 import Models.Genre;
 import Models.Writer;
+import ServiceLayers.MailService_Impl;
+import ServiceLayers.MailService_Interface;
 import ServiceLayers.WriterService_Impl;
 import ServiceLayers.WriterService_Interface;
 import java.io.IOException;
@@ -24,7 +26,7 @@ import java.util.List;
  */
 @WebServlet(name = "WriterController", urlPatterns = {"/WriterController"})
 public class WriterController extends HttpServlet {
-
+    private MailService_Interface mailService;
     private WriterService_Interface writerService;
     private Integer writerId;
     private Writer writer;
@@ -32,6 +34,7 @@ public class WriterController extends HttpServlet {
 
     public WriterController() {
         this.writerService = new WriterService_Impl();
+        this.mailService = new MailService_Impl();
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

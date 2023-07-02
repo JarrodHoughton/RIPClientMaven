@@ -60,9 +60,12 @@
         </style>
     </head>
     <body>
-        <% 
+        <%
+            Integer offsetAmount = 20;
+            Integer offset = (Integer) request.getAttribute("offset");
             List<Story> storiesInGenre = (List<Story>) request.getAttribute("storiesInGenre");
             String genreName = (String) request.getAttribute("genreName");
+            Integer genreId = (Integer) request.getAttribute("genreId");
         %>
         <div id="navbar-container">
             <!-- Navbar -->
@@ -98,11 +101,11 @@
                     <div class="col">
                         <div class="card card-fixed">
                             <%
-                                if (story.getImage()!=null) {
+                                if (story.getImage() != null) {
                             %>
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
                             <%
-                                } else {
+                            } else {
                             %>
                             <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
                             <%
@@ -114,17 +117,27 @@
                         </div>
                     </div>
                 </a>
-                <% 
-                        }
+                <%
+                    }
                 %>
             </div>
+        <div class="btn-group">
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId %>&genreName=<%= genreName %>&offset=<%= (offset+offsetAmount) %>">Next</a>
+                <%
+                    if (offset!=null && offset>0) {
+                %>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId %>&genreName=<%= genreName %>&offset=<%= (offset-offsetAmount) %>">Previous</a>
+                <%
+                    }
+                %>
+        </div>
             <div class="other-space"></div>
         </div>
         <%
-            } else {
+        } else {
         %>
         <h3>No stories found in genre: "<%=genreName%>"</h3>
-        <% 
+        <%
             }
         %>
     </body>

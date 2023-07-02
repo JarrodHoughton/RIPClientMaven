@@ -192,10 +192,17 @@ public class StoryController extends HttpServlet {
                 String genreName = request.getParameter("genreName");
                 request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, 0));
                 request.setAttribute("genreName", genreName);
+                request.setAttribute("genreId", genreId);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
             case "nextPageOfStoriesInGenre":
-                
+                Integer offset = Integer.valueOf(request.getParameter("Offset"));
+                genreId = Integer.valueOf(request.getParameter("genreId"));
+                genreName = request.getParameter("genreName");
+                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, offset));
+                request.setAttribute("genreName", genreName);
+                request.setAttribute("offset", offset);
+                request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
             case "searchForGenreAndStories":
                 String searchValue = request.getParameter("searchValue");

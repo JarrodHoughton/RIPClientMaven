@@ -54,6 +54,7 @@ public class LoginController extends HttpServlet {
                 user.setEmail(request.getParameter("email"));
                 user.setPasswordHash(request.getParameter("password"));
                 HashMap<String, String> details = loginService.getUserSalt(user.getEmail());
+                System.out.println(details);
                 String message = "Login Credentials Invalid: password was incorrect.";
                 if (Boolean.parseBoolean(details.get("userFound"))&&Boolean.parseBoolean(details.get("userVerified"))) {
                     switch (details.get("userType")) {
