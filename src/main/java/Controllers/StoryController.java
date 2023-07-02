@@ -3,6 +3,8 @@ package Controllers;
 import Models.*;
 import ServiceLayers.CommentService_Impl;
 import ServiceLayers.CommentService_Interface;
+import ServiceLayers.EditorService_Impl;
+import ServiceLayers.EditorService_Interface;
 import ServiceLayers.GenreService_Impl;
 import ServiceLayers.GenreService_Interface;
 import ServiceLayers.StoryService_Impl;
@@ -48,6 +50,7 @@ public class StoryController extends HttpServlet {
     private RatingService_Interface ratingService;
     private ViewService_Interface viewService;
     private MailService_Interface mailService;
+    private EditorService_Interface editorService;
     private String message;
     private Integer storyId;
 
@@ -59,6 +62,7 @@ public class StoryController extends HttpServlet {
         this.ratingService = new RatingService_Impl();
         this.viewService = new ViewService_Impl();
         this.mailService = new MailService_Impl();
+        this.editorService = new EditorService_Impl();
         this.reader = null;
         this.writer = null;
         this.editor = null;
@@ -190,7 +194,9 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("genreName", genreName);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
-
+            case "nextPageOfStoriesInGenre":
+                
+                break;
             case "searchForGenreAndStories":
                 String searchValue = request.getParameter("searchValue");
                 if (isAlphaAndNumericOnly(searchValue)) {
@@ -207,6 +213,8 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "approveEditedStoryFromEditor":
+                editor.setApprovalCount(editor.getApprovalCount()+1);
+                message = editorService.updateEditor(editor);
                 Story story = new Story();
                 story.setApproved(Boolean.TRUE);
                 story.setSubmitted(Boolean.TRUE);
@@ -220,7 +228,7 @@ public class StoryController extends HttpServlet {
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story.setId(storyId);
                 story.setAuthorId(authorId);
-                message = mailService.notifyWriterOfStorySubmission(authorId, Boolean.TRUE);
+                message += mailService.notifyWriterOfStorySubmission(authorId, Boolean.TRUE);
                 Part filePart = request.getPart("image");
                 if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
@@ -247,7 +255,7 @@ public class StoryController extends HttpServlet {
                 }
                 story.setGenreIds(genreIds);
                 if (genreIds.isEmpty()) {
-                    message = "Failed to update story: Please select genres for your story.";
+                    message += "<br>Failed to update story: Please select genres for your story.";
                 } else {
                     message += "<br>" + storyService.updateStory(story);
                     System.out.println("Updated story.");
@@ -258,11 +266,13 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "submitStoryFromSelectStoryToEditPage":
+                editor.setApprovalCount(editor.getApprovalCount()+1);
+                message = editorService.updateEditor(editor);
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story = storyService.getStory(storyId);
                 story.setApproved(Boolean.TRUE);
                 story.setRejected(Boolean.FALSE);
-                message = mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.TRUE) + "<br>" + storyService.updateStory(story);
+                message += mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.TRUE) + "<br>" + storyService.updateStory(story);
                 request.setAttribute("message", message);
                 request.setAttribute("submittedStories", storyService.getSubmittedStories(20, 0));
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
