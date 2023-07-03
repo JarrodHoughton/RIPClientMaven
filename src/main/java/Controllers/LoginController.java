@@ -134,12 +134,12 @@ public class LoginController extends HttpServlet {
                             request.setAttribute("message", "Something went wrong logging in.");
                             request.getRequestDispatcher("login.jsp").forward(request, response);
                     }
-                } else if(!Boolean.parseBoolean(details.get("userVerified"))) {
-                    message = "Please verify your account.";
+                } else if(!Boolean.parseBoolean(details.get("userFound"))) {
+                    message = "Login Credentials Invalid: Email not found.";
                     request.setAttribute("message", message);
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                 } else {
-                    message = "Login Credentials Invalid: Email not found.";
+                    message = "Please verify your account.";
                     request.setAttribute("message", message);
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                 }

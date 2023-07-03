@@ -15,7 +15,10 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,12 +51,25 @@ public class WriterService_Impl implements WriterService_Interface{
     }
 
     @Override
-    public List<Writer> getAllWriters() {
+    public List<Writer> getWriters(Integer numberOfWriters, Integer currentId, Boolean next) {
         List<Writer> writers = null;
-        String getAllWritersUri = uri + "getAllWriters";
+        String getwriterPath = uri + "getWriters";
         try {
-            webTarget = client.target(getAllWritersUri);
-            writers = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Writer>>(){});
+            // Build the query parameters
+            URI getwriterUri = UriBuilder.fromPath(getwriterPath)
+                .queryParam("currentId", currentId)
+                .queryParam("numberOfWriters", numberOfWriters)
+                .queryParam("next", next)
+                .build();
+            webTarget = client.target(getwriterUri);
+            response = webTarget.request().get();
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                return null;
+            }
+            String responseStr = response.readEntity(String.class);
+            if (responseStr != null) {
+                writers = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
+            }
         } catch (IOException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -118,5 +134,33 @@ public class WriterService_Impl implements WriterService_Interface{
     
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
+    }
+
+    @Override
+    public List<Writer> searchForWriters(String searchValue, Integer numberOfWriters, Integer currentId, Boolean next) {
+        List<Writer> writers = null;
+        String searchForWritersPath = uri + "searchForWriters";
+        try {
+            // Build the query parameters
+            URI searchForWritersUri = UriBuilder.fromPath(searchForWritersPath)
+                .queryParam("searchValue", searchValue)
+                .queryParam("numberOfWriters", numberOfWriters)
+                .queryParam("currentId", currentId)
+                .queryParam("next", String.valueOf(next))
+                .build();
+            webTarget = client.target(searchForWritersUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).get();
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                return null;
+            }
+            String responseStr = response.readEntity(String.class);
+            if (responseStr != null && !responseStr.isEmpty()) {
+                writers = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        return writers;
     }
 }

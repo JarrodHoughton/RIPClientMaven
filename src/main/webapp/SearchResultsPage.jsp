@@ -42,7 +42,7 @@
             .card-fixed {
                 height: 400px; /* Adjust the height as per your requirement */
             }
-            
+
             .card-genre {
                 height: 100px; /* Adjust the height as per your requirement */
             }
@@ -64,9 +64,9 @@
         </style>
     </head>
     <body>
-        <% 
+        <%
             Account user = null;
-            if  (request.getSession(false) != null) {
+            if (request.getSession(false) != null) {
                 user = (Account) request.getSession(false).getAttribute("user");
             }
             String homePageUrl = "http://localhost:8080/RIPClientMaven/";
@@ -78,6 +78,8 @@
             List<Genre> genresFromSearch = (List<Genre>) request.getAttribute("genresFromSearch");
             List<Story> storiesFromSearch = (List<Story>) request.getAttribute("storiesFromSearch");
             String searchValue = (String) request.getAttribute("searchValue");
+            Integer pageNumber = (Integer) request.getAttribute("pageNumber");
+            Integer offsetAmount = 20;
         %>
         <div id="navbar-container">
             <!-- Navbar -->
@@ -110,14 +112,14 @@
                     for (Story story : storiesFromSearch) {
                 %>
                 <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                <div class="col">
+                    <div class="col">
                         <div class="card card-fixed">
                             <%
-                                if (story.getImage()!=null) {
+                                if (story.getImage() != null) {
                             %>
                             <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
                             <%
-                                } else {
+                            } else {
                             %>
                             <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
                             <%
@@ -127,18 +129,41 @@
                                 <h5 class="card-title"><%=story.getTitle()%></h5>
                             </div>
                         </div>
-                </div>
+                    </div>
                 </a>
-                <% 
-                        }
+                <%
+                    }
                 %>
             </div>
             <div class="other-space"></div>
+            <div class="btn-group mt-5 mb-5 mx-auto">
+                <%
+                    if (pageNumber != null && pageNumber > 0) {
+                %>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
+                <%
+                    }
+                %>
+                <%
+                    if (storiesFromSearch.size() == offsetAmount) {
+                %>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber+1)%>&currentId=<%=storiesFromSearch.get(storiesFromSearch.size()-1).getId()%>&next=true">Next</a>
+                <%
+                    }
+                %>
+            </div>
+        </div>
+        <%
+            } else if (pageNumber > 0) {
+        %>
+        <h4>No more results found for "<%=searchValue%>".</h4>
+        <div class="btn-group mt-5 mb-5 mx-auto">
+            <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
         </div>
         <%
             }
         %>
-        
+
         <%
             if (genresFromSearch != null && !genresFromSearch.isEmpty()) {
         %>
@@ -157,8 +182,8 @@
                         </div>
                     </div>
                 </div>
-                <% 
-                        }
+                <%
+                    }
                 %>
             </div>
             <div class="other-space"></div>
@@ -167,7 +192,7 @@
             }
         %>
         <%
-            if (storiesFromSearch == null && genresFromSearch == null) {
+            if (storiesFromSearch == null && genresFromSearch == null && pageNumber == 0) {
         %>
         <h4>No results found for "<%=searchValue%>".</h4>
         <%

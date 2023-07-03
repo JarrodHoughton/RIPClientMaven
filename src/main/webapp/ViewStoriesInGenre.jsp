@@ -62,7 +62,7 @@
     <body>
         <%
             Integer offsetAmount = 20;
-            Integer offset = (Integer) request.getAttribute("offset");
+            Integer pageNumber = (Integer) request.getAttribute("pageNumber");
             List<Story> storiesInGenre = (List<Story>) request.getAttribute("storiesInGenre");
             String genreName = (String) request.getAttribute("genreName");
             Integer genreId = (Integer) request.getAttribute("genreId");
@@ -121,24 +121,31 @@
                     }
                 %>
             </div>
-        <div class="btn-group">
+            <div class="btn-group mt-5 mb-5 mx-auto">
                 <%
-                    if (offset!=null && offset>0) {
+                    if (pageNumber != null && pageNumber > 0) {
                 %>
-                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId %>&genreName=<%= genreName %>&offset=<%= (offset-offsetAmount) %>">Previous</a>
-                <%
-                    }
-                %>
-                <%
-                    if (storiesInGenre.size()==offsetAmount) {
-                %>
-                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId %>&genreName=<%= genreName %>&offset=<%= (offset+offsetAmount) %>">Next</a>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId%>&genreName=<%=genreName%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesInGenre.get(0).getId()%>&next=false">Previous</a>
                 <%
                     }
                 %>
-        </div>
+                <%
+                    if (storiesInGenre.size() == offsetAmount) {
+                %>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId%>&genreName=<%=genreName%>&pageNumber=<%=(pageNumber+1)%>&currentId=<%=storiesInGenre.get(storiesInGenre.size()-1).getId()%>&next=true">Next</a>
+                <%
+                    }
+                %>
+            </div>
             <div class="other-space"></div>
         </div>
+        <%
+            } else if (pageNumber > 0) {
+        %>
+        <h4>No more results found for "<%=genreName%>".</h4>
+        <div class="btn-group mt-5 mb-5 mx-auto">
+            <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStoriesInGenre&genreId=<%= genreId%>&genreName=<%= genreName%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesInGenre.get(0).getId()%>&next=false">Previous</a>
+        </div>  
         <%
         } else {
         %>

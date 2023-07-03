@@ -17,6 +17,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.StatusType;
 import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
@@ -68,7 +69,7 @@ public class StoryService_Impl implements StoryService_Interface {
     }
 
     @Override
-    public List<Story> getStoriesInGenre(Integer genreId, Integer numberOfStories, Integer offset) {
+    public List<Story> getStoriesInGenre(Integer genreId, Integer numberOfStories, Integer currentId, Boolean next) {
         List<Story> stories = null;
         try {
             String getStoriesInGenrePath = uri + "getStoriesInGenre";
@@ -76,10 +77,18 @@ public class StoryService_Impl implements StoryService_Interface {
             URI getStoriesInGenreUri = UriBuilder.fromPath(getStoriesInGenrePath)
                 .queryParam("genreId", genreId)
                 .queryParam("numberOfStories", numberOfStories)
-                .queryParam("offset", offset)
+                .queryParam("currentId", currentId)
+                    .queryParam("next", String.valueOf(next))
                 .build();
             webTarget = client.target(getStoriesInGenreUri);
-            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+            response = webTarget.request(MediaType.APPLICATION_JSON).get();
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                return null;
+            }
+            String responseString = response.readEntity(String.class);
+            if (responseString!=null) {
+                stories = mapper.readValue(responseString, new TypeReference<List<Story>>() {});
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -127,7 +136,6 @@ public class StoryService_Impl implements StoryService_Interface {
         try {
             String getTopPicksUri = uri + "getTopPicks";
             webTarget = client.target(getTopPicksUri);
-            Logger.getLogger("CALLING GET TOP PICKS");
             stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -154,12 +162,24 @@ public class StoryService_Impl implements StoryService_Interface {
     }
     
     @Override
-    public List<Story> searchForStories(String searchValue) {
+    public List<Story> searchForStories(String searchValue, Integer numberOfStories, Integer currentId, Boolean next) {
         List<Story> stories = null;
         try {
-            String searchForStoriesUri = uri + "searchForStories/{searchValue}";
-            webTarget = client.target(searchForStoriesUri).resolveTemplate("searchValue", searchValue);
-            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+            String searchForStoriesPath = uri + "searchForStories";// Build the query parameters
+            URI searchForStoriesUri = UriBuilder.fromPath(searchForStoriesPath)
+                    .queryParam("searchValue", searchValue)
+                    .queryParam("numberOfStories", numberOfStories)
+                    .queryParam("currentId", currentId)
+                    .queryParam("next", String.valueOf(next))
+                    .build();
+            webTarget = client.target(searchForStoriesUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).get();
+            if (response.getStatus()==Response.Status.OK.getStatusCode()) {
+                stories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {});
+            } else {
+                Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, "Failed to retrieve stories from search. Response status: {0}", response.getStatus());
+                return null;
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;

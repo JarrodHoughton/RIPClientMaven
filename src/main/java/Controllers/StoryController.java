@@ -190,28 +190,41 @@ public class StoryController extends HttpServlet {
             case "viewAllStoriesInGenre":
                 Integer genreId = Integer.valueOf(request.getParameter("genreId"));
                 String genreName = request.getParameter("genreName");
-                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, 0));
+                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, 0, true));
                 request.setAttribute("genreName", genreName);
                 request.setAttribute("genreId", genreId);
-                request.setAttribute("offset", 0);
+                request.setAttribute("pageNumber", 0);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
             case "nextPageOfStoriesInGenre":
-                Integer offset = Integer.valueOf(request.getParameter("offset"));
+                Boolean nextValues = Boolean.valueOf(request.getParameter("next"));
                 genreId = Integer.valueOf(request.getParameter("genreId"));
                 genreName = request.getParameter("genreName");
-                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, offset));
+                Integer pageNumber = Integer.valueOf(request.getParameter("pageNumber"));
+                Integer currentId = Integer.valueOf(request.getParameter("currentId"));
+                request.setAttribute("storiesInGenre", storyService.getStoriesInGenre(genreId, 20, currentId, nextValues));
                 request.setAttribute("genreName", genreName);
-                request.setAttribute("offset", offset);
                 request.setAttribute("genreId", genreId);
+                request.setAttribute("pageNumber", pageNumber);
                 request.getRequestDispatcher("ViewStoriesInGenre.jsp").forward(request, response);
                 break;
-            case "searchForGenreAndStories":
+            case "nextPageOfStorySearchResults":
+                nextValues = Boolean.valueOf(request.getParameter("next"));
                 String searchValue = request.getParameter("searchValue");
+                pageNumber = Integer.valueOf(request.getParameter("pageNumber"));
+                currentId = Integer.valueOf(request.getParameter("currentId"));
+                request.setAttribute("storiesFromSearch", storyService.searchForStories(searchValue, 20, currentId, nextValues));
+                request.setAttribute("searchValue", searchValue);
+                request.setAttribute("pageNumber", pageNumber);
+                request.getRequestDispatcher("SearchResultsPage.jsp").forward(request, response);
+                break;
+            case "searchForGenreAndStories":
+                searchValue = request.getParameter("searchValue");
                 if (isAlphaAndNumericOnly(searchValue)) {
-                    request.setAttribute("storiesFromSearch", storyService.searchForStories(searchValue));
+                    request.setAttribute("storiesFromSearch", storyService.searchForStories(searchValue, 20, 0, true));
                     request.setAttribute("genresFromSearch", genreService.searchForGenres(searchValue));
                 }
+                request.setAttribute("pageNumber", 0);
                 request.setAttribute("searchValue", searchValue);
                 request.getRequestDispatcher("SearchResultsPage.jsp").forward(request, response);
                 break;

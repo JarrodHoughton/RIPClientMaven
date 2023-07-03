@@ -26,6 +26,7 @@ import java.util.List;
  */
 @WebServlet(name = "WriterController", urlPatterns = {"/WriterController"})
 public class WriterController extends HttpServlet {
+    private final Integer WRITER_AMOUNT = 10;
     private MailService_Interface mailService;
     private WriterService_Interface writerService;
     private Integer writerId;
@@ -41,24 +42,51 @@ public class WriterController extends HttpServlet {
             throws ServletException, IOException {
         switch (request.getParameter("submit")) {
             case "goToBlockWriterPage":
-                request.setAttribute("writers", writerService.getAllWriters());
+                request.setAttribute("pageNumber", 0);
+                request.setAttribute("writers", writerService.getWriters(WRITER_AMOUNT, 0, true));
                 request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
                 break;
             case "blockWriters":
-                List<Writer> writers = writerService.getAllWriters();
                 List<Integer> writerIds = new ArrayList<>();
-                for (Writer writer : writers) {
-                    if (request.getParameter(String.valueOf(writer.getId())) != null) {
-                        writerIds.add(writer.getId());
-                    }
+                String[] writerIdStrings = request.getParameterValues("writerIds");
+                for (String writerIdStr : writerIdStrings) {
+                    writerIds.add(Integer.valueOf(writerIdStr));
                 }
                 if (writerIds.isEmpty()) {
                     message = "No writers were selected.";
                 } else {
                     message = writerService.blockWriters(writerIds);
+                    message += "<br>" + mailService.notifyBlockedWriters(writerIds);
                 }
-                request.setAttribute("writers", writerService.getAllWriters());
+                request.setAttribute("pageNumber", 0);
+                request.setAttribute("writers", writerService.getWriters(WRITER_AMOUNT, 0, true));
                 request.setAttribute("message", message);
+                request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
+                break;
+                
+            case "searchForWriter":
+                Boolean nextValues = Boolean.valueOf(request.getParameter("next"));
+                String searchValue = request.getParameter("searchValue");
+                request.setAttribute("pageNumber", 0);
+                request.setAttribute("searchValue", searchValue);
+                request.setAttribute("writers", writerService.searchForWriters(searchValue, WRITER_AMOUNT, 0, nextValues));
+                request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
+                break;
+            case "nextPageOfWriters":
+                nextValues = Boolean.valueOf(request.getParameter("next"));
+                Integer currentId = Integer.valueOf(request.getParameter("currentId"));
+                Integer pageNumber = Integer.valueOf(request.getParameter("pageNumber"));
+                searchValue = request.getParameter("searchValue");
+                List<Writer> writers;
+                if (searchValue!=null) {
+                    writers = writerService.searchForWriters(searchValue, WRITER_AMOUNT, currentId, nextValues);
+                    message = "Search results of \"" + searchValue + "\".";
+                } else {
+                    writers = writerService.getWriters(WRITER_AMOUNT, currentId, nextValues);
+                }
+                request.setAttribute("pageNumber", pageNumber);
+                request.setAttribute("searchValue", searchValue);
+                request.setAttribute("writers", writers);
                 request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
                 break;
             default:

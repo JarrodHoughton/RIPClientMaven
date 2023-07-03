@@ -9,10 +9,11 @@ import java.util.List;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 public interface WriterService_Interface {
-    public List<Writer> getAllWriters();
+    public List<Writer> getWriters(Integer numberOfWriters, Integer offset, Boolean next);
+    public List<Writer> searchForWriters(String searchValue, Integer numberOfWriters, Integer currentId, Boolean next);
     public Writer getWriter(Integer writerId);
     public Writer getWriter(String email);
     public String updateWriter(Writer writer);

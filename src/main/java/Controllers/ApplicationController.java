@@ -58,7 +58,7 @@ public class ApplicationController extends HttpServlet {
                     for (String idString : readerIdsStrings) {
                         accountIds.add(Integer.valueOf(idString));
                     }
-                    message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.TRUE);
+                    message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriters(accountIds, Boolean.TRUE);
 
                 }
                 request.setAttribute("message", message);
@@ -73,7 +73,7 @@ public class ApplicationController extends HttpServlet {
                     for (String idString : readerIdsStrings) {
                         accountIds.add(Integer.valueOf(idString));
                     }
-                    message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriter(accountIds, Boolean.TRUE);
+                    message = writerService.addWriters(accountIds) + "<br>" + applicationService.deleteApplications(accountIds) + "<br>" + mailService.notifyApprovedWriters(accountIds, Boolean.TRUE);
 
                 }request.setAttribute("message", message);
                 request.setAttribute("applications", applicationService.getApplications());

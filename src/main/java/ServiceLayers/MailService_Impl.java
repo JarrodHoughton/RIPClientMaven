@@ -78,7 +78,7 @@ public class MailService_Impl implements MailService_Interface {
     }
 
     @Override
-    public String notifyApprovedWriter(List<Integer> accountIds, Boolean approved) {
+    public String notifyApprovedWriters(List<Integer> accountIds, Boolean approved) {
         try {
             String sendVerficationEmailUri = uri;
             if (approved) {
@@ -103,6 +103,19 @@ public class MailService_Impl implements MailService_Interface {
         notifDetails.put("approved", approved);
         webTarget = client.target(notifyUri).resolveTemplates(notifDetails);
         response = webTarget.request().get();
+        return response.readEntity(String.class);
+    }
+
+    @Override
+    public String notifyBlockedWriters(List<Integer> accountIds) {
+        try {
+            String notifyBlockedWritersUri = uri + "notifyBlockedWriters";
+            webTarget = client.target(notifyBlockedWritersUri);
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(accountIds)));
+        } catch (IOException ex) {
+            Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Something went wrong connecting to the server.";
+        }
         return response.readEntity(String.class);
     }
 }
