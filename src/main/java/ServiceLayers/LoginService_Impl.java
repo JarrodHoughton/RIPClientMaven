@@ -46,16 +46,29 @@ public class LoginService_Impl implements LoginService_Interface{
     @Override
     public HashMap getUserSalt(String email) {
         HashMap<String, String> details = null;
+        String getUserSaltUri = uri + "getUserSalt/{email}";
+
         try {
-            String getUserSaltUri = uri + "getUserSalt/{email}";
             webTarget = client.target(getUserSaltUri).resolveTemplate("email", email);
-            details = mapper.readValue(webTarget.request(MediaType.APPLICATION_JSON).get(String.class), new TypeReference<HashMap<String, String>>(){});
+            response = webTarget.request(MediaType.APPLICATION_JSON).get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                details = mapper.readValue(response.readEntity(String.class), new TypeReference<HashMap<String, String>>(){});
+            } else {
+                // Handle error response
+                System.err.println("Failed to get user salt. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
+
         return details;
     }
-
+   
     @Override
     public Reader loginReader(Reader reader) {
         try {
@@ -63,11 +76,24 @@ public class LoginService_Impl implements LoginService_Interface{
             String loginReaderUri = uri + "getUser";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Reader.class);
+            } else {
+                // Handle error response
+                System.err.println("Failed to login reader. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(Reader.class);
+
+        return null;
     }
+
 
     @Override
     public Writer loginWriter(Writer writer) {
@@ -76,11 +102,24 @@ public class LoginService_Impl implements LoginService_Interface{
             String loginReaderUri = uri + "getUser";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(writer)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Writer.class);
+            } else {
+                // Handle error response
+                System.err.println("Failed to login writer. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(Writer.class);
+
+        return null;
     }
+
 
     @Override
     public Editor loginEditor(Editor editor) {
@@ -89,11 +128,24 @@ public class LoginService_Impl implements LoginService_Interface{
             String loginReaderUri = uri + "getUser";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(editor)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Editor.class);
+            } else {
+                // Handle error response
+                System.err.println("Failed to login editor. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(Editor.class);
+
+        return null;
     }
+
 
     @Override
     public String register(Reader reader) {
@@ -101,11 +153,24 @@ public class LoginService_Impl implements LoginService_Interface{
             String loginReaderUri = uri + "register";
             webTarget = client.target(loginReaderUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                // Handle error response
+                System.err.println("Failed to register reader. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(String.class);
+
+        return null;
     }
+
     
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
