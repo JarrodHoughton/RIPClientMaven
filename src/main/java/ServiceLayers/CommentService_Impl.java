@@ -75,7 +75,7 @@ public class CommentService_Impl implements CommentService_Interface{
             }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(CommentService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return "An error occured while adding a comment. IOException was thrown";
+            return "An error occured while adding a comment. JsonProcessingException was thrown";
         }finally{
             closeResponse();
         }
