@@ -51,15 +51,14 @@ public class WriterService_Impl implements WriterService_Interface{
     }
 
     @Override
-    public List<Writer> getWriters(Integer numberOfWriters, Integer currentId, Boolean next) {
+    public List<Writer> getWriters(Integer numberOfWriters, Integer pageNumber) {
         List<Writer> writers = null;
         String getwriterPath = uri + "getWriters";
         try {
             // Build the query parameters
             URI getwriterUri = UriBuilder.fromPath(getwriterPath)
-                .queryParam("currentId", currentId)
+                .queryParam("pageNumber", pageNumber)
                 .queryParam("numberOfWriters", numberOfWriters)
-                .queryParam("next", next)
                 .build();
             webTarget = client.target(getwriterUri);
             response = webTarget.request().get();
@@ -137,7 +136,7 @@ public class WriterService_Impl implements WriterService_Interface{
     }
 
     @Override
-    public List<Writer> searchForWriters(String searchValue, Integer numberOfWriters, Integer currentId, Boolean next) {
+    public List<Writer> searchForWriters(String searchValue, Integer numberOfWriters, Integer pageNumber) {
         List<Writer> writers = null;
         String searchForWritersPath = uri + "searchForWriters";
         try {
@@ -145,8 +144,7 @@ public class WriterService_Impl implements WriterService_Interface{
             URI searchForWritersUri = UriBuilder.fromPath(searchForWritersPath)
                 .queryParam("searchValue", searchValue)
                 .queryParam("numberOfWriters", numberOfWriters)
-                .queryParam("currentId", currentId)
-                .queryParam("next", String.valueOf(next))
+                .queryParam("pageNumber", pageNumber)
                 .build();
             webTarget = client.target(searchForWritersUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).get();

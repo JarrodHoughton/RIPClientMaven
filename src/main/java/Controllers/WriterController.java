@@ -43,7 +43,7 @@ public class WriterController extends HttpServlet {
         switch (request.getParameter("submit")) {
             case "goToBlockWriterPage":
                 request.setAttribute("pageNumber", 0);
-                request.setAttribute("writers", writerService.getWriters(WRITER_AMOUNT, 0, true));
+                request.setAttribute("writers", writerService.getWriters(WRITER_AMOUNT, 0));
                 request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
                 break;
             case "blockWriters":
@@ -59,7 +59,7 @@ public class WriterController extends HttpServlet {
                     message += "<br>" + mailService.notifyBlockedWriters(writerIds);
                 }
                 request.setAttribute("pageNumber", 0);
-                request.setAttribute("writers", writerService.getWriters(WRITER_AMOUNT, 0, true));
+                request.setAttribute("writers", writerService.getWriters(WRITER_AMOUNT, 0));
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
                 break;
@@ -68,7 +68,7 @@ public class WriterController extends HttpServlet {
                 String searchValue = request.getParameter("searchValue");
                 request.setAttribute("pageNumber", 0);
                 request.setAttribute("searchValue", searchValue);
-                request.setAttribute("writers", writerService.searchForWriters(searchValue, WRITER_AMOUNT, 0, true));
+                request.setAttribute("writers", writerService.searchForWriters(searchValue, WRITER_AMOUNT, 0));
                 request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
                 break;
             case "nextPageOfWriters":
@@ -78,10 +78,10 @@ public class WriterController extends HttpServlet {
                 searchValue = request.getParameter("searchValue");
                 List<Writer> writers;
                 if (searchValue!=null) {
-                    writers = writerService.searchForWriters(searchValue, WRITER_AMOUNT, currentId, nextValues);
+                    writers = writerService.searchForWriters(searchValue, WRITER_AMOUNT, pageNumber);
                     message = "Search results of \"" + searchValue + "\".";
                 } else {
-                    writers = writerService.getWriters(WRITER_AMOUNT, currentId, nextValues);
+                    writers = writerService.getWriters(WRITER_AMOUNT, pageNumber);
                 }
                 request.setAttribute("pageNumber", pageNumber);
                 request.setAttribute("searchValue", searchValue);
