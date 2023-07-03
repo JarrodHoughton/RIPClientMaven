@@ -12,8 +12,8 @@ import java.util.List;
  * @author Jarrod
  */
 public interface WriterService_Interface {
-    public List<Writer> getWriters(Integer numberOfWriters, Integer offset, Boolean next);
-    public List<Writer> searchForWriters(String searchValue, Integer numberOfWriters, Integer currentId, Boolean next);
+    public List<Writer> getWriters(Integer numberOfWriters, Integer pageNumber);
+    public List<Writer> searchForWriters(String searchValue, Integer numberOfWriters, Integer pageNumber);
     public Writer getWriter(Integer writerId);
     public Writer getWriter(String email);
     public String updateWriter(Writer writer);

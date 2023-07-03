@@ -51,13 +51,21 @@ public class DataReportService_Impl implements DataReportService_Interface {
                 .queryParam("endDate", endDate)
                 .build();
         webTarget = client.target(storyLikesUri);
-
+        
+        // Perform the HTTP GET request
         response = webTarget.request().get();
 
         try {
-            return response.readEntity(Integer.class);
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Integer.class);
+            } else {
+                System.err.println("Failed to retrieve story likes by date. Response status: " + response.getStatus());
+                return null; // or throw an exception
+            }
         } finally {
-            response.close();
+            if (response != null) {
+                response.close();
+            }
         }
     }
 
