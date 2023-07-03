@@ -54,8 +54,13 @@ public class DataReportService_Impl implements DataReportService_Interface {
 
         response = webTarget.request().get();
 
-        return response.readEntity(Integer.class);
+        try {
+            return response.readEntity(Integer.class);
+        } finally {
+            response.close();
+        }
     }
+
 
     @Override
     public List<Story> getMostLikedStories(Integer numberOfStories, String startDate, String endDate) {
@@ -80,7 +85,6 @@ public class DataReportService_Impl implements DataReportService_Interface {
                 });
             } else {
                 System.err.println("Failed to retrieve most liked stories. Response status: " + response.getStatus());
-                System.out.println(response.readEntity(String.class));
             }
         } catch (ProcessingException | IllegalStateException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
@@ -148,8 +152,19 @@ public class DataReportService_Impl implements DataReportService_Interface {
         // Perform the HTTP GET request
         response = webTarget.request().get();
 
-        return response.readEntity(Integer.class);
+        try {
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to retrieve the views on this story in this time period. Response status: " + response.getStatus());
+            }
+
+            return response.readEntity(Integer.class);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
+
 
     @Override
     public List<Story> getTopHighestRatedStoriesInTimePeriod(String startDate, String endDate, Integer numberOfEntries) {
@@ -205,19 +220,23 @@ public class DataReportService_Impl implements DataReportService_Interface {
         // Perform the HTTP GET request
         response = webTarget.request().get();
 
-        if (response.getStatus() == 200) {
-            String responseBody = response.readEntity(String.class);
-            try {
-                return Double.parseDouble(responseBody);
-            } catch (NumberFormatException e) {
-                // Handle the case when the response body cannot be parsed as a Double
-                // Log an error or throw an exception to handle the issue appropriately
-                return null; // or throw an exception
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                String responseBody = response.readEntity(String.class);
+                try {
+                    return Double.parseDouble(responseBody);
+                } catch (NumberFormatException ex) {
+                    Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Unable to parse the response body as a Double: " + responseBody, ex);
+                    return null;
+                }
+            } else {
+                System.err.println("Failed to retrieve the rating. Response status: " + response.getStatus());
+                return null;
             }
-        } else {
-            // Handle the case when the response has an error status
-            // Log an error or throw an exception to handle the issue appropriately
-            return null; // or throw an exception
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
     }
 
@@ -268,7 +287,7 @@ public class DataReportService_Impl implements DataReportService_Interface {
             webTarget = client.target(topRatedStoriesUri);
 
             // Perform the HTTP GET request
-            response = webTarget.request(MediaType.APPLICATION_JSON).get();
+            response = webTarget.request(MediaType.APPLICATION_JSON).get();        
 
             // Check if the response is successful
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
@@ -296,7 +315,7 @@ public class DataReportService_Impl implements DataReportService_Interface {
     public Integer getGenreViewsByDate(String startDate, String endDate, Integer genreId) {
         String genresViewsPath = uri + "getGenreViewsByDate";
 
-        //build query
+        // Build the query
         URI genresViewsUri = UriBuilder.fromPath(genresViewsPath)
                 .queryParam("startDate", startDate)
                 .queryParam("endDate", endDate)
@@ -307,21 +326,52 @@ public class DataReportService_Impl implements DataReportService_Interface {
         // Perform the HTTP GET request
         response = webTarget.request().get();
 
-        return response.readEntity(Integer.class);
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Integer.class);
+            } else {
+                System.err.println("Failed to retrieve genre views by date. Response status: " + response.getStatus());
+                return null;
+            }
+        } catch (ProcessingException ex) {
+            // Log an error or handle the case when there is an exception during the request
+            Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Exception occurred during the HTTP request: " + ex.getMessage(), ex);
+            return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
 
-    @Override
-    public Integer getTotalViewsByWriterId(Integer writerId) {
-        String totalViewsByWriterIdUri = uri + "getTotalViewsByWriterId/{writerId}";
+@Override
+public Integer getTotalViewsByWriterId(Integer writerId) {
+    String totalViewsByWriterIdUri = uri + "getTotalViewsByWriterId/{writerId}";
 
-        // Build the query parameters
-        webTarget = client.target(totalViewsByWriterIdUri).resolveTemplate("writerId", writerId);
+    // Build the query parameters
+    webTarget = client.target(totalViewsByWriterIdUri).resolveTemplate("writerId", writerId);
 
-        // Perform the HTTP GET request
-        response = webTarget.request().get();
+    // Perform the HTTP GET request
+    response = webTarget.request().get();
 
-        return response.readEntity(Integer.class);
+    try {
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.readEntity(Integer.class);
+        } else {
+            System.err.println("Failed to retrieve total views by writer ID. Response status: " + response.getStatus());
+            return null;
+        }
+    } catch (ProcessingException ex) {
+        // Log an error or handle the case when there is an exception during the request
+        Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+
+        return null;
+    } finally {
+        if (response != null) {
+            response.close();
+        }
     }
+}
 
     @Override
     public List<Editor> getTopEditors(Integer numberOfEntries) {
