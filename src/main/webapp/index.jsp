@@ -79,13 +79,12 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <div class="container-fluid align-items-left">
-                        <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false">
-                            <i class="bi bi-list"></i> <!-- More Icon -->
-                        </button>
+                    <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
+                        <i class="bi bi-list"></i> <!-- More Icon -->
+                    </button>
+                    <div class="container-fluid">
                         <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
-                            <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
-                                 style="filter: invert(1)">
+                            <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                             READERS ARE INNOVATORS
                         </a>
                     </div>
@@ -94,20 +93,12 @@
                             <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue" required>
                             <input type="hidden" name="submit" value="searchForGenreAndStories">
                         </form>
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle-no-arrow ms-2" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-list"></i> <!-- More Icon -->
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="login.jsp"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
-                                <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#referFriend"><i class="bi bi-share"></i> Share</button></li>
-                            </ul>
-                        </div>
-
                     </div>
                 </div>
             </nav>
         </div>
+
+
 
 
 
