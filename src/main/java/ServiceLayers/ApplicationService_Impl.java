@@ -25,12 +25,12 @@ import java.util.logging.Logger;
  * @author Jarrod
  */
 public class ApplicationService_Impl implements ApplicationService_Interface{
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     public ApplicationService_Impl() {
         client = ClientBuilder.newClient();
@@ -42,16 +42,23 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
     
     @Override
     public List<Application> getApplications() {
-        List<Application> applications;
+        List<Application> applications = null;
         try {
-            String getgetApplicationsUri = uri + "getApplications";
-            webTarget = client.target(getgetApplicationsUri);
-            applications = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Application>>(){});
+            String getApplicationsUri = uri + "getApplications";
+            webTarget = client.target(getApplicationsUri);
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                applications = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Application>>() {});
+            } else {
+                System.err.println("Failed to retrieve all applications. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
-            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            Logger.getLogger(ApplicationService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResponse();
         }
-        return applications;
+        return applications;       
     }
 
     @Override
@@ -60,19 +67,40 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
             String addApplicationUri = uri + "addApplication";
             webTarget = client.target(addApplicationUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(application)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to add application. Response status: " + response.getStatus());                
+            }
         } catch (IOException ex) {
-            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return "Something went wrong connecting to the server.";
+            Logger.getLogger(ApplicationService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "An error occured while adding an application. IOException was thrown";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
+        return "System failed to add application";
     }
 
     @Override
     public String deleteApplication(Integer accountId) {
-        String deleteApplicationUri = uri + "deleteApplication/{readerId}";
-        webTarget = client.target(deleteApplicationUri).resolveTemplate("readerId", accountId);
-        response = webTarget.request().get();
-        return response.readEntity(String.class);
+        try {
+            String deleteApplicationUri = uri + "deleteApplication/{readerId}";
+            webTarget = client.target(deleteApplicationUri).resolveTemplate("readerId", accountId);
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to delete application. Response status: " + response.getStatus());
+                return "Failed to delete application";
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ApplicationService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "An error occurred while deleting the application.";
+        } finally {
+            closeResponse();
+        }
     }
     
     @Override
@@ -81,14 +109,28 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
             String deleteApplicationsUri = uri + "deleteApplications";
             webTarget = client.target(deleteApplicationsUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(accountIds)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to delete applications. Response status: " + response.getStatus());
+                return "Failed to delete application";
+            }
         } catch (IOException ex) {
-            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ApplicationService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
     }
  
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
+    }
+    
+    private void closeResponse(){
+        if (response != null) {
+            response.close();
+        }
     }
 }

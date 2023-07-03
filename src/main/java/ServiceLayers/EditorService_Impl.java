@@ -53,7 +53,7 @@ public class EditorService_Impl implements EditorService_Interface{
                 System.err.println("Failed to retrieve all editors. Response status: " + response.getStatus());
             }                  
         } catch (IOException ex) {
-            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }finally{
             closeResponse();
@@ -74,7 +74,7 @@ public class EditorService_Impl implements EditorService_Interface{
                 System.err.println("Failed to add editor. Response status: " + response.getStatus());
             }
         } catch (IOException ex) {
-            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "An error occured while adding an editor. IOException was thrown";
         }finally{
             closeResponse();
@@ -113,7 +113,7 @@ public class EditorService_Impl implements EditorService_Interface{
                 System.err.println("Failed to add editor. Response status: " + response.getStatus());
             }
         } catch (IOException ex) {
-            Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             closeResponse();
         }
