@@ -28,12 +28,12 @@ import java.util.logging.Logger;
  * @author 27713
  */
 public class ViewService_Impl implements ViewService_Interface {
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
     
     public ViewService_Impl(){
         client = ClientBuilder.newClient();
@@ -43,20 +43,29 @@ public class ViewService_Impl implements ViewService_Interface {
     }
     
     @Override
-    public String addView(View view) {
-        String addViewUri = uri + "addView";
-        try {            
+    public String addView(View view) {        
+        try {
+            String addViewUri = uri + "addView";
             webTarget = client.target(addViewUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(view)));
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(String.class);
+            }else {
+                System.err.println("Failed to add view. Response status: " + response.getStatus());
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "An error occured while adding a view. JsonProcessingException was thrown";
+        }finally{
+            closeResponse();
         }
-        return response.readEntity(String.class);
+        return "System failed to add view";
     }
 
     @Override
     public List<Integer> getMostViewedStoriesInATimePeriod(Integer numberOfEntries, Timestamp startDate, Timestamp endDate) {
-        List<Integer> bookIds = new ArrayList<>();
+        List<Integer> bookIds = null;
         HashMap<String, Object> details = new HashMap<>();
         try {            
             String mostViewedBooksUri = uri + "getMostViewedStories/{numberOfEntries}/{startDate}/{endDate}";
@@ -64,39 +73,61 @@ public class ViewService_Impl implements ViewService_Interface {
             details.put("startDate", startDate);
             details.put("endDate", endDate);
             webTarget = client.target(mostViewedBooksUri).resolveTemplates(details);
-            bookIds = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Integer>>(){});
+            response = webTarget.request().get();
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                bookIds = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Integer>>() {});
+            }else {
+                System.err.println("Failed to retrieve all editors. Response status: " + response.getStatus());
+            }            
         } catch (IOException ex) {
-            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;            
+        }finally{
+            closeResponse();
         }
         return bookIds;
     }
 
     @Override
     public Integer getTheViewsOnAStoryInATimePeriod(Integer storyId, Timestamp startDate, Timestamp endDate) {
-        String getViewsOnStoryUri = uri + "getTheViewOnAStory/{storyId}/{startDate}/{endDate}";
         HashMap<String, Object> details = new HashMap<>();
+        String getViewsOnStoryUri = uri + "getTheViewOnAStory/{storyId}/{startDate}/{endDate}";
         details.put("storyId", storyId);
         details.put("startDate", startDate);
         details.put("endDate", endDate);
-        webTarget = client.target(getViewsOnStoryUri).resolveTemplates(details);
-        response = webTarget.request().get();
-        return response.readEntity(Integer.class);
+
+        try {
+            webTarget = client.target(getViewsOnStoryUri).resolveTemplates(details);
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Integer.class);
+            } else {
+                System.err.println("Failed to retrieve the views on a story. Response status: " + response.getStatus());
+                return null;
+            }
+        }finally{
+            closeResponse();
+        }
     }
 
     @Override
     public Boolean isViewAlreadyAdded(View view) {
-        Boolean viewExists = false;
+        Boolean viewExists;
         try {
             String isViewAddedUri = uri + "isViewAlreadyAdded";
             webTarget = client.target(isViewAddedUri);
-            response= webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(view)));
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(view)));
             viewExists = response.readEntity(Boolean.class);
+            System.out.println("View Exists: " + viewExists);
+            return viewExists;
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return false;
+        } finally {
+            closeResponse();
         }
-        System.out.println("View Exists: " + viewExists);
-        return viewExists;
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
@@ -111,4 +142,9 @@ public class ViewService_Impl implements ViewService_Interface {
         return isViewAlreadyAdded(view);
     }
     
+    private void closeResponse(){
+        if (response != null) {
+            response.close();
+        }
+    }
 }
