@@ -5,7 +5,6 @@
 package ServiceLayers;
 
 import Models.Editor;
-import Models.Story;
 import Utils.GetProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -26,12 +25,12 @@ import java.util.logging.Logger;
  * @author jarro
  */
 public class EditorService_Impl implements EditorService_Interface{
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     public EditorService_Impl() {
         client = ClientBuilder.newClient();
@@ -42,13 +41,22 @@ public class EditorService_Impl implements EditorService_Interface{
     
     @Override
     public List<Editor> getAllEditors() {
-        List<Editor> editors = null;
+        List<Editor> editors = null;        
         try {
-            String ggetAllEditorsUri = uri + "getAllEditors";
-            webTarget = client.target(ggetAllEditorsUri);
-            editors = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Editor>>() {});
+            String getAllEditorsUri = uri + "getAllEditors";
+            webTarget = client.target(getAllEditorsUri);
+            response = webTarget.request().get();
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                editors = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Editor>>() {});
+            }else {
+                System.err.println("Failed to retrieve all editors. Response status: " + response.getStatus());
+            }                  
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }finally{
+            closeResponse();
         }
         return editors;
     }
@@ -59,18 +67,37 @@ public class EditorService_Impl implements EditorService_Interface{
             String addEditorUri = uri + "registerEditor";
             webTarget = client.target(addEditorUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(editor)));
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(String.class);
+            }else {
+                System.err.println("Failed to add editor. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "An erro occured while adding an editor. IOException was thrown";
+        }finally{
+            closeResponse();
         }
-        return response.readEntity(String.class);
+        return "System failed to add editor";
     }
 
     @Override
-    public String deleteEditor(Integer editorId) {
-        String deleteEditorUri = uri + "deleteEditor/{editorId}";
-        webTarget = client.target(deleteEditorUri).resolveTemplate("editorId", editorId);
-        response = webTarget.request().get();
-        return response.readEntity(String.class);
+    public String deleteEditor(Integer editorId) {       
+        try{
+            String deleteEditorUri = uri + "deleteEditor/{editorId}";
+            webTarget = client.target(deleteEditorUri).resolveTemplate("editorId", editorId);
+            response = webTarget.request().get();
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(String.class);
+            }else {
+                System.err.println("Failed to add editor. Response status: " + response.getStatus());
+            }
+        }finally{
+            closeResponse();
+        }
+        return "System failed to delete editor";
     }
 
     @Override
@@ -79,10 +106,18 @@ public class EditorService_Impl implements EditorService_Interface{
             String updateEditorUri = uri + "updateEditor";
             webTarget = client.target(updateEditorUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(editor)));
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(String.class);
+            }else {
+                System.err.println("Failed to add editor. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            closeResponse();
         }
-        return response.readEntity(String.class);
+        return "System failed to update editor";
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
@@ -91,25 +126,61 @@ public class EditorService_Impl implements EditorService_Interface{
 
     @Override
     public Boolean searchForEditor(String accountEmail) {
-        String searchForEditorUri = uri + "searchForEditor/{accountEmail}";
-        webTarget = client.target(searchForEditorUri).resolveTemplate("accountEmail", accountEmail);
-        response = webTarget.request().get();
-        return response.readEntity(Boolean.class);
+        try{
+            String searchForEditorUri = uri + "searchForEditor/{accountEmail}";
+            webTarget = client.target(searchForEditorUri).resolveTemplate("accountEmail", accountEmail);
+            response = webTarget.request().get();
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(Boolean.class);
+            }else {
+                    System.err.println("Failed to search for editor. Response status: " + response.getStatus());
+            }
+        }finally{
+            closeResponse();
+        }
+        return false;
     }
 
     @Override
     public Editor getEditor(String accountEmail) {
-        String getEditorUri = uri + "getEditorByEmail/{accountEmail}";
-        webTarget = client.target(getEditorUri).resolveTemplate("accountEmail", accountEmail);
-        response = webTarget.request().get();
-        return response.readEntity(Editor.class);
+        try{
+            String getEditorUri = uri + "getEditorByEmail/{accountEmail}";
+            webTarget = client.target(getEditorUri).resolveTemplate("accountEmail", accountEmail);
+            response = webTarget.request().get();
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(Editor.class);
+            }else {
+                    System.err.println("Failed to search for editor. Response status: " + response.getStatus());
+            }            
+        }finally{
+            closeResponse();
+        }
+        return null;
     }
 
     @Override
     public Editor getEditor(Integer editorId) {
-        String getEditorUri = uri + "getEditorById/{editorId}";
-        webTarget = client.target(getEditorUri).resolveTemplate("editorId", editorId);
-        response = webTarget.request().get();
-        return response.readEntity(Editor.class);
+        try{
+            String getEditorUri = uri + "getEditorById/{editorId}";
+            webTarget = client.target(getEditorUri).resolveTemplate("editorId", editorId);
+            response = webTarget.request().get();
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(Editor.class);
+            }else {
+                    System.err.println("Failed to get for editor. Response status: " + response.getStatus());
+            }            
+        }finally{
+            closeResponse();
+        }
+        return null;
+    }
+    
+    private void closeResponse(){
+        if (response != null) {
+            response.close();
+        }
     }
 }
