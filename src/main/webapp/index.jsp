@@ -55,7 +55,7 @@
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 75px; /* Adjust the margin-bottom as per your requirement */
             }
 
             .other-space {
@@ -120,7 +120,7 @@
         %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h2 class="text-center book-title">Top 10 picks</h2>
+            <h3 class="text-center book-title">Top 10 picks</h3>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
                     if (topPicks != null) {
