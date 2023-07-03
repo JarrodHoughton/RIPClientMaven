@@ -13,6 +13,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
@@ -48,11 +49,23 @@ public class RatingService_Impl implements RatingService_Interface {
         webTarget = client.target(addRatingUri);
         try {
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(rating)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to add the rating. Response status: " + response.getStatus());
+                return "Rating not added";
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(RatingService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Rating not added";
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(String.class);
     }
+
 
     @Override
     public Boolean checkRatingExists(Rating rating) {
@@ -60,11 +73,23 @@ public class RatingService_Impl implements RatingService_Interface {
         webTarget = client.target(checkRatingExistsUri);
         try {
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(rating)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Boolean.class);
+            } else {
+                System.err.println("Failed to check if rating exists. Response status: " + response.getStatus());
+                return null;
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(RatingService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(Boolean.class);
     }
+
 
     @Override
     public String updateRatingValue(Rating rating) {
@@ -72,41 +97,81 @@ public class RatingService_Impl implements RatingService_Interface {
         webTarget = client.target(updateRatingValueUri);
         try {
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(rating)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to update rating value. Response status: " + response.getStatus());
+                return "Rating value not updated";
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(RatingService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Rating value not updated";
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(String.class);
     }
 
     @Override
     public List<Integer> getTopHighestRatedStoriesInTimePeriod(Timestamp startDate, Timestamp endDate, Integer numberOfEntries) {
         List<Integer> bookIds = null;
+        String mostLikedBooksUri = uri + "getTopHighestRatedStories/{startDate}/{endDate}/{numberOfEntries}";
+
         try {
-            String mostLikedBooksUri = uri + "getTopHighestRatedStories/{startDate}/{endDate}/{numberOfEntries}";
-            webTarget = client.target(mostLikedBooksUri);
-            webTarget.resolveTemplate("startDate", startDate);
-            webTarget.resolveTemplate("endDate", endDate);
-            webTarget.resolveTemplate("numberOfEntries", numberOfEntries);
-            bookIds = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Integer>>() {
-            });
-        } catch (IOException ex) {
-            Logger.getLogger(RatingService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            webTarget = client.target(mostLikedBooksUri)
+                    .resolveTemplate("startDate", startDate)
+                    .resolveTemplate("endDate", endDate)
+                    .resolveTemplate("numberOfEntries", numberOfEntries);
+
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                bookIds = response.readEntity(new GenericType<List<Integer>>() {
+                });
+            } else {
+                // Handle error response
+                System.err.println("Failed to get top highest rated stories. Response status: " + response.getStatus());
+            }
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+
         }
+
         return bookIds;
+    }
+    
+    @Override
+    public Rating getRating(Integer accountId, Integer storyId) {
+        HashMap<String, Object> ratingValues = new HashMap<>();
+        ratingValues.put("accountId", accountId);
+        ratingValues.put("storyId", storyId);
+        String getRatingUri = uri + "getRating/{accountId}/{storyId}";
+
+        try {
+            webTarget = client.target(getRatingUri).resolveTemplates(ratingValues);
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Rating.class);
+            } else {
+                // Handle error response
+                System.err.println("Failed to get rating. Response status: " + response.getStatus());
+                return null; // Or throw an exception, depending on your requirement
+            }
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
 
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
 
-    @Override
-    public Rating getRating(Integer accountId, Integer storyId) {
-        HashMap<String, Object> ratingValues = new HashMap<>();
-        ratingValues.put("accountId", accountId);
-        ratingValues.put("storyId", storyId);
-        String mostLikedBooksUri = uri + "getRating/{accountId}/{storyId}";
-        webTarget = client.target(mostLikedBooksUri).resolveTemplates(ratingValues);
-        response = webTarget.request().get();
-        return response.readEntity(Rating.class);
-    }
+
 }
