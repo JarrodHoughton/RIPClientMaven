@@ -26,6 +26,7 @@
                 right: 0;
                 z-index: 9999;
             }
+           
 
             .card {
                 border: 1px solid #ddd; /* Add border to the cards */
@@ -55,12 +56,10 @@
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 75px; /* Adjust the margin-bottom as per your requirement */
             }
 
-            .other-space{
-                margin-bottom: 40px;
-            }
+   
         </style>
     </head>
     <body>
@@ -104,9 +103,11 @@
         <%
             if (storiesFromSearch != null && !storiesFromSearch.isEmpty()) {
         %>
+        
+        <div class="space"></div>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h2 class="text-center book-title">Search Results In Stories</h2>
+            <h3 class="text-center book-title">Search Results In Stories</h3>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
                     for (Story story : storiesFromSearch) {
@@ -135,23 +136,24 @@
                     }
                 %>
             </div>
-            <div class="other-space"></div>
-            <div class="btn-group mt-5 mb-5 mx-auto">
-                <%
-                    if (pageNumber != null && pageNumber > 0) {
-                %>
-                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
-                <%
-                    }
-                %>
-                <%
-                    if (storiesFromSearch.size() == offsetAmount) {
-                %>
-                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber+1)%>&currentId=<%=storiesFromSearch.get(storiesFromSearch.size()-1).getId()%>&next=true">Next</a>
-                <%
-                    }
-                %>
-            </div>
+            
+            <div class="btn-group mt-5 mb-5 d-flex justify-content-center">
+    <%
+        if (pageNumber != null && pageNumber > 0) {
+    %>
+    <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
+    <%
+        }
+    %>
+    <%
+        if (storiesFromSearch.size() == offsetAmount) {
+    %>
+    <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber+1)%>&currentId=<%=storiesFromSearch.get(storiesFromSearch.size()-1).getId()%>&next=true">Next</a>
+    <%
+        }
+    %>
+</div>
+
         </div>
         <%
             } else if (pageNumber > 0) {
@@ -169,7 +171,7 @@
         %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h2 class="text-center book-title">Search Results In Genres</h2>
+            <h3 class="text-center book-title">Search Results In Genres</h3>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
                     for (Genre genre : genresFromSearch) {
@@ -186,7 +188,7 @@
                     }
                 %>
             </div>
-            <div class="other-space"></div>
+            
         </div>
         <%
             }
