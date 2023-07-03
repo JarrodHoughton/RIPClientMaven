@@ -65,15 +65,14 @@ public class WriterController extends HttpServlet {
                 break;
                 
             case "searchForWriter":
-                Boolean nextValues = Boolean.valueOf(request.getParameter("next"));
                 String searchValue = request.getParameter("searchValue");
                 request.setAttribute("pageNumber", 0);
                 request.setAttribute("searchValue", searchValue);
-                request.setAttribute("writers", writerService.searchForWriters(searchValue, WRITER_AMOUNT, 0, nextValues));
+                request.setAttribute("writers", writerService.searchForWriters(searchValue, WRITER_AMOUNT, 0, true));
                 request.getRequestDispatcher("BlockWriters.jsp").forward(request, response);
                 break;
             case "nextPageOfWriters":
-                nextValues = Boolean.valueOf(request.getParameter("next"));
+                Boolean nextValues = Boolean.valueOf(request.getParameter("next"));
                 Integer currentId = Integer.valueOf(request.getParameter("currentId"));
                 Integer pageNumber = Integer.valueOf(request.getParameter("pageNumber"));
                 searchValue = request.getParameter("searchValue");
