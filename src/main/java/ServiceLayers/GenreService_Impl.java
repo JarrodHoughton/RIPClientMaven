@@ -47,8 +47,21 @@ public class GenreService_Impl implements GenreService_Interface{
         String getGenreUri = uri + "getGenre/{genreId}";
         webTarget = client.target(getGenreUri).resolveTemplate("genreId", id);
         response = webTarget.request().get();
-        return response.readEntity(Genre.class);
+
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Genre.class);
+            } else {
+                System.err.println("Failed to retrieve the genre. Response status: " + response.getStatus());
+                return null; // or throw an exception
+            }
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
+
 
     @Override
     public List<Genre> getAllGenres() {
@@ -56,47 +69,96 @@ public class GenreService_Impl implements GenreService_Interface{
         try {
             String getAllGenresUri = uri + "getAllGenres";
             webTarget = client.target(getAllGenresUri);
-            genres = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Genre>>(){});
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                genres = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Genre>>() {
+                });
+            } else {
+                System.err.println("Failed to retrieve all genres. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
         return genres;
     }
+
 
     @Override
     public String deleteGenre(Integer id) {
         String deleteGenreUri = uri + "deleteGenre/{genreId}";
         webTarget = client.target(deleteGenreUri).resolveTemplate("genreId", id);
         response = webTarget.request().get();
-        return response.readEntity(String.class);
+
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to delete the genre. Response status: " + response.getStatus());
+                return null; // or throw an exception
+            }
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
+
 
     @Override
     public String addGenre(Genre genre) {
         try {
-            String loginReaderUri = uri + "addGenre";
-            webTarget = client.target(loginReaderUri);
+            String addGenreUri = uri + "addGenre";
+            webTarget = client.target(addGenreUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(genre)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to add the genre. Response status: " + response.getStatus());
+                return null; // or throw an exception
+            }
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null; // or throw an exception
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(String.class);
     }
     
-    private String toJsonString(Object obj) throws JsonProcessingException {
-        return mapper.writeValueAsString(obj);
-    }
-
     @Override
     public List<Genre> searchForGenres(String searchValue) {
         List<Genre> genres = null;
         try {
             String searchForGenresUri = uri + "searchForGenres/{searchValue}";
             webTarget = client.target(searchForGenresUri).resolveTemplate("searchValue", searchValue);
-            genres = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Genre>>(){});
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                genres = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Genre>>(){});
+            } else {
+                System.err.println("Failed to search for genres. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
         return genres;
     }
+    
+    private String toJsonString(Object obj) throws JsonProcessingException {
+        return mapper.writeValueAsString(obj);
+    }
+
+
+
 }
