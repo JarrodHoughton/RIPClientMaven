@@ -75,7 +75,7 @@ public class EditorService_Impl implements EditorService_Interface{
             }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return "An erro occured while adding an editor. IOException was thrown";
+            return "An error occured while adding an editor. IOException was thrown";
         }finally{
             closeResponse();
         }

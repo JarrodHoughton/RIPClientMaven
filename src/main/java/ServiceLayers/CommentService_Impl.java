@@ -22,15 +22,15 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author 27713
+ * @author Kylynn van der Merwe
  */
 public class CommentService_Impl implements CommentService_Interface{
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
     
     public CommentService_Impl() {
         client = ClientBuilder.newClient();
@@ -42,30 +42,53 @@ public class CommentService_Impl implements CommentService_Interface{
     @Override
     public List<Comment> getAllCommentForStory(Integer storyId) {
         List<Comment> allComments = null;
-        String getCommentsForStoryUri = uri + "getAllComments/{storyId}";
-        webTarget = client.target(getCommentsForStoryUri).resolveTemplate("storyId",storyId);
-        try {
-            allComments = mapper.readValue(webTarget.request(MediaType.APPLICATION_JSON).get(String.class), new TypeReference<List<Comment>>(){});
+        try {            
+            String getCommentsForStoryUri = uri + "getAllComments/{storyId}";
+            webTarget = client.target(getCommentsForStoryUri).resolveTemplate("storyId",storyId);
+            response = webTarget.request(MediaType.APPLICATION_JSON).get();
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                allComments = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Comment>>(){});
+            }else {
+                System.err.println("Failed to retrieve all comments. Response status: " + response.getStatus());
+            }            
         } catch (IOException ex) {
             Logger.getLogger(CommentService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }finally{
+            closeResponse();
         }
         return allComments;
     }
 
     @Override
-    public String addComment(Comment comment) {
-        String addCommentUri = uri + "addComment";
-        webTarget = client.target(addCommentUri);
+    public String addComment(Comment comment) {        
         try {
+            String addCommentUri = uri + "addComment";
+            webTarget = client.target(addCommentUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(comment)));
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(String.class);
+            }else {
+                System.err.println("Failed to add comment. Response status: " + response.getStatus());
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(CommentService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "An error occured while adding a comment. IOException was thrown";
+        }finally{
+            closeResponse();
         }
-        return response.readEntity(String.class);
+        return "System failed to add comment";
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
     
+    private void closeResponse(){
+        if (response != null) {
+            response.close();
+        }
+    }
 }
