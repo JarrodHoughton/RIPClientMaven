@@ -79,11 +79,16 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
-                        <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
-                             style="filter: invert(1)">
-                        READERS ARE INNOVATORS
-                    </a>
+                    <div class="container-fluid align-items-left">
+                        <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false">
+                            <i class="bi bi-list"></i> <!-- More Icon -->
+                        </button>
+                        <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                            <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
+                                 style="filter: invert(1)">
+                            READERS ARE INNOVATORS
+                        </a>
+                    </div>
                     <div class="d-flex align-items-center">
                         <form action="StoryController" method="post">
                             <input class="form-control me-2" type="search" placeholder="Search for titles, genres, blurbs..." aria-label="Search" name="searchValue" required>
@@ -186,6 +191,33 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+
+
+
+        <!-- Side Bare Menu -->
+        <div class="offcanvas offcanvas-start show text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="btn-group" role="group" aria-label="Vertical button group">
+                    <a class="btn btn-dark col-6" mb-3" href="login.jsp"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    <button class="btn btn-dark col-6" mb-3" type="button" data-bs-toggle="modal" data-bs-target="#referFriend"><i class="bi bi-share"></i> Share</button>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a class="nav-link" role="button" href="#">Top Picks</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a class="list-group-link" role="button" href="#">Most Viewed</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a class="nav-link" role="button" href="#">Highest Rated</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </body>
