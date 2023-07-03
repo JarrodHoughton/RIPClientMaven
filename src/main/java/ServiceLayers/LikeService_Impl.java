@@ -9,6 +9,7 @@ import Utils.GetProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -34,6 +35,7 @@ public class LikeService_Impl implements LikeService_Interface{
     private Response response;
     private GetProperties properties;
     private String uri;
+
     
     public LikeService_Impl() {
         client = ClientBuilder.newClient();
@@ -45,61 +47,111 @@ public class LikeService_Impl implements LikeService_Interface{
     @Override
     public String addLike(Like like) {
         String addLikeUri = uri + "addLike";
-        try {            
+        try {
             webTarget = client.target(addLikeUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to add the like. Response status: " + response.getStatus());
+                return "Like not added";
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Like not added";
-        }
-        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            return response.readEntity(String.class);
-        } else {            
-            return "Like not added";
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
     }
+
 
     @Override
     public String deleteLike(Like like) {
         try {
             String deleteLikeUri = uri + "deleteLike";
             webTarget = client.target(deleteLikeUri);
-            response= webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to delete the like. Response status: " + response.getStatus());
+                return "Like not deleted";
+            }
+
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Like not deleted";
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(String.class);
     }
+
 
     @Override
     public List<Like> getLikesByReaderId(Integer accountId) {
-        List<Like> likes = new ArrayList<>();
-        try {            
+        List<Like> likes = null;
+        try {
             String likesByReaderUri = uri + "getLikesByReaderId/{accountId}";
-            webTarget = client.target(likesByReaderUri).resolveTemplate("accountId",accountId);
-            likes = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Like>>(){});
+            webTarget = client.target(likesByReaderUri).resolveTemplate("accountId", accountId);
+
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                likes = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Like>>() {
+                });
+            } else {
+                System.err.println("Failed to retrieve likes by reader ID. Response status: " + response.getStatus());
+            }
+
+            return likes;
         } catch (IOException ex) {
-            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, "Error reading JSON response", ex);
+        } catch (ProcessingException ex) {
+            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
         return likes;
     }
+
+
 
     @Override
     public List<Like> getLikesByStory(Integer storyId) {
         List<Like> likes = new ArrayList<>();
-        try {            
+        try {
             String likesByStoryUri = uri + "getLikesByStory/{storyId}";
-            webTarget = client.target(likesByStoryUri).resolveTemplate("storyId",storyId);
-            likes = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Like>>(){});
+            webTarget = client.target(likesByStoryUri).resolveTemplate("storyId", storyId);
+
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                likes = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Like>>() {
+                });
+            } else {
+                System.err.println("Failed to retrieve story's likes. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
         return likes;
     }
 
+
     @Override
-    public Integer getStoryLikesByDate(Integer storyId, Timestamp startDate, Timestamp endDate) {        
+    public Integer getStoryLikesByDate(Integer storyId, Timestamp startDate, Timestamp endDate) {
         String storyLikesUri = uri + "getStoryLikesByDate/{storyId}/{startDate}/{endDate}";
         HashMap<String, Object> details = new HashMap<>();
         details.put("storyId", storyId);
@@ -107,42 +159,76 @@ public class LikeService_Impl implements LikeService_Interface{
         details.put("endDate", endDate);
         webTarget = client.target(storyLikesUri).resolveTemplates(details);
         response = webTarget.request().get();
-        return response.readEntity(Integer.class);
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Integer.class);
+            } else {
+                System.err.println("Failed to retrieve story likes by date. Response status: " + response.getStatus());
+                return null; // or throw an exception
+            }
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
+
 
     @Override
     public List<Integer> getMostLikedBooks(Integer numberOfBooks, Timestamp startDate, Timestamp endDate) {
         List<Integer> bookIds = new ArrayList<>();
         HashMap<String, Object> details = new HashMap<>();
-        try {            
+        try {
             String mostLikedBooksUri = uri + "getMostLikedBooks/{numberOfBooks}/{startDate}/{endDate}";
             details.put("numberOfBooks", numberOfBooks);
             details.put("startDate", startDate);
             details.put("endDate", endDate);
             webTarget = client.target(mostLikedBooksUri).resolveTemplates(details);
-            bookIds = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Integer>>(){});
+
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                bookIds = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Integer>>() {
+                });
+            } else {
+                System.err.println("Failed to retrieve most liked books. Response status: " + response.getStatus());
+            }
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
         return bookIds;
     }
+
     
     @Override
     public Boolean checkIfLikeExists(Like like) {
         try {
             String checkLikeExistsUri = uri + "checkIfLikeExists";
             webTarget = client.target(checkLikeExistsUri);
-            response= webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
+            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(like)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Boolean.class);
+            } else {
+                System.err.println("Failed to check if like exists. Response status: " + response.getStatus());
+                return null;
+            }
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return response.readEntity(Boolean.class);
+            Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, "Failed to check if like exists: " + ex.getMessage(), ex);
+            return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }        
     }
 
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
     }
 
-    
-    
 }
