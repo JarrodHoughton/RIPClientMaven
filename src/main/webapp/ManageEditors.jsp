@@ -16,22 +16,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Manage Editors</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <style>
-        html,
+        
         body {
-            height: 100%;
+          background-color: #333333;
+          color: white;
         }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
         .other-space{
             margin-bottom: 100px;
         }
@@ -40,23 +35,49 @@
         <%
             Account user = (Account) request.getSession(false).getAttribute("user");
         %>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+         <!--navbar-->
+    <div class="space-div"></div>
+    <%
+        String message = (String) request.getAttribute("message");
+    %>
+
+    <div id="navbar-container">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
-                    <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
-                    READERS ARE INNOVATORS
-                </a>
+                <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
+                    <i class="bi bi-list"></i> <!-- More Icon -->
+                </button>
+                <div class="container-fluid">
+                    <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
+                    <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
+                </div>
                 <div class="d-flex align-items-center">
                     <%
                         if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
                     %>
-                    <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
+                    <!-- Button trigger profile modal -->
+
+
                     <%
                         }
                     %>
                 </div>
-            </div>
         </nav>
+    </div>
+
+    <!--side-navbar-->
+    <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="d-grid">
+                <button class="btn btn-dark " type="button" data-bs-toggle="modal" data-bs-target="#profileDetails"><i class="bi bi-person-fill"></i> Profile</button>
+                <a class="btn btn-dark " href="LoginController?submit=logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
+            </div>
+        </div>
+    </div>
         <div class="other-space"></div>
         <%
             if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
@@ -75,7 +96,6 @@
         <%-- Retrieve the list of editors from the request attribute --%>
         <%
             List<Editor> editors = (List<Editor>) request.getAttribute("editors");
-            String message = (String) request.getAttribute("message");
         %>
 
         <%
