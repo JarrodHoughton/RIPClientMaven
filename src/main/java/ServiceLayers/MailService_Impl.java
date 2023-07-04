@@ -18,12 +18,12 @@ import java.util.logging.Logger;
 
 public class MailService_Impl implements MailService_Interface {
 
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     public MailService_Impl() {
         client = ClientBuilder.newClient();
@@ -34,32 +34,49 @@ public class MailService_Impl implements MailService_Interface {
 
     @Override
     public String sendMail(String recipientEmail, String emailContent, String subject) {
-        try {
-            HashMap<String, String> emailDetails = new HashMap<>();
+        HashMap<String, String> emailDetails = new HashMap<>();
+        try {            
             emailDetails.put("recipient", recipientEmail);
             emailDetails.put("content", emailContent);
             emailDetails.put("subject", subject);
             String sendMailUri = uri + "sendMail";
             webTarget = client.target(sendMailUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(emailDetails)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to send email. Response status: " + response.getStatus());
+                return "Failed to send email";
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
     }
+    
 
     @Override
     public String sendVerficationEmail(Reader reader) {
         try {
-            String sendVerficationEmailUri = uri + "sendVerificationEmail";
-            webTarget = client.target(sendVerficationEmailUri);
+            String sendVerificationEmailUri = uri + "sendVerificationEmail";
+            webTarget = client.target(sendVerificationEmailUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(reader)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to send verification email. Response status: " + response.getStatus());
+                return "Failed to send verification email";
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
     }
 
     private String toJsonString(Object obj) throws JsonProcessingException {
@@ -74,25 +91,43 @@ public class MailService_Impl implements MailService_Interface {
         referralDetails.put("recipientName", recipientName);
         webTarget = client.target(sendReferralEmailUri).resolveTemplates(referralDetails);
         response = webTarget.request().get();
-        return response.readEntity(String.class);
+
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to send referral email. Response status: " + response.getStatus());
+                return "Failed to send referral email";
+            }
+        } finally {
+            closeResponse();
+        }
     }
 
     @Override
     public String notifyApprovedWriters(List<Integer> accountIds, Boolean approved) {
         try {
-            String sendVerficationEmailUri = uri;
+            String notifyWritersUri = uri;
             if (approved) {
-                sendVerficationEmailUri += "notifyApprovedWriters";
+                notifyWritersUri += "notifyApprovedWriters";
             } else {
-                sendVerficationEmailUri += "notifyRejectedWriters";
+                notifyWritersUri += "notifyRejectedWriters";
             }
-            webTarget = client.target(sendVerficationEmailUri);
+            webTarget = client.target(notifyWritersUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(accountIds)));
-        } catch (IOException ex) {
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to notify writers. Response status: " + response.getStatus());
+                return "Failed to notify approved writer";
+            }
+        }catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
     }
 
     @Override
@@ -103,7 +138,16 @@ public class MailService_Impl implements MailService_Interface {
         notifDetails.put("approved", approved);
         webTarget = client.target(notifyUri).resolveTemplates(notifDetails);
         response = webTarget.request().get();
-        return response.readEntity(String.class);
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to notify writer of story submission. Response status: " + response.getStatus());
+                return "Failed to notify writer of story submission";
+            }
+        } finally {
+            closeResponse();
+        }
     }
 
     @Override
@@ -112,10 +156,23 @@ public class MailService_Impl implements MailService_Interface {
             String notifyBlockedWritersUri = uri + "notifyBlockedWriters";
             webTarget = client.target(notifyBlockedWritersUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(accountIds)));
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to notify blocked writers. Response status: " + response.getStatus());
+                return "Failed to notify blocked writer";
+            }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
+    }
+    
+    private void closeResponse(){
+        if (response != null) {
+            response.close();
+        }
     }
 }
