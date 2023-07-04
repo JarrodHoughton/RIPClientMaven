@@ -21,6 +21,8 @@
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-element-bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"></script>
         <style>
             /* Custom CSS to fix the navbar position */
             #navbar-container {
@@ -32,16 +34,14 @@
             }
 
             body {
-                background: #8e9eab;  /* fallback for old browsers */
-                background: -webkit-linear-gradient(to bottom, #eef2f3, #8e9eab);  /* Chrome 10-25, Safari 5.1-6 */
-                background: linear-gradient(to bottom, #eef2f3, #8e9eab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
+                background: #485563;
             }
 
             .card {
                 border: 1px solid black;
                 border-radius: 5px; /* Round the card corners */
                 transition: transform 0.3s;
+                height: 400px;
             }
 
             .card:hover {
@@ -55,7 +55,7 @@
 
             .card-img-top-fixed {
                 width: 100%;
-                height: 250px; /* Adjust the height as per your requirement */
+                height: 300px; /* Adjust the height as per your requirement */
                 object-fit: cover;
             }
 
@@ -71,6 +71,29 @@
             carouselTitle {
                 color: white;
             }
+
+            swiper-container {
+                width: 100%;
+                height: 100%;
+            }
+
+            swiper-slide {
+                text-align: center;
+                font-size: 18px;
+                background: #485563;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            swiper-slide img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                color: #485563;
+                object-fit: cover;
+            }
+
         </style>
 
         <%
@@ -135,68 +158,36 @@
             %>
             <!-- Spacing -->
             <h3 class="text-center carouselTitle">Top 10 picks</h3>
-            <div id="topPicks" class="carousel slide">
-                <div class="carousel-inner">
+
+            <div class="container">
+                <swiper-container class="mySwiper" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true">
                     <%
-                        Integer carouselSize = 5;
-                        for (int i = 0; i < topPicks.size() / carouselSize; i++) {
+                        for (Story story : topPicks) {
                     %>
-                    <%
-                        if (i > 0) {
-                    %>
-                    <div class="carousel-item  align-items-center">
-                        <%
-                        } else {
-                        %>
-                        <div class="carousel-item active  align-items-center">
-                            <%
-                                }
-                            %>
-                            <div class="card-group align-items-center">
+                    <swiper-slide>
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-dark">
                                 <%
-                                    for (int j = 0; j < carouselSize; j++) {
-                                        int storyIndex = j;
-                                        if (i > 0) {
-                                            storyIndex += carouselSize;
-                                        }
-                                        Story story = topPicks.get(storyIndex);
+                                    if (story.getImage() != null) {
                                 %>
-                                <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                                    <div class="card text-white bg-dark">
-                                        <%
-                                            if (story.getImage() != null) {
-                                        %>
-                                        <img class="card-img-top" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-                                        <%
-                                        } else {
-                                        %>
-                                        <img class="card-img-top" src="book.svg" alt="Book Image">
-                                        <%
-                                            }
-                                        %>
-                                        <div class="card-body">
-                                            <h5 class="card-title"><%=story.getTitle()%></h5>
-                                        </div>
-                                    </div>
-                                </a>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
                                 <%
                                     }
                                 %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
                             </div>
-                        </div>
-                        <%
-                            }
-                        %>
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#topPicks" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next ms-3" type="button" data-bs-target="#topPicks" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
             </div>
             <%
                 }
