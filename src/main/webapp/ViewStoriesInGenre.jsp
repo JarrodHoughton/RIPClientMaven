@@ -51,12 +51,10 @@
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 75px; /* Adjust the margin-bottom as per your requirement */
             }
 
-            .other-space{
-                margin-bottom: 40px;
-            }
+            
         </style>
     </head>
     <body>
@@ -92,7 +90,7 @@
         %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h2 class="text-center book-title">Stories In Genre: <%=genreName%></h2>
+            <h3 class="text-center book-title">Stories In Genre: <%=genreName%></h3>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
                     for (Story story : storiesInGenre) {
@@ -121,7 +119,7 @@
                     }
                 %>
             </div>
-            <div class="btn-group mt-5 mb-5 mx-auto">
+            <div class="btn-group mt-5 mb-5 d-flex justify-content-center">
                 <%
                     if (pageNumber != null && pageNumber > 0) {
                 %>
@@ -137,7 +135,7 @@
                     }
                 %>
             </div>
-            <div class="other-space"></div>
+            
         </div>
         <%
             } else if (pageNumber > 0) {
