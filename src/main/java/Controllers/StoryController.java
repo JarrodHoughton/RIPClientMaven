@@ -3,6 +3,8 @@ package Controllers;
 import Models.*;
 import ServiceLayers.CommentService_Impl;
 import ServiceLayers.CommentService_Interface;
+import ServiceLayers.DataReportService_Impl;
+import ServiceLayers.DataReportService_Interface;
 import ServiceLayers.EditorService_Impl;
 import ServiceLayers.EditorService_Interface;
 import ServiceLayers.GenreService_Impl;
@@ -25,7 +27,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import java.io.File;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -51,6 +56,7 @@ public class StoryController extends HttpServlet {
     private ViewService_Interface viewService;
     private MailService_Interface mailService;
     private EditorService_Interface editorService;
+    private DataReportService_Interface dataReportService;
     private String message;
     private Integer storyId;
 
@@ -63,6 +69,7 @@ public class StoryController extends HttpServlet {
         this.viewService = new ViewService_Impl();
         this.mailService = new MailService_Impl();
         this.editorService = new EditorService_Impl();
+        this.dataReportService = new DataReportService_Impl();
         this.reader = null;
         this.writer = null;
         this.editor = null;
@@ -318,7 +325,17 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "getStoriesForLandingPage":
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                List<Genre> topGenres = dataReportService.getTopGenres(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10);
+                request.setAttribute("genre1", topGenres.get(0));
+                request.setAttribute("genre2", topGenres.get(1));
+                request.setAttribute("genre3", topGenres.get(2));
+                request.setAttribute("genre1Stories", storyService.getStoriesInGenre(topGenres.get(0).getId(), 10, 0, true));
+                request.setAttribute("genre2Stories", storyService.getStoriesInGenre(topGenres.get(1).getId(), 10, 0, true));
+                request.setAttribute("genre3Stories", storyService.getStoriesInGenre(topGenres.get(2).getId(), 10, 0, true));
                 request.setAttribute("getStoriesCalled", true);
+                request.setAttribute("highestRated", dataReportService.getTopHighestRatedStoriesInTimePeriod(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10));
+                request.setAttribute("mostViewed", dataReportService.getMostViewedStoriesInATimePeriod(10, LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter)));
                 request.setAttribute("topPicks", storyService.getTopPicks());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
