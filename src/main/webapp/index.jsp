@@ -160,7 +160,7 @@
             <h3 class="text-center carouselTitle">Top 10 picks</h3>
 
             <div class="container">
-                <swiper-container class="mySwiper" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true">
+                <swiper-container class="mySwiper" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
