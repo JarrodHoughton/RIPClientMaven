@@ -28,7 +28,7 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                z-index: 9999;
+                z-index: 1;
             }
 
 
@@ -67,7 +67,7 @@
                 </button>
                 <div class="container-fluid">
                     <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
-                        <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
+                    <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
                 </div>
                 <div class="d-flex align-items-center">
                     <%
