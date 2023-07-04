@@ -31,6 +31,9 @@
                 z-index: 1;
             }
 
+            body{
+                background-color: #333333;
+            }
 
             .space {
                 /* Adjust the margin-top as per your requirement */
@@ -45,6 +48,10 @@
             }
             .space-div{
                 height: 80px;
+            }
+            .welcome{
+                background-color: #333333;
+                color: white;
             }
         </style>
     </style>
@@ -113,7 +120,7 @@
     %>
 
     <!--welcome div-->
-    <div class="welcome bg-light border-top border-bottom border-4">
+    <div class="welcome border-top border-bottom border-4 ">
         <div class="welcome-editor text-center " >
             <h1 class="fs-3">Welcome, Editor!</h1>
             <p>Here you can manage books and perform various editor-related tasks.</p>
