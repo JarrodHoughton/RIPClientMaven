@@ -88,11 +88,12 @@
                             <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" maxlength="16" minlength="8" required>
                         </div>
                         <div class="text-center">
-                            <input type="submit" value="Login" name="submit" class="btn btn-primary login-button">
+                            <input type="submit" value="Login" class="btn btn-primary login-button">
                         </div>
                         <div class="not-member">
                             <p>Not a member? <a href="LoginController?submit=getGenresForRegister">Register</a></p>
                         </div>
+                        <input type="hidden" value="login" name="submit" class="btn btn-primary login-button">
                     </form>
                 </div>
             </div>

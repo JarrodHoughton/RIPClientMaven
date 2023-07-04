@@ -61,7 +61,7 @@
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 75px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
             }
 
             .other-space {
@@ -76,10 +76,13 @@
                 width: 100%;
                 height: 100%;
             }
-            
-            .Top-Stories-Swiper {
-                width: 500px;
-                height: 500px;
+
+            .TopStoriesSwiper {
+                width: 300px;
+                height: 300px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
             }
 
             swiper-slide {
@@ -163,7 +166,8 @@
             %>
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container class="Top-Stories-Swiper" navigation="true" space-between="10" slides-per-view="1" loop="true" mousewheel="true" effect="cube" cube-effect-shadow="true" cube-effect-slide-shadows="true" cube-effect-shadow-offset="20" cube-effect-shadow-scale="0.94">
+                <div class="TopStoriesContainer">
+                <swiper-container speed="800" navigation="true" slides-per-view="1" loop="true" mousewheel="true" effect="cube">
                     <%
                         for (Story story : topPicks) {
                     %>
@@ -191,6 +195,7 @@
                         }
                     %>
                 </swiper-container>
+                </div>
             </div>
             <%
                 }
@@ -200,12 +205,13 @@
             <%
                 if (topPicks != null) {
             %>
+
             <!-- Spacing -->
             <h3 class="text-center">Top 10 picks</h3>
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="600" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
