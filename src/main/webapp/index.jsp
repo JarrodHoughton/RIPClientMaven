@@ -34,7 +34,7 @@
             }
 
             body {
-                background: #485563;
+                background: #333333;
             }
 
             .card {
@@ -61,7 +61,7 @@
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 75px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
             }
 
             .other-space {
@@ -77,10 +77,18 @@
                 height: 100%;
             }
 
+            .TopStoriesSwiper {
+                width: 300px;
+                height: 300px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+            }
+
             swiper-slide {
                 text-align: center;
                 font-size: 18px;
-                background: #485563;
+                background: #333333;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -88,9 +96,9 @@
 
             swiper-slide img {
                 display: block;
-                width: 100%;
+                width: 200px;
                 height: 100%;
-                color: #485563;
+                color: #333333;
                 object-fit: cover;
             }
 
@@ -156,11 +164,54 @@
             <%
                 if (topPicks != null) {
             %>
-            <!-- Spacing -->
-            <h3 class="text-center carouselTitle">Top 10 picks</h3>
-
+            <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container class="mySwiper" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true">
+                <div class="TopStoriesContainer">
+                <swiper-container speed="800" navigation="true" slides-per-view="1" loop="true" mousewheel="true" effect="cube">
+                    <%
+                        for (Story story : topPicks) {
+                    %>
+                    <swiper-slide>
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-dark">
+                                <%
+                                    if (story.getImage() != null) {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                <%
+                                    }
+                                %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
+                </div>
+            </div>
+            <%
+                }
+            %>
+            <div class="other-space"></div>
+            <div class="other-space"></div>
+            <%
+                if (topPicks != null) {
+            %>
+
+            <!-- Spacing -->
+            <h3 class="text-center">Top 10 picks</h3>
+
+            <!-- Top Picks Swiper -->
+            <div class="container">
+                <swiper-container speed="600" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
@@ -194,56 +245,57 @@
             %>
         </div>
         <div class="other-space"></div>
+    </div>
 
-        <!-- Modal Refer Friend Form -->
-        <div class="modal fade" id="referFriend" aria-labelledby="referFriend" tabindex="-1" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal Refer Friend Form -->
+    <div class="modal fade" id="referFriend" aria-labelledby="referFriend" tabindex="-1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="MailController" method="post">
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <label for="name" class="col-form-label mb-3">Name</label>
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="row mb-3">
+                            <label for="email" class="col-form-label mb-3">Email</label>
+                            <input type="email" class="form-control" id="email"name="email">
+                        </div>
+                        <div class="row mb-3">
+                            <label for="phoneNumber" class="col-form-label mb-3">Phone Number</label>
+                            <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber">
+                        </div>
+                        <input type="hidden" name="currentPage" value="index.jsp">
+                        <input type="hidden" name="submit" value="sendReferralEmail">
                     </div>
-                    <form action="MailController" method="post">
-                        <div class="modal-body">
-                            <div class="row mb-3">
-                                <label for="name" class="col-form-label mb-3">Name</label>
-                                <input type="text" class="form-control" id="name" name="name">
-                            </div>
-                            <div class="row mb-3">
-                                <label for="email" class="col-form-label mb-3">Email</label>
-                                <input type="email" class="form-control" id="email"name="email">
-                            </div>
-                            <div class="row mb-3">
-                                <label for="phoneNumber" class="col-form-label mb-3">Phone Number</label>
-                                <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber">
-                            </div>
-                            <input type="hidden" name="currentPage" value="index.jsp">
-                            <input type="hidden" name="submit" value="sendReferralEmail">
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-primary mb-3">Send</button>
                         </div>
-                        <div class="modal-footer">
-                            <div class="btn-group" role="group">
-                                <button type="submit" class="btn btn-primary mb-3">Send</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
 
 
-        <!-- Side Bare Menu -->
-        <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <div class="d-grid">
-                    <a class="btn btn-dark" role="button" href="login.jsp"> Login</a>
-                    <button class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
-                </div>
+    <!-- Side Bar Menu -->
+    <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="d-grid">
+                <a class="btn btn-dark" role="button" href="login.jsp"> Login</a>
+                <button class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
             </div>
         </div>
-    </body>
+    </div>
+</body>
 </html>

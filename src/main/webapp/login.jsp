@@ -19,6 +19,7 @@
             html,
             body {
                 height: 100%;
+                background: linear-gradient(180deg, #000000, #111111, #000000);;
             }
 
             body {
@@ -32,9 +33,16 @@
                 max-width: 400px;
                 margin: 0 auto;
                 padding: 20px;
-                border: 1px solid #ccc;
+                border: none; /* Remove the border */
                 border-radius: 5px;
-                background-color: #fff;
+                background-color: black;
+                color: #ffffff;
+/*                box-shadow: 0 0 100px rgba(255, 255, 255, 0.1);  Add a subtle box shadow */
+            }
+
+
+            .login-form h3 {
+                color: #ffffff;
             }
 
             .login-button {
@@ -44,10 +52,12 @@
             .not-member {
                 text-align: center;
                 margin-top: 10px;
+                color: #ffffff;
             }
         </style>
+
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
@@ -55,16 +65,16 @@
                 </a>
             </div>
         </nav>
-        <% 
+        <%
             String message = (String) request.getAttribute("message");
             Reader user = (Reader) request.getAttribute("user");
-            if  (message != null) { 
+            if (message != null) {
         %>
         <div class="alert alert-info" role="alert">
-            <h4 class="alert-heading"><%= message %></h4>
+            <h4 class="alert-heading"><%= message%></h4>
         </div>
-        <% 
-            } 
+        <%
+            }
         %>
         <div class="container mt-4">
             <div class="row">
@@ -78,11 +88,12 @@
                             <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" maxlength="16" minlength="8" required>
                         </div>
                         <div class="text-center">
-                            <input type="submit" value="login" name="submit" class="btn btn-primary login-button">
+                            <input type="submit" value="Login" class="btn btn-primary login-button">
                         </div>
                         <div class="not-member">
                             <p>Not a member? <a href="LoginController?submit=getGenresForRegister">Register</a></p>
                         </div>
+                        <input type="hidden" value="login" name="submit" class="btn btn-primary login-button">
                     </form>
                 </div>
             </div>
