@@ -78,7 +78,7 @@
             }
 
             .TopStoriesSwiper {
-                width: 300px;
+                width: 50%;
                 height: 300px;
                 position: absolute;
                 left: 50%;
@@ -88,7 +88,6 @@
             swiper-slide {
                 text-align: center;
                 font-size: 18px;
-                background: #333333;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -101,10 +100,32 @@
                 color: #333333;
                 object-fit: cover;
             }
+            
+            
+            
+            .modal-body {
+                color: white;
+            }
+            
+            .modal-footer {
+                color: white;
+            }
+            
+            .modal-header {
+                color: white;
+            }
 
         </style>
 
         <%
+            Genre genre1 = (Genre) request.getAttribute("genre1");
+            Genre genre2 = (Genre)  request.getAttribute("genre2");
+            Genre genre3 = (Genre)  request.getAttribute("genre3");
+            List<Story> genre1Stories = (List<Story>) request.getAttribute("genre1Stories");
+            List<Story> genre2Stories = (List<Story>) request.getAttribute("genre2Stories");
+            List<Story> genre3Stories = (List<Story>) request.getAttribute("genre3Stories");
+            List<Story> highestRated = (List<Story>) request.getAttribute("highestRated");
+            List<Story> mostViewed = (List<Story>) request.getAttribute("mostViewed");
             List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
             Boolean getStoriesCalled = (Boolean) request.getAttribute("getStoriesCalled");
             String message = (String) request.getAttribute("message");
@@ -149,8 +170,7 @@
 
 
 
-
-        <div class="space"></div>
+        <div class="other-space"></div>
         <%
             if (message != null) {
         %>
@@ -160,58 +180,21 @@
         <%
             }
         %>
+        
+        <div class="space"></div>
+        
         <div class="container mt-5">
-            <%
-                if (topPicks != null) {
-            %>
-            <!-- Top Picks Swiper -->
-            <div class="container">
-                <div class="TopStoriesContainer">
-                <swiper-container speed="800" navigation="true" slides-per-view="1" loop="true" mousewheel="true" effect="cube">
-                    <%
-                        for (Story story : topPicks) {
-                    %>
-                    <swiper-slide>
-                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                            <div class="card text-white bg-dark">
-                                <%
-                                    if (story.getImage() != null) {
-                                %>
-                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-                                <%
-                                } else {
-                                %>
-                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
-                                <%
-                                    }
-                                %>
-                                <div class="card-body">
-                                    <h5 class="card-title"><%=story.getTitle()%></h5>
-                                </div>
-                            </div>
-                        </a>
-                    </swiper-slide>
-                    <%
-                        }
-                    %>
-                </swiper-container>
-                </div>
-            </div>
-            <%
-                }
-            %>
-            <div class="other-space"></div>
             <div class="other-space"></div>
             <%
                 if (topPicks != null) {
             %>
 
             <!-- Spacing -->
-            <h3 class="text-center">Top 10 picks</h3>
+            <h3 class="text-center" style="color: white;">Top 10 picks</h3>
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="600" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
@@ -244,19 +227,254 @@
                 }
             %>
         </div>
+        
+        <div class="other-space" id="mostViewed"></div>
+        
+        <div class="container mt-5">
+            <div class="other-space"></div>
+            <%
+                if (mostViewed != null) {
+            %>
+
+            <!-- Spacing -->
+            <h3 class="text-center" style="color: white;">Most Viewed Stories This Month</h3>
+
+            <!-- Top Picks Swiper -->
+            <div class="container" >
+                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                    <%
+                        for (Story story : mostViewed) {
+                    %>
+                    <swiper-slide>
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-dark">
+                                <%
+                                    if (story.getImage() != null) {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                <%
+                                    }
+                                %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
+            </div>
+            <%
+                }
+            %>
+        </div>
+        
+        <div class="other-space" id="highestRated"></div>
+        
+        <div class="container mt-5">
+            <div class="other-space"></div>
+            <%
+                if (highestRated != null) {
+            %>
+
+            <!-- Spacing -->
+            <h3 class="text-center" style="color: white;">Highest Rated Stories This Month</h3>
+
+            <!-- Top Picks Swiper -->
+            <div class="container" >
+                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                    <%
+                        for (Story story : highestRated) {
+                    %>
+                    <swiper-slide>
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-dark">
+                                <%
+                                    if (story.getImage() != null) {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                <%
+                                    }
+                                %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
+            </div>
+            <%
+                }
+            %>
+        </div>
+        
+        <div class="other-space" id="genre1"></div>
+        
+        <div class="container mt-5">
+            <div class="other-space"></div>
+            <%
+                if (genre1 != null) {
+            %>
+
+            <!-- Spacing -->
+            <h3 class="text-center" style="color: white;"><%=genre1.getName()%> Stories</h3>
+
+            <!-- Top Picks Swiper -->
+            <div class="container">
+                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                    <%
+                        for (Story story : genre1Stories) {
+                    %>
+                    <swiper-slide>
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-dark">
+                                <%
+                                    if (story.getImage() != null) {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                <%
+                                    }
+                                %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
+            </div>
+            <%
+                }
+            %>
+        </div>
+        
+        <div class="other-space" id="genre2"></div>
+        
+        <div class="container mt-5">
+            <div class="other-space"></div>
+            <%
+                if (genre2 != null) {
+            %>
+
+            <!-- Spacing -->
+            <h3 class="text-center" style="color: white;"><%=genre2.getName()%> Stories</h3>
+
+            <!-- Top Picks Swiper -->
+            <div class="container">
+                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                    <%
+                        for (Story story : genre2Stories) {
+                    %>
+                    <swiper-slide>
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-dark">
+                                <%
+                                    if (story.getImage() != null) {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                <%
+                                    }
+                                %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
+            </div>
+            <%
+                }
+            %>
+        </div>
+        
+        <div class="other-space" id="genre3"></div>
+        
+        <div class="container mt-5">
+            <div class="other-space"></div>
+            <%
+                if (genre3 != null) {
+            %>
+
+            <!-- Spacing -->
+            <h3 class="text-center" style="color: white;"><%=genre3.getName()%> Stories</h3>
+
+            <!-- Top Picks Swiper -->
+            <div class="container">
+                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                    <%
+                        for (Story story : genre3Stories) {
+                    %>
+                    <swiper-slide>
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-dark">
+                                <%
+                                    if (story.getImage() != null) {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                <%
+                                    }
+                                %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
+            </div>
+            <%
+                }
+            %>
+        </div>
+        
         <div class="other-space"></div>
-    </div>
 
     <!-- Modal Refer Friend Form -->
     <div class="modal fade" id="referFriend" aria-labelledby="referFriend" tabindex="-1" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-dark">
                     <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="MailController" method="post">
-                    <div class="modal-body">
+                    <div class="modal-body bg-dark">
                         <div class="row mb-3">
                             <label for="name" class="col-form-label mb-3">Name</label>
                             <input type="text" class="form-control" id="name" name="name">
@@ -272,7 +490,7 @@
                         <input type="hidden" name="currentPage" value="index.jsp">
                         <input type="hidden" name="submit" value="sendReferralEmail">
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer bg-dark">
                         <div class="btn-group" role="group">
                             <button type="submit" class="btn btn-primary mb-3">Send</button>
                         </div>
@@ -291,9 +509,63 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <div class="d-grid">
+            <div class="d-grid" style="text-align: left;">
                 <a class="btn btn-dark" role="button" href="login.jsp"> Login</a>
                 <button class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
+                <%
+                    if (topPicks!=null) {
+                %>
+                <button role="button" class="btn btn-dark" type="button" onclick="scrollToTop()">Top Picks</button>
+                <%
+                    }
+                %>
+                
+                <script>
+                    function scrollToTop(){
+                        document.body.scrollTop = 0; 
+                        document.documentElement.scrollTop = 0;
+                    }
+                </script>
+                
+                <%
+                    if (mostViewed!=null) {
+                %>
+                <a role="button" class="btn btn-dark" href="#mostViewed">Most Viewed</a>
+                <%
+                    }
+                %>
+                
+                <%
+                    if (highestRated!=null) {
+                %>
+                <a role="button" class="btn btn-dark" href="#highestRated">Highest Rated</a>
+                <%
+                    }
+                %>
+                
+                <%
+                    if (genre1!=null) {
+                %>
+                <a role="button" class="btn btn-dark" href="#genre1"><%=genre1.getName()%></a>
+                <%
+                    }
+                %>
+                
+                <%
+                    if (genre2!=null) {
+                %>
+                <a role="button" class="btn btn-dark" href="#genre2"><%=genre2.getName()%></a>
+                <%
+                    }
+                %>
+                
+                <%
+                    if (genre3!=null) {
+                %>
+                <a role="button" class="btn btn-dark" href="#genre3"><%=genre3.getName()%></a>
+                <%
+                    }
+                %>
             </div>
         </div>
     </div>
