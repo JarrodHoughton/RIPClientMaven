@@ -96,8 +96,6 @@ public class StoryService_Impl implements StoryService_Interface {
         return stories;
     }
 
-
-
     @Override
     public List<Story> getStoriesInGenre(Integer genreId, Integer numberOfStories, Integer currentId, Boolean next) {
         List<Story> stories = null;
@@ -158,26 +156,47 @@ public class StoryService_Impl implements StoryService_Interface {
         return response.readEntity(String.class);
     }
 
-
     @Override
-    public String deleteStory(Integer storyId) {
+    public String deleteStory(Integer storyId) {       
+        try{
         String deleteStoryUri = uri + "deleteStory/{storyId}";
         webTarget = client.target(deleteStoryUri).resolveTemplate("storyId", storyId);
         response = webTarget.request().get();
-        return response.readEntity(String.class);
-    }
+            
+            if (response.getStatus() == Response.Status.OK.getStatusCode()){
+                return response.readEntity(String.class);
+            }else {
+                System.err.println("Failed to delete story. Response status: " + response.getStatus());
+            }
+        }finally{
+           response.close();
 
+        }
+        return "System failed to delete story";
+    }
+    
     @Override
     public String addStory(Story story) {
         try {
             String addStoryUri = uri + "addStory";
             webTarget = client.target(addStoryUri);
-            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(story)));
-        } catch (IOException ex) {
+            String storyJson = toJsonString(story);
+            response = webTarget.request(MediaType.APPLICATION_JSON)
+                                .post(Entity.json(storyJson));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                return "Something went wrong adding a story to the system.";
+            }
+        } catch (Exception ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Something went wrong adding a story to the system.";
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(String.class);
     }
 
     @Override
@@ -186,11 +205,22 @@ public class StoryService_Impl implements StoryService_Interface {
         try {
             String getTopPicksUri = uri + "getTopPicks";
             webTarget = client.target(getTopPicksUri);
-            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                stories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {});
+            } else {
+                return null;
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
+
         return stories;
     }
     
@@ -199,32 +229,45 @@ public class StoryService_Impl implements StoryService_Interface {
         List<Story> submittedStories = null;
         try {
             String getSubmittedStoriesUri = uri + "getSubmittedStories/{numberOfStories}/{offset}";
-            HashMap<String, Object> params = new HashMap<>();
-            params.put("numberOfStories", numberOfStories);
-            params.put("offset", offset);
-            webTarget = client.target(getSubmittedStoriesUri).resolveTemplates(params);
-            submittedStories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+            webTarget = client.target(getSubmittedStoriesUri)
+                    .resolveTemplate("numberOfStories", numberOfStories)
+                    .resolveTemplate("offset", offset);
+            response = webTarget.request().get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                submittedStories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {
+                });
+            } else {
+                return null;
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.ALL, null, ex);
             return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
         return submittedStories;
     }
+
     
     @Override
     public List<Story> searchForStories(String searchValue, Integer numberOfStories, Integer currentId, Boolean next) {
         List<Story> stories = null;
         try {
-            String searchForStoriesPath = uri + "searchForStories";// Build the query parameters
-            URI searchForStoriesUri = UriBuilder.fromPath(searchForStoriesPath)
+            String searchForStoriesPath = uri + "searchForStories";
+            UriBuilder uriBuilder = UriBuilder.fromPath(searchForStoriesPath)
                     .queryParam("searchValue", searchValue)
                     .queryParam("numberOfStories", numberOfStories)
                     .queryParam("currentId", currentId)
-                    .queryParam("next", String.valueOf(next))
-                    .build();
+                    .queryParam("next", next);
+            URI searchForStoriesUri = uriBuilder.build();
+
             webTarget = client.target(searchForStoriesUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
-            if (response.getStatus()==Response.Status.OK.getStatusCode()) {
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 stories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {});
             } else {
                 Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, "Failed to retrieve stories from search. Response status: {0}", response.getStatus());
@@ -233,24 +276,44 @@ public class StoryService_Impl implements StoryService_Interface {
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
+
         return stories;
-    }
+}
+
     
     @Override
     public List<Story> getRecommendations(List<Integer> genreIds) {
         List<Story> recommendedStories = null;
         try {
-            String loginReaderUri = uri + "getRecommendations";
-            webTarget = client.target(loginReaderUri);
-            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(genreIds)));
-            recommendedStories = response.readEntity(StoriesHolder.class).getStories();
+            String getRecommendationsUri = uri + "getRecommendations";
+            webTarget = client.target(getRecommendationsUri);
+
+            response = webTarget.request(MediaType.APPLICATION_JSON)
+                    .post(Entity.json(toJsonString(genreIds)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                recommendedStories = response.readEntity(new GenericType<List<Story>>() {});
+            } else {
+                Logger.getLogger(StoryService_Impl.class.getName())
+                        .log(Level.SEVERE, "Failed to retrieve recommended stories.", response.getStatus());
+                return null;
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
         return recommendedStories;
     }
+
 
     @Override
     public List<Story> getWritersSubmittedStories(List<Integer> storyIds, Integer writerId) {
@@ -259,16 +322,32 @@ public class StoryService_Impl implements StoryService_Interface {
             StoriesHolder storiesHolder = new StoriesHolder();
             storiesHolder.setId(writerId);
             storiesHolder.setStoryIds(storyIds);
-            String loginReaderUri = uri + "getWritersSubmittedStories";
-            webTarget = client.target(loginReaderUri);
-            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(storiesHolder)));
-            submittedStories = response.readEntity(StoriesHolder.class).getStories();
+
+            String getWritersSubmittedStoriesUri = uri + "getWritersSubmittedStories";
+            webTarget = client.target(getWritersSubmittedStoriesUri);
+
+            response = webTarget.request(MediaType.APPLICATION_JSON)
+                    .post(Entity.json(toJsonString(storiesHolder)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                submittedStories = response.readEntity(new GenericType<List<Story>>() {});
+            } else {
+                Logger.getLogger(StoryService_Impl.class.getName())
+                        .log(Level.SEVERE, "Failed to retrieve submitted stories.", response.getStatus());
+                return null;
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
+
         return submittedStories;
     }
+
 
     @Override
     public List<Story> getWritersDraftedStories(List<Integer> storyIds, Integer writerId) {
@@ -277,16 +356,33 @@ public class StoryService_Impl implements StoryService_Interface {
             StoriesHolder storiesHolder = new StoriesHolder();
             storiesHolder.setId(writerId);
             storiesHolder.setStoryIds(storyIds);
-            String loginReaderUri = uri + "getWritersDraftedStories";
-            webTarget = client.target(loginReaderUri);
-            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(storiesHolder)));
-            draftedStories = response.readEntity(StoriesHolder.class).getStories();
+
+            String getWritersDraftedStoriesUri = uri + "getWritersDraftedStories";
+            webTarget = client.target(getWritersDraftedStoriesUri);
+
+            response = webTarget.request(MediaType.APPLICATION_JSON)
+                    .post(Entity.json(toJsonString(storiesHolder)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                draftedStories = response.readEntity(new GenericType<List<Story>>() {
+                });
+            } else {
+                Logger.getLogger(StoryService_Impl.class.getName())
+                        .log(Level.SEVERE, "Failed to retrieve drafted stories.", response.getStatus());
+                return null;
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
+
         return draftedStories;
     }
+
     
     private String toJsonString(Object obj) throws JsonProcessingException {
         return mapper.writeValueAsString(obj);
@@ -297,11 +393,25 @@ public class StoryService_Impl implements StoryService_Interface {
         try {
             String updateStoriesUri = uri + "updateStories";
             webTarget = client.target(updateStoriesUri);
-            response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(stories)));
+
+            response = webTarget.request(MediaType.APPLICATION_JSON)
+                    .post(Entity.json(toJsonString(stories)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                Logger.getLogger(StoryService_Impl.class.getName())
+                        .log(Level.SEVERE, "Failed to update the selected stories.", response.getStatus());
+                return "Something went wrong updating the selected stories.";
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return "Something went wrong updating the selected stories.";
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return response.readEntity(String.class);
     }
+
 }
