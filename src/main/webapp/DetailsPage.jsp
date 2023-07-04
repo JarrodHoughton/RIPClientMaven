@@ -13,6 +13,11 @@
               integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <title>Story Details</title>
         <style>
+            body {
+                
+                background: linear-gradient(180deg, #000000, #111111, #000000);
+            }
+            
             .title-right {
                 margin-left: 50px; /* Adjust the margin value as needed */
             }
@@ -26,6 +31,7 @@
                 margin-top: 20px;
                 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
                 transition: 0.3s;
+                background-color: black;
             }
 
             .card:hover {
@@ -111,7 +117,7 @@
         %>
         <div id="navbar-container">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-black">
                 <div class="container">
                     <a class="navbar-brand" href="<%=homePageUrl%>">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
@@ -181,15 +187,15 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="details-container">
-                                    <h3 class="title title-right"><%= story.getTitle()%></h3>
+                                    <h3 class="title title-right text-white"><%= story.getTitle()%></h3>
                                     <div class="blurb-container title-right">
-                                        <p class="blurp"><%= story.getBlurb()%></p>
+                                        <p class="blurp text-white"><%= story.getBlurb()%></p>
                                     </div>
                                 </div>
                                 <div class="rating-container">
-                                    <div class="rating-box title-right">Rating: <%= story.getRating()%></div>
-                                    <div class="likes-box title-right">Likes: <%= story.getLikeCount()%></div>
-                                    <div class="views-box title-right">Views: <%= story.getViewCount()%></div>
+                                    <div class="rating-box title-right text-white">Rating: <%= story.getRating()%></div>
+                                    <div class="likes-box title-right text-white">Likes: <%= story.getLikeCount()%></div>
+                                    <div class="views-box title-right text-white">Views: <%= story.getViewCount()%></div>
                                 </div>
                                 <div class="button-container">
                                     <%
@@ -270,12 +276,12 @@
                     </div>
                     <div>
                         <% if (story.getCommentsEnabled() && comments != null) { %>
-                        <h3>Comments</h3>
+                        <h3 class="text-white">Comments</h3>
                         <%
                             for (Comment comment : comments) {
                         %>
                         <div>
-                            <p class="comment-content"><%= comment.getName() + " " + comment.getSurname() + ":" + comment.getDate() + " -> " + comment.getMessage()%></p>
+                            <p class="comment-content text-white"><%= comment.getName() + " " + comment.getSurname() + ":" + comment.getDate() + " -> " + comment.getMessage()%></p>
                         </div>
                         <%
                             }
