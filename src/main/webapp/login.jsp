@@ -19,7 +19,7 @@
             html,
             body {
                 height: 100%;
-                background: linear-gradient(180deg, #333333, #444444, #333333);
+                background: linear-gradient(180deg, #000000, #111111, #000000);;
             }
 
             body {
@@ -35,9 +35,9 @@
                 padding: 20px;
                 border: none; /* Remove the border */
                 border-radius: 5px;
-                background-color: #222222;
+                background-color: black;
                 color: #ffffff;
-                box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* Add a subtle box shadow */
+/*                box-shadow: 0 0 100px rgba(255, 255, 255, 0.1);  Add a subtle box shadow */
             }
 
 
@@ -57,7 +57,7 @@
         </style>
 
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
