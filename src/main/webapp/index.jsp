@@ -30,15 +30,15 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                z-index: 9999;
+                z-index: 999;
             }
 
             body {
-                background: #333333;
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+
             }
 
             .card {
-                border: 1px solid black;
                 border-radius: 5px; /* Round the card corners */
                 transition: transform 0.3s;
                 height: 400px;
@@ -144,7 +144,7 @@
     <body>
         <div id="navbar-container">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-20">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-black bg-opacity-20">
                 <div class="container">
                     <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
                         <i class="bi bi-list"></i> <!-- More Icon -->
@@ -200,7 +200,7 @@
                     %>
                     <swiper-slide>
                         <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                            <div class="card text-white bg-dark">
+                            <div class="card text-white bg-black">
                                 <%
                                     if (story.getImage() != null) {
                                 %>
@@ -247,7 +247,7 @@
                     %>
                     <swiper-slide>
                         <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                            <div class="card text-white bg-dark">
+                            <div class="card text-white bg-black">
                                 <%
                                     if (story.getImage() != null) {
                                 %>
@@ -294,7 +294,7 @@
                     %>
                     <swiper-slide>
                         <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                            <div class="card text-white bg-dark">
+                            <div class="card text-white bg-black">
                                 <%
                                     if (story.getImage() != null) {
                                 %>
@@ -341,7 +341,7 @@
                     %>
                     <swiper-slide>
                         <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                            <div class="card text-white bg-dark">
+                            <div class="card text-white bg-black">
                                 <%
                                     if (story.getImage() != null) {
                                 %>
@@ -388,7 +388,7 @@
                     %>
                     <swiper-slide>
                         <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                            <div class="card text-white bg-dark">
+                            <div class="card text-white bg-black">
                                 <%
                                     if (story.getImage() != null) {
                                 %>
@@ -435,7 +435,7 @@
                     %>
                     <swiper-slide>
                         <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                            <div class="card text-white bg-dark">
+                            <div class="card text-white bg-black">
                                 <%
                                     if (story.getImage() != null) {
                                 %>

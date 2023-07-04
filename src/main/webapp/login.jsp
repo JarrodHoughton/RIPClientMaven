@@ -19,7 +19,7 @@
             html,
             body {
                 height: 100%;
-                background: linear-gradient(180deg, #000000, #111111, #000000);;
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
             }
 
             body {
