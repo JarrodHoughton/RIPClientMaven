@@ -31,14 +31,20 @@
                 z-index: 9999;
             }
 
+            body {
+                background: #8e9eab;  /* fallback for old browsers */
+                background: -webkit-linear-gradient(to bottom, #eef2f3, #8e9eab);  /* Chrome 10-25, Safari 5.1-6 */
+                background: linear-gradient(to bottom, #eef2f3, #8e9eab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+            }
+
             .card {
-                border: 1px solid #ddd; /* Add border to the cards */
+                border: 1px solid black;
                 border-radius: 5px; /* Round the card corners */
                 transition: transform 0.3s;
             }
 
             .card:hover {
-                transform: translateY(-5px);
                 border-color: #007bff; /* Add blue border color on hover */
                 box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Add blue box shadow on hover */
             }
@@ -61,13 +67,22 @@
             .other-space {
                 margin-bottom: 40px;
             }
+
+            carouselTitle {
+                color: white;
+            }
         </style>
 
         <%
             List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
+            Boolean getStoriesCalled = (Boolean) request.getAttribute("getStoriesCalled");
             String message = (String) request.getAttribute("message");
 
-            if (topPicks == null) {
+            if (getStoriesCalled == null) {
+                getStoriesCalled = false;
+            }
+
+            if (topPicks == null && !getStoriesCalled) {
         %>
         <script>
             window.location.replace("StoryController?submit=getStoriesForLandingPage");
@@ -77,7 +92,7 @@
     <body>
         <div id="navbar-container">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-20">
                 <div class="container">
                     <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
                         <i class="bi bi-list"></i> <!-- More Icon -->
@@ -115,40 +130,79 @@
             }
         %>
         <div class="container mt-5">
+            <%
+                if (topPicks != null) {
+            %>
             <!-- Spacing -->
-            <h3 class="text-center book-title">Top 10 picks</h3>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
-                <%
-                    if (topPicks != null) {
-                        for (Story story : topPicks) {
-                %>
-                <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
-                    <div class="col">
-                        <div class="card card-fixed">
-                            <%
-                                if (story.getImage() != null) {
-                            %>
-                            <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-                            <%
-                            } else {
-                            %>
-                            <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+            <h3 class="text-center carouselTitle">Top 10 picks</h3>
+            <div id="topPicks" class="carousel slide">
+                <div class="carousel-inner">
+                    <%
+                        Integer carouselSize = 5;
+                        for (int i = 0; i < topPicks.size() / carouselSize; i++) {
+                    %>
+                    <%
+                        if (i > 0) {
+                    %>
+                    <div class="carousel-item  align-items-center">
+                        <%
+                        } else {
+                        %>
+                        <div class="carousel-item active  align-items-center">
                             <%
                                 }
                             %>
-                            <div class="card-body">
-                                <h5 class="card-title"><%=story.getTitle()%></h5>
+                            <div class="card-group align-items-center">
+                                <%
+                                    for (int j = 0; j < carouselSize; j++) {
+                                        int storyIndex = j;
+                                        if (i > 0) {
+                                            storyIndex += carouselSize;
+                                        }
+                                        Story story = topPicks.get(storyIndex);
+                                %>
+                                <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                                    <div class="card text-white bg-dark">
+                                        <%
+                                            if (story.getImage() != null) {
+                                        %>
+                                        <img class="card-img-top" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                        <%
+                                        } else {
+                                        %>
+                                        <img class="card-img-top" src="book.svg" alt="Book Image">
+                                        <%
+                                            }
+                                        %>
+                                        <div class="card-body">
+                                            <h5 class="card-title"><%=story.getTitle()%></h5>
+                                        </div>
+                                    </div>
+                                </a>
+                                <%
+                                    }
+                                %>
                             </div>
                         </div>
+                        <%
+                            }
+                        %>
                     </div>
-                </a>
-                <%
-                        }
-                    }
-                %>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#topPicks" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next ms-3" type="button" data-bs-target="#topPicks" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <div class="other-space"></div>
+            <%
+                }
+            %>
         </div>
+        <div class="other-space"></div>
 
         <!-- Modal Refer Friend Form -->
         <div class="modal fade" id="referFriend" aria-labelledby="referFriend" tabindex="-1" style="display: none;" aria-hidden="true">
@@ -188,27 +242,16 @@
 
 
         <!-- Side Bare Menu -->
-        <div class="offcanvas offcanvas-start show text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
+        <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <div class="btn-group" role="group" aria-label="Vertical button group">
-                    <a class="btn btn-dark col-6" mb-3" href="login.jsp"><i class="bi bi-box-arrow-in-right"></i> Login</a>
-                    <button class="btn btn-dark col-6" mb-3" type="button" data-bs-toggle="modal" data-bs-target="#referFriend"><i class="bi bi-share"></i> Share</button>
+                <div class="d-grid">
+                    <a class="btn btn-dark" role="button" href="login.jsp"> Login</a>
+                    <button class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
                 </div>
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <a class="nav-link" role="button" href="#">Top Picks</a>
-                    </li>
-                    <li class="list-group-item">
-                        <a class="list-group-link" role="button" href="#">Most Viewed</a>
-                    </li>
-                    <li class="list-group-item">
-                        <a class="nav-link" role="button" href="#">Highest Rated</a>
-                    </li>
-                </ul>
             </div>
         </div>
     </body>

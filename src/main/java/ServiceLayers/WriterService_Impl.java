@@ -28,12 +28,12 @@ import java.util.logging.Logger;
  * @author Jarrod
  */
 public class WriterService_Impl implements WriterService_Interface{
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     public WriterService_Impl() {
         client = ClientBuilder.newClient();
@@ -47,7 +47,17 @@ public class WriterService_Impl implements WriterService_Interface{
         String addWriterUri = uri + "addWriter/{readerId}";
         webTarget = client.target(addWriterUri).resolveTemplate("readerId", readerId);
         response = webTarget.request().get();
-        return response.readEntity(String.class);
+
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to add writer. Response status: " + response.getStatus());
+                return "Failed to add writer";
+            }
+        } finally {
+            closeResponse();
+        }
     }
 
     @Override
@@ -62,16 +72,18 @@ public class WriterService_Impl implements WriterService_Interface{
                 .build();
             webTarget = client.target(getwriterUri);
             response = webTarget.request().get();
-            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                writers = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Writer>>(){});
+            } else {
+                System.err.println("Failed to retrieve writers. Response status: " + response.getStatus());
                 return null;
-            }
-            String responseStr = response.readEntity(String.class);
-            if (responseStr != null) {
-                writers = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        } finally {
+            closeResponse();
         }
         return writers;
     }
@@ -81,7 +93,17 @@ public class WriterService_Impl implements WriterService_Interface{
         String getWriterByIdUri = uri + "getWriterById/{writerId}";
         webTarget = client.target(getWriterByIdUri).resolveTemplate("writerId", writerId);
         response = webTarget.request().get();
-        return response.readEntity(Writer.class);
+
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Writer.class);
+            } else {
+                System.err.println("Failed to retrieve writer by ID. Response status: " + response.getStatus());
+                return null;
+            }
+        } finally {
+            closeResponse();
+        }
     }
 
     @Override
@@ -89,7 +111,17 @@ public class WriterService_Impl implements WriterService_Interface{
         String getWriterByEmailUri = uri + "getWriterByEmail/{email}";
         webTarget = client.target(getWriterByEmailUri).resolveTemplate("email", email);
         response = webTarget.request().get();
-        return response.readEntity(Writer.class);
+
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(Writer.class);
+            } else {
+                System.err.println("Failed to retrieve writer by email. Response status: " + response.getStatus());
+                return null;
+            }
+        } finally {
+            closeResponse();
+        }
     }
 
     @Override
@@ -98,11 +130,19 @@ public class WriterService_Impl implements WriterService_Interface{
             String updateWriterUri = uri + "updateWriter";
             webTarget = client.target(updateWriterUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(writer)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to update writer. Response status: " + response.getStatus());
+                return "Failed to update writer";
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return "Something went wrong connecting to server.";
+            return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
     }
 
     @Override
@@ -111,11 +151,19 @@ public class WriterService_Impl implements WriterService_Interface{
             String blockWritersUri = uri + "blockWriters";
             webTarget = client.target(blockWritersUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(writerIds)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to block writers. Response status: " + response.getStatus());
+                return "Failed to block writers";
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return "Something went wrong connecting to server.";
+            return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
     }
     
     @Override
@@ -124,11 +172,19 @@ public class WriterService_Impl implements WriterService_Interface{
             String addWritersUri = uri + "addWriters";
             webTarget = client.target(addWritersUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).post(Entity.json(toJsonString(writerIds)));
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to add writers. Response status: " + response.getStatus());
+                return null;
+            }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return "Something went wrong connecting to server.";
+            return "Something went wrong connecting to the server.";
+        } finally {
+            closeResponse();
         }
-        return response.readEntity(String.class);
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
@@ -148,17 +204,27 @@ public class WriterService_Impl implements WriterService_Interface{
                 .build();
             webTarget = client.target(searchForWritersUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
-            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-                return null;
-            }
-            String responseStr = response.readEntity(String.class);
-            if (responseStr != null && !responseStr.isEmpty()) {
-                writers = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                String responseStr = response.readEntity(String.class);
+                if (responseStr != null && !responseStr.isEmpty()) {
+                    writers = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
+                }
+            } else {
+                System.err.println("Failed to search for writers. Response status: " + response.getStatus());
             }
         } catch (IOException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        } finally {
+            closeResponse();
         }
         return writers;
+    }
+    
+    private void closeResponse(){
+        if (response != null) {
+            response.close();
+        }
     }
 }
