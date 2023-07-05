@@ -60,6 +60,8 @@ public class LoginService_Impl implements LoginService_Interface{
             if (!responseStr.isEmpty()) {
                 details = mapper.readValue(responseStr, new TypeReference<HashMap<String, String>>(){});
             }
+            return details;
+
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -69,7 +71,6 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         }
 
-        return details;
     }
    
     @Override
@@ -85,6 +86,8 @@ public class LoginService_Impl implements LoginService_Interface{
             } else {
                 // Handle error response
                 System.err.println("Failed to login reader. Response status: " + response.getStatus());
+                return null;
+
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -95,7 +98,6 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         }
 
-        return null;
     }
 
 
@@ -112,6 +114,8 @@ public class LoginService_Impl implements LoginService_Interface{
             } else {
                 // Handle error response
                 System.err.println("Failed to login writer. Response status: " + response.getStatus());
+                return null;
+
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -122,7 +126,6 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         }
 
-        return null;
     }
 
 
@@ -139,6 +142,8 @@ public class LoginService_Impl implements LoginService_Interface{
             } else {
                 // Handle error response
                 System.err.println("Failed to login editor. Response status: " + response.getStatus());
+                return null;
+
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -149,7 +154,6 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         }
 
-        return null;
     }
 
 
@@ -165,6 +169,8 @@ public class LoginService_Impl implements LoginService_Interface{
             } else {
                 // Handle error response
                 System.err.println("Failed to register reader. Response status: " + response.getStatus());
+                return null;
+
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -175,7 +181,6 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         }
 
-        return null;
     }
 
     

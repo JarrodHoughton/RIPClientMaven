@@ -52,6 +52,8 @@ public class ViewService_Impl implements ViewService_Interface {
                 return response.readEntity(String.class);
             }else {
                 System.err.println("Failed to add view. Response status: " + response.getStatus());
+                return "System failed to add view";
+
             }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,7 +61,6 @@ public class ViewService_Impl implements ViewService_Interface {
         }finally{
             closeResponse();
         }
-        return "System failed to add view";
     }
 
     @Override
@@ -83,13 +84,14 @@ public class ViewService_Impl implements ViewService_Interface {
             if (!responseStr.isEmpty()) {
                 bookIds = mapper.readValue(responseStr, new TypeReference<List<Integer>>(){});
             }            
+            return bookIds;
+
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;            
         }finally{
             closeResponse();
         }
-        return bookIds;
     }
 
     @Override

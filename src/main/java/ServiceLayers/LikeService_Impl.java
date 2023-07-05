@@ -146,6 +146,8 @@ public class LikeService_Impl implements LikeService_Interface{
             if (!responseStr.isEmpty()) {
                 likes = mapper.readValue(responseStr, new TypeReference<List<Like>>(){});
             }
+            return likes;
+
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -154,7 +156,6 @@ public class LikeService_Impl implements LikeService_Interface{
                 response.close();
             }
         }
-        return likes;
     }
 
 
@@ -204,6 +205,8 @@ public class LikeService_Impl implements LikeService_Interface{
             if (!responseStr.isEmpty()) {
                 bookIds = mapper.readValue(responseStr, new TypeReference<List<Integer>>(){});
             }
+            return bookIds;
+
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -212,7 +215,6 @@ public class LikeService_Impl implements LikeService_Interface{
                 response.close();
             }
         }
-        return bookIds;
     }
 
     

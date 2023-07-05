@@ -57,13 +57,13 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
             if (!responseStr.isEmpty()) {
                 applications = mapper.readValue(responseStr, new TypeReference<List<Application>>(){});
             }
+             return applications;
         } catch (IOException ex) {
             Logger.getLogger(ApplicationService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
             closeResponse();
         }
-        return applications;       
     }
 
     @Override
@@ -77,6 +77,7 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
                 return response.readEntity(String.class);
             } else {
                 System.err.println("Failed to add application. Response status: " + response.getStatus());                
+                 return "System failed to add application";
             }
         } catch (IOException ex) {
             Logger.getLogger(ApplicationService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -84,7 +85,6 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
         } finally {
             closeResponse();
         }
-        return "System failed to add application";
     }
 
     @Override

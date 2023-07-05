@@ -49,20 +49,19 @@ public class CommentService_Impl implements CommentService_Interface{
             
             if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 System.err.println("Failed to get all comments. Response status: " + response.getStatus());
-                return null;
-            }
+             }
             
             String responseStr = response.readEntity(String.class);            
             if (!responseStr.isEmpty()) {
                 allComments = mapper.readValue(responseStr, new TypeReference<List<Comment>>(){});
             }            
+           return allComments;
         } catch (IOException ex) {
             Logger.getLogger(CommentService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }finally{
             closeResponse();
         }
-        return allComments;
     }
 
     @Override
