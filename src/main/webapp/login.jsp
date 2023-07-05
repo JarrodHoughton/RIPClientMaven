@@ -59,6 +59,22 @@
                 color: #ffffff;
             }
         </style>
+        <script>
+            
+            <%
+                Boolean tokensMatch = (Boolean) request.getAttribute("tokensMatch");
+                String email = (String) request.getAttribute("email");
+                if (tokensMatch!=null&&tokensMatch) {
+            %>
+                window.onload = activateChangePasswordModal();
+            <%
+                }
+            %>
+            
+            function activateChangePasswordModal() {
+                $("#changePasswordForm").modal();
+            }
+        </script>
 
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
@@ -139,12 +155,47 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <input type="hidden" name="submit" value="sendforgotPasswordEmail">
+                            <input type="hidden" name="submit" value="sendForgotPasswordEmail">
                             <button type="submit" class="btn btn-primary mb-3">Change Password</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+        
+        <%
+            if (tokensMatch!=null && tokensMatch) {
+        %>
+        <%-- Change Password Modal --%>
+        <div class="modal fade" id="changePasswordForm" aria-labelledby="changePasswordForm" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-white bg-dark">
+                    <form action="ReaderController" method="post">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="editorForm">Please enter your email</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="password" class="col-form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." maxlength="8" minlength="16">
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordRepeat" class="col-form-label">Repeat-Password</label>
+                                <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." maxlength="8" minlength="16">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="email" value="<%=email%>">
+                            <input type="hidden" name="submit" value="changePasswordForLogin">
+                            <button type="submit" class="btn btn-primary mb-3">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%
+            }
+        %>
     </body>
 </html>

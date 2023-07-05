@@ -54,9 +54,34 @@ public class ReaderController extends HttpServlet {
                 request.getRequestDispatcher(currentPage).forward(request, response);
                 break;
                 
-            case "changePassword":
-                String verifyToken = request.getParameter("");
+            case "allowPasswordChangeOnLogin":
+                String verifyToken = request.getParameter("verifyToken");
+                Integer readerId = Integer.valueOf(request.getParameter("readerId"));
+                String originalToken = readerService.getVerifyToken(readerId);
+                Boolean tokensMatch = false;
+                if (verifyToken.equals(originalToken)) {
+                    tokensMatch = false;
+                }
+                request.setAttribute("email", reader.getEmail());
+                request.setAttribute("tokensMatch", tokensMatch);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
+                
+            case "changePasswordForLogin":
+                password = request.getParameter("password");
+                String repeatPassword = request.getParameter("repeatPassword");
+                String email = request.getParameter("email");
+                reader = readerService.getReader(email);
+                String message;
+                if (password.equals(repeatPassword)) {
+                    reader.setPasswordHash(PasswordEncryptor.hashPassword(password, reader.getSalt()));
+                    message = readerService.updateReaderDetails(reader);
+                } else {
+                    message = "The passwords you entered did not match. Please try again.";
+                }
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            break;
             
         }
         

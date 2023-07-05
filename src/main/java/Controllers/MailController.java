@@ -7,7 +7,6 @@ package Controllers;
 import ServiceLayers.MailService_Impl;
 import ServiceLayers.MailService_Interface;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -37,7 +36,7 @@ public class MailController extends HttpServlet {
                 request.setAttribute("message", mailService.sendReferralEmail(request.getParameter("email"), request.getParameter("name")));
                 request.getRequestDispatcher(request.getParameter("currentPage")).forward(request, response);
                 break;
-            case "sendforgotPasswordEmail" :
+            case "sendForgotPasswordEmail" :
                 request.setAttribute("message", mailService.sendChangePasswordEmail(request.getParameter("email")));
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
