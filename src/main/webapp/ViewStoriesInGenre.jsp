@@ -28,9 +28,14 @@
             }
 
             .card {
-                border: 1px solid #ddd; /* Add border to the cards */
                 border-radius: 5px; /* Round the card corners */
                 transition: transform 0.3s;
+                color: white; /* Set the card text color to white */
+                background-color: black;
+            }
+            
+            body {
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
             }
 
             .card:hover {
@@ -51,7 +56,7 @@
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 75px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
             }
 
             
@@ -67,7 +72,7 @@
         %>
         <div id="navbar-container">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-black">
                 <div class="container">
                     <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
@@ -90,12 +95,12 @@
         %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h3 class="text-center book-title">Stories In Genre: <%=genreName%></h3>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
+            <h3 class="text-center book-title" style="color: white;">Stories In Genre: <%=genreName%></h3>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
                 <%
                     for (Story story : storiesInGenre) {
                 %>
-                <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                     <div class="col">
                         <div class="card card-fixed">
                             <%

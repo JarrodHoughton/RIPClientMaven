@@ -17,6 +17,7 @@
         <title>Reader Landing Page</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
         <style>
             /* Custom CSS to fix the navbar position */
             #navbar-container {
@@ -26,12 +27,16 @@
                 right: 0;
                 z-index: 9999;
             }
-           
+
+            body {
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+            }
 
             .card {
-                border: 1px solid #ddd; /* Add border to the cards */
                 border-radius: 5px; /* Round the card corners */
                 transition: transform 0.3s;
+                color: white; /* Set the card text color to white */
+                background-color: black;
             }
 
             .card:hover {
@@ -56,11 +61,15 @@
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 75px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
             }
-
-   
+            
+            .otherspace {
+                /* Adjust the margin-top as per your requirement */
+                margin-bottom: 60px; /* Adjust the margin-bottom as per your requirement */
+            }
         </style>
+
     </head>
     <body>
         <%
@@ -82,7 +91,7 @@
         %>
         <div id="navbar-container">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-black">
                 <div class="container">
                     <a class="navbar-brand" href="<%=homePageUrl%>">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
@@ -103,16 +112,17 @@
         <%
             if (storiesFromSearch != null && !storiesFromSearch.isEmpty()) {
         %>
-        
+
         <div class="space"></div>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h3 class="text-center book-title">Search Results In Stories</h3>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
+            <h3 class="text-center book-title" style="color: white;">Search Results In Stories</h3>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
+
                 <%
                     for (Story story : storiesFromSearch) {
                 %>
-                <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
                     <div class="col">
                         <div class="card card-fixed">
                             <%
@@ -136,31 +146,31 @@
                     }
                 %>
             </div>
-            
+
             <div class="btn-group mt-5 mb-5 d-flex justify-content-center">
-    <%
-        if (pageNumber != null && pageNumber > 0) {
-    %>
-    <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
-    <%
-        }
-    %>
-    <%
-        if (storiesFromSearch.size() == offsetAmount) {
-    %>
-    <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber+1)%>&currentId=<%=storiesFromSearch.get(storiesFromSearch.size()-1).getId()%>&next=true">Next</a>
-    <%
-        }
-    %>
-</div>
+                <%
+                    if (pageNumber != null && pageNumber > 0) {
+                %>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber - 1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
+                <%
+                    }
+                %>
+                <%
+                    if (storiesFromSearch.size() == offsetAmount) {
+                %>
+                <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber + 1)%>&currentId=<%=storiesFromSearch.get(storiesFromSearch.size() - 1).getId()%>&next=true">Next</a>
+                <%
+                    }
+                %>
+            </div>
 
         </div>
         <%
-            } else if (pageNumber > 0) {
+        } else if (pageNumber > 0) {
         %>
         <h4>No more results found for "<%=searchValue%>".</h4>
         <div class="btn-group mt-5 mb-5 mx-auto">
-            <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber-1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
+            <a class="btn btn-primary ms-2" href="StoryController?submit=nextPageOfStorySearchResults&searchValue=<%= searchValue%>&pageNumber=<%=(pageNumber - 1)%>&currentId=<%=storiesFromSearch.get(0).getId()%>&next=false">Previous</a>
         </div>
         <%
             }
@@ -171,7 +181,7 @@
         %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h3 class="text-center book-title">Search Results In Genres</h3>
+            <h3 class="text-center book-title" style="color: white;">Search Results In Genres</h3>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
                     for (Genre genre : genresFromSearch) {
@@ -188,15 +198,16 @@
                     }
                 %>
             </div>
-            
+
         </div>
+        <div class="otherspace"></div>
         <%
             }
         %>
         <%
             if (storiesFromSearch == null && genresFromSearch == null && pageNumber == 0) {
         %>
-        <h4>No results found for "<%=searchValue%>".</h4>
+        <h3 class="text-center" style="color: white;">No results found for "<%=searchValue%>".</h3>
         <%
             }
         %>
