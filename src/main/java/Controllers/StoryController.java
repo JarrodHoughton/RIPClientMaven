@@ -245,7 +245,7 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "approveEditedStoryFromEditor":
-                editor.setApprovalCount(editor.getApprovalCount()+1);
+                editor.setApprovalCount(editor.getApprovalCount() + 1);
                 message = editorService.updateEditor(editor);
                 Story story = new Story();
                 story.setApproved(Boolean.TRUE);
@@ -298,7 +298,7 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "submitStoryFromSelectStoryToEditPage":
-                editor.setApprovalCount(editor.getApprovalCount()+1);
+                editor.setApprovalCount(editor.getApprovalCount() + 1);
                 message = editorService.updateEditor(editor);
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story = storyService.getStory(storyId);
@@ -329,28 +329,41 @@ public class StoryController extends HttpServlet {
 
             case "getStoriesForLandingPage":
                 List<Genre> topGenres = dataReportService.getTopGenres(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10);
-                request.setAttribute("genre1", topGenres.get(0));
-                request.setAttribute("genre2", topGenres.get(1));
-                request.setAttribute("genre3", topGenres.get(2));
-                request.setAttribute("genre1Stories", storyService.getStoriesInGenre(topGenres.get(0).getId(), 10, 0, true));
-                request.setAttribute("genre2Stories", storyService.getStoriesInGenre(topGenres.get(1).getId(), 10, 0, true));
-                request.setAttribute("genre3Stories", storyService.getStoriesInGenre(topGenres.get(2).getId(), 10, 0, true));
+                if (topGenres != null) {
+                    request.setAttribute("genre1", topGenres.get(0));
+                    request.setAttribute("genre2", topGenres.get(1));
+                    request.setAttribute("genre3", topGenres.get(2));
+                    request.setAttribute("genre1Stories", storyService.getStoriesInGenre(topGenres.get(0).getId(), 10, 0, true));
+                    request.setAttribute("genre2Stories", storyService.getStoriesInGenre(topGenres.get(1).getId(), 10, 0, true));
+                    request.setAttribute("genre3Stories", storyService.getStoriesInGenre(topGenres.get(2).getId(), 10, 0, true));
+                }
                 request.setAttribute("getStoriesCalled", true);
                 request.setAttribute("highestRated", dataReportService.getTopHighestRatedStoriesInTimePeriod(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10));
                 request.setAttribute("mostViewed", dataReportService.getMostViewedStoriesInATimePeriod(10, LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter)));
-                request.setAttribute("topPicks", storyService.getTopPicks());
+                request.setAttribute("topPicks", dataReportService.getMostLikedStories(10, LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter)));
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
 
             case "getStoriesForReaderLandingPage":
                 request.setAttribute("getStoriesForReaderLandingPageCalled", Boolean.TRUE);
-                request.setAttribute("topPicks", storyService.getTopPicks());
+                topGenres = dataReportService.getTopGenres(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10);
+                if (topGenres != null) {
+                    request.setAttribute("genre1", topGenres.get(0));
+                    request.setAttribute("genre2", topGenres.get(1));
+                    request.setAttribute("genre3", topGenres.get(2));
+                    request.setAttribute("genre1Stories", storyService.getStoriesInGenre(topGenres.get(0).getId(), 10, 0, true));
+                    request.setAttribute("genre2Stories", storyService.getStoriesInGenre(topGenres.get(1).getId(), 10, 0, true));
+                    request.setAttribute("genre3Stories", storyService.getStoriesInGenre(topGenres.get(2).getId(), 10, 0, true));
+                }
+                request.setAttribute("highestRated", dataReportService.getTopHighestRatedStoriesInTimePeriod(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10));
+                request.setAttribute("mostViewed", dataReportService.getMostViewedStoriesInATimePeriod(10, LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter)));
+                request.setAttribute("topPicks", dataReportService.getMostLikedStories(10, LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter)));
                 if (reader != null) {
                     request.setAttribute("recommendedStories", storyService.getRecommendations(reader.getFavouriteGenreIds()));
                 }
                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                 break;
-                
+
             case "manageStories":
                 request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
                 request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
@@ -375,7 +388,7 @@ public class StoryController extends HttpServlet {
                 filePart = request.getPart("image");
                 if (filePart.getSize() > 0) {
                     try (InputStream fis = filePart.getInputStream()) {
-                        
+
                         byte[] imageData = new byte[(int) filePart.getSize()];
                         fis.read(imageData);
                         Byte[] image = ArrayUtils.toObject(imageData);
@@ -402,7 +415,7 @@ public class StoryController extends HttpServlet {
                 } else {
                     message = storyService.addStory(story);
                 }
-                
+
                 System.out.println("Finished adding a story.");
                 request.setAttribute("message", message);
                 request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
@@ -491,7 +504,7 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
                 request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
                 break;
-                
+
             case "storyOfTheDay":
                 request.setAttribute("readerName", request.getParameter("readerName"));
                 Story storyOfTheDay = dataReportService.getMostViewedStoriesInATimePeriod(1, LocalDate.now().minusDays(1).atStartOfDay().format(outputFormatter), LocalDateTime.now().format(outputFormatter)).get(0);
@@ -502,7 +515,7 @@ public class StoryController extends HttpServlet {
                 throw new AssertionError();
         }
     }
-    
+
     public Boolean isAlphaAndNumericOnly(String searchValue) {
         Boolean alphaNumericOnly = true;
         for (int i = 0; i < searchValue.length(); i++) {

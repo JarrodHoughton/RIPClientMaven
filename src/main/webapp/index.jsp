@@ -22,7 +22,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-element-bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"></script>
+        <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
         <style>
             /* Custom CSS to fix the navbar position */
             #navbar-container {
@@ -72,7 +72,7 @@
                 color: white;
             }
 
-            swiper-container {
+            .swiper-container {
                 width: 100%;
                 height: 100%;
             }
@@ -85,7 +85,7 @@
                 top: 50%;
             }
 
-            swiper-slide {
+            .swiper-slide {
                 text-align: center;
                 font-size: 18px;
                 display: flex;
@@ -93,7 +93,7 @@
                 align-items: center;
             }
 
-            swiper-slide img {
+            .swiper-slide img {
                 display: block;
                 width: 200px;
                 height: 100%;
@@ -121,12 +121,12 @@
             Genre genre1 = (Genre) request.getAttribute("genre1");
             Genre genre2 = (Genre)  request.getAttribute("genre2");
             Genre genre3 = (Genre)  request.getAttribute("genre3");
+            List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
             List<Story> genre1Stories = (List<Story>) request.getAttribute("genre1Stories");
             List<Story> genre2Stories = (List<Story>) request.getAttribute("genre2Stories");
             List<Story> genre3Stories = (List<Story>) request.getAttribute("genre3Stories");
             List<Story> highestRated = (List<Story>) request.getAttribute("highestRated");
             List<Story> mostViewed = (List<Story>) request.getAttribute("mostViewed");
-            List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
             Boolean getStoriesCalled = (Boolean) request.getAttribute("getStoriesCalled");
             String message = (String) request.getAttribute("message");
 
@@ -134,7 +134,7 @@
                 getStoriesCalled = false;
             }
 
-            if (topPicks == null && !getStoriesCalled) {
+            if (!getStoriesCalled) {
         %>
         <script>
             window.location.replace("StoryController?submit=getStoriesForLandingPage");
@@ -181,7 +181,7 @@
             }
         %>
         
-        <div class="space"></div>
+        <div class="other-space"></div>
         
         <div class="container mt-5">
             <div class="other-space"></div>
@@ -241,7 +241,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : mostViewed) {
                     %>
@@ -288,7 +288,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : highestRated) {
                     %>
@@ -335,7 +335,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre1Stories) {
                     %>
@@ -382,7 +382,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre2Stories) {
                     %>
@@ -429,7 +429,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre3Stories) {
                     %>

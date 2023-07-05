@@ -73,6 +73,21 @@
             <%
                 }
             %>
+
+            function validateForm(formName) {
+                let currentForm = forms[formName];
+                
+                if (formName === "changePasswordForm") {
+                    let password = currentForm["password"];
+                    let passwordRepeat = currentForm["repeatPassword"];
+                    if (password!==passwordRepeat) {
+                        console.log("passwords did not match!");
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
         </script>
 
     <body>
@@ -98,7 +113,7 @@
         <div class="container mt-4">
             <div class="row">
                 <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
-                    <form action="LoginController" method="post" class="login-form">
+                    <form id="loginForm" action="LoginController" method="post" class="login-form">
                         <h3 class="text-center mb-4">Login</h3>
                         <div class="mb-3">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
@@ -142,14 +157,14 @@
         <div class="modal fade" id="forgotPasswordForm" aria-labelledby="forgotPasswordForm" tabindex="-1" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content text-white bg-dark">
-                    <form action="MailController" method="post">
+                    <form action="MailController" method="post" onsubmit="validateForm('forgotPasswordForm')">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="editorForm">Please enter your email</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="email" class="col-form-label">Email</label>
+                                <label for="email" class="col-form-label" required>Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                         </div>
@@ -177,11 +192,11 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="password" class="col-form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." minlength="8" maxlength="16">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." minlength="8" maxlength="16"required>
                             </div>
                             <div class="mb-3">
                                 <label for="passwordRepeat" class="col-form-label">Repeat-Password</label>
-                                <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" placeholder="Repeat Password..." minlength="8" maxlength="16">
+                                <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" placeholder="Repeat Password..." minlength="8" maxlength="16" required>
                             </div>
                         </div>
                         <div class="modal-footer">
