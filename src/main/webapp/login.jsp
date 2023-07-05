@@ -60,20 +60,19 @@
             }
         </style>
         <script>
-            
+
             <%
                 Boolean tokensMatch = (Boolean) request.getAttribute("tokensMatch");
                 String email = (String) request.getAttribute("email");
-                if (tokensMatch!=null&&tokensMatch) {
+                if (tokensMatch != null && tokensMatch) {
             %>
-                window.onload = activateChangePasswordModal();
+            $(document).ready(function () {
+                console.log("Tokens matched. User may change password.");
+                $("#changePasswordForm").modal("show");
+            });
             <%
                 }
             %>
-            
-            function activateChangePasswordModal() {
-                $("#changePasswordForm").modal();
-            }
         </script>
 
     <body>
@@ -162,9 +161,9 @@
                 </div>
             </div>
         </div>
-        
+
         <%
-            if (tokensMatch!=null && tokensMatch) {
+            if (tokensMatch != null && tokensMatch) {
         %>
         <%-- Change Password Modal --%>
         <div class="modal fade" id="changePasswordForm" aria-labelledby="changePasswordForm" tabindex="-1" style="display: none;" aria-hidden="true">
@@ -172,17 +171,17 @@
                 <div class="modal-content text-white bg-dark">
                     <form action="ReaderController" method="post">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="editorForm">Please enter your email</h1>
+                            <h1 class="modal-title fs-5">Please enter your new password</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="password" class="col-form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." maxlength="8" minlength="16">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." minlength="8" maxlength="16">
                             </div>
                             <div class="mb-3">
                                 <label for="passwordRepeat" class="col-form-label">Repeat-Password</label>
-                                <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." maxlength="8" minlength="16">
+                                <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" placeholder="Repeat Password..." minlength="8" maxlength="16">
                             </div>
                         </div>
                         <div class="modal-footer">
