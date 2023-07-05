@@ -98,8 +98,8 @@
                 </ul>
             </div>
             <br>
-            <input type="hidden" name="submit" val="register">
-            <input type="button" value="Register">
+            <input type="hidden" name="submit" value="register">
+            <input type="submit" value="Register">
         </form>
     </body>
 </html>
