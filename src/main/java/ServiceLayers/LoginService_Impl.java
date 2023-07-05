@@ -20,7 +20,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,12 +28,12 @@ import java.util.logging.Logger;
  * @author jarro
  */
 public class LoginService_Impl implements LoginService_Interface{
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     public LoginService_Impl() {
         client = ClientBuilder.newClient();
@@ -52,14 +51,18 @@ public class LoginService_Impl implements LoginService_Interface{
             webTarget = client.target(getUserSaltUri).resolveTemplate("email", email);
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                details = mapper.readValue(response.readEntity(String.class), new TypeReference<HashMap<String, String>>(){});
-            } else {
-                // Handle error response
-                System.err.println("Failed to get user salt. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get users salt. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                details = mapper.readValue(responseStr, new TypeReference<HashMap<String, String>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -85,6 +88,7 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -111,6 +115,7 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -137,6 +142,7 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -162,6 +168,7 @@ public class LoginService_Impl implements LoginService_Interface{
             }
         } catch (IOException ex) {
             Logger.getLogger(LoginService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Failed to register reader";
         } finally {
             if (response != null) {
                 response.close();

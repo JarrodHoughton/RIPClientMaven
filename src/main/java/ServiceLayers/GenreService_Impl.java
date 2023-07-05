@@ -5,9 +5,7 @@
 package ServiceLayers;
 
 import Models.Genre;
-import Models.Reader;
 import Utils.GetProperties;
-import Utils.PasswordEncryptor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +16,6 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,12 +25,12 @@ import java.util.logging.Logger;
  * @author jarro
  */
 public class GenreService_Impl implements GenreService_Interface{
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     public GenreService_Impl() {
         client = ClientBuilder.newClient();
@@ -71,14 +68,18 @@ public class GenreService_Impl implements GenreService_Interface{
             webTarget = client.target(getAllGenresUri);
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                genres = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Genre>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve all genres. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get all genres. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                genres = mapper.readValue(responseStr, new TypeReference<List<Genre>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -99,7 +100,7 @@ public class GenreService_Impl implements GenreService_Interface{
                 return response.readEntity(String.class);
             } else {
                 System.err.println("Failed to delete the genre. Response status: " + response.getStatus());
-                return null; // or throw an exception
+                return null; 
             }
         } finally {
             if (response != null) {
@@ -120,11 +121,11 @@ public class GenreService_Impl implements GenreService_Interface{
                 return response.readEntity(String.class);
             } else {
                 System.err.println("Failed to add the genre. Response status: " + response.getStatus());
-                return null; // or throw an exception
+                return null;
             }
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return null; // or throw an exception
+            return null; 
         } finally {
             if (response != null) {
                 response.close();
@@ -140,13 +141,18 @@ public class GenreService_Impl implements GenreService_Interface{
             webTarget = client.target(searchForGenresUri).resolveTemplate("searchValue", searchValue);
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                genres = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Genre>>(){});
-            } else {
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 System.err.println("Failed to search for genres. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                genres = mapper.readValue(responseStr, new TypeReference<List<Genre>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();

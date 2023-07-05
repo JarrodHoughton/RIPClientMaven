@@ -29,12 +29,12 @@ import java.util.logging.Logger;
  * @author 27713
  */
 public class LikeService_Impl implements LikeService_Interface{
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     
     public LikeService_Impl() {
@@ -102,24 +102,28 @@ public class LikeService_Impl implements LikeService_Interface{
 
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                likes = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Like>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve likes by reader ID. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get likes by reader ID. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                likes = mapper.readValue(responseStr, new TypeReference<List<Like>>(){});
             }
 
             return likes;
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, "Error reading JSON response", ex);
+            return null;
         } catch (ProcessingException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
             }
         }
-        return likes;
     }
 
 
@@ -133,14 +137,18 @@ public class LikeService_Impl implements LikeService_Interface{
 
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                likes = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Like>>() {
-                });
-            } else {
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 System.err.println("Failed to retrieve story's likes. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                likes = mapper.readValue(responseStr, new TypeReference<List<Like>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -187,14 +195,18 @@ public class LikeService_Impl implements LikeService_Interface{
 
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                bookIds = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Integer>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve most liked books. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get most liked books. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                bookIds = mapper.readValue(responseStr, new TypeReference<List<Integer>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();

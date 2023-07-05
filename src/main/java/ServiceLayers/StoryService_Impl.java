@@ -4,7 +4,6 @@
  */
 package ServiceLayers;
 
-import Models.Genre;
 import Models.StoriesHolder;
 import Models.Story;
 import Utils.GetProperties;
@@ -15,10 +14,8 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.StatusType;
 import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
@@ -33,12 +30,12 @@ import java.util.logging.Logger;
  */
 public class StoryService_Impl implements StoryService_Interface {
 
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
 
     public StoryService_Impl() {
         client = ClientBuilder.newClient();
@@ -78,15 +75,18 @@ public class StoryService_Impl implements StoryService_Interface {
             webTarget = client.target(getAllStoriesUri);
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                String responseString = response.readEntity(String.class);
-                stories = mapper.readValue(responseString, new TypeReference<List<Story>>() {});
-            } else {
-                // Handle error response
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 System.err.println("Failed to get all stories. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                stories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -113,13 +113,14 @@ public class StoryService_Impl implements StoryService_Interface {
             webTarget = client.target(getStoriesInGenreUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                String responseString = response.readEntity(String.class);
-                stories = mapper.readValue(responseString, new TypeReference<List<Story>>() {});
-            } else {
-                // Handle error response
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 System.err.println("Failed to get stories in genre. Response status: " + response.getStatus());
                 return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                stories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -162,9 +163,19 @@ public class StoryService_Impl implements StoryService_Interface {
     @Override
     public String deleteStory(Integer storyId) {
         String deleteStoryUri = uri + "deleteStory/{storyId}";
+    try {
         webTarget = client.target(deleteStoryUri).resolveTemplate("storyId", storyId);
         response = webTarget.request().get();
-        return response.readEntity(String.class);
+        
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            System.err.println("Failed to delete story. Response status: " + response.getStatus());
+        }
+    } finally {
+        if (response != null) {
+                response.close();
+            }
+    }
+    return response.readEntity(String.class);
     }
 
     @Override
@@ -186,7 +197,17 @@ public class StoryService_Impl implements StoryService_Interface {
         try {
             String getTopPicksUri = uri + "getTopPicks";
             webTarget = client.target(getTopPicksUri);
-            stories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+            response = webTarget.request().get();
+            
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get top picks. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                stories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -203,7 +224,18 @@ public class StoryService_Impl implements StoryService_Interface {
             params.put("numberOfStories", numberOfStories);
             params.put("offset", offset);
             webTarget = client.target(getSubmittedStoriesUri).resolveTemplates(params);
-            submittedStories = mapper.readValue(webTarget.request().get(String.class), new TypeReference<List<Story>>() {});
+            response = webTarget.request().get();
+            
+            
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get submitted stories. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                submittedStories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
+            }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.ALL, null, ex);
             return null;
@@ -224,11 +256,15 @@ public class StoryService_Impl implements StoryService_Interface {
                     .build();
             webTarget = client.target(searchForStoriesUri);
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
-            if (response.getStatus()==Response.Status.OK.getStatusCode()) {
-                stories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {});
-            } else {
-                Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, "Failed to retrieve stories from search. Response status: {0}", response.getStatus());
+            
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to search for stories. Response status: " + response.getStatus());
                 return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                stories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(StoryService_Impl.class.getName()).log(Level.SEVERE, null, ex);

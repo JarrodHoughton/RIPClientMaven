@@ -47,10 +47,14 @@ public class EditorService_Impl implements EditorService_Interface{
             webTarget = client.target(getAllEditorsUri);
             response = webTarget.request().get();
             
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                editors = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Editor>>() {});
-            }else {
-                System.err.println("Failed to retrieve all editors. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get all editors. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                editors = mapper.readValue(responseStr, new TypeReference<List<Editor>>(){});
             }                  
         } catch (IOException ex) {
             Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -114,6 +118,7 @@ public class EditorService_Impl implements EditorService_Interface{
             }
         } catch (IOException ex) {
             Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }finally{
             closeResponse();
         }

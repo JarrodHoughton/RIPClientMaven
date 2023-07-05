@@ -17,7 +17,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,7 +24,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author 27713
+ * @author Kylynn van der Merwe
  */
 public class ViewService_Impl implements ViewService_Interface {
     private final Client client;
@@ -75,10 +74,14 @@ public class ViewService_Impl implements ViewService_Interface {
             webTarget = client.target(mostViewedBooksUri).resolveTemplates(details);
             response = webTarget.request().get();
             
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                bookIds = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Integer>>() {});
-            }else {
-                System.err.println("Failed to retrieve all editors. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to search for genres. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                bookIds = mapper.readValue(responseStr, new TypeReference<List<Integer>>(){});
             }            
         } catch (IOException ex) {
             Logger.getLogger(LikeService_Impl.class.getName()).log(Level.SEVERE, null, ex);

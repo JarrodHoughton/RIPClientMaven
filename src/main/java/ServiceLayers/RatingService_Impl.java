@@ -13,7 +13,6 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
@@ -78,11 +77,11 @@ public class RatingService_Impl implements RatingService_Interface {
                 return response.readEntity(Boolean.class);
             } else {
                 System.err.println("Failed to check if rating exists. Response status: " + response.getStatus());
-                return null;
+                return false;
             }
         } catch (JsonProcessingException ex) {
             Logger.getLogger(RatingService_Impl.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            return false;
         } finally {
             if (response != null) {
                 response.close();
@@ -127,13 +126,18 @@ public class RatingService_Impl implements RatingService_Interface {
 
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                bookIds = response.readEntity(new GenericType<List<Integer>>() {
-                });
-            } else {
-                // Handle error response
-                System.err.println("Failed to get top highest rated stories. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get likes by reader ID. Response status: " + response.getStatus());
+                return null;
             }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                bookIds = mapper.readValue(responseStr, new TypeReference<List<Integer>>(){});
+            }
+        }catch (IOException ex) {
+            Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             if (response != null) {
                 response.close();
@@ -158,9 +162,9 @@ public class RatingService_Impl implements RatingService_Interface {
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 return response.readEntity(Rating.class);
             } else {
-                // Handle error response
+                
                 System.err.println("Failed to get rating. Response status: " + response.getStatus());
-                return null; // Or throw an exception, depending on your requirement
+                return null; 
             }
         } finally {
             if (response != null) {

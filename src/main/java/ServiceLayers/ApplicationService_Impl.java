@@ -48,13 +48,18 @@ public class ApplicationService_Impl implements ApplicationService_Interface{
             webTarget = client.target(getApplicationsUri);
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                applications = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Application>>() {});
-            } else {
-                System.err.println("Failed to retrieve all applications. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get applications. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                applications = mapper.readValue(responseStr, new TypeReference<List<Application>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(ApplicationService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             closeResponse();
         }

@@ -11,13 +11,11 @@ import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,12 +23,12 @@ import java.util.logging.Logger;
 
 public class DataReportService_Impl implements DataReportService_Interface {
 
-    private Client client;
+    private final Client client;
     private WebTarget webTarget;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private Response response;
-    private GetProperties properties;
-    private String uri;
+    private final GetProperties properties;
+    private final String uri;
     private HashMap<String, Object> params;
 
     public DataReportService_Impl() {
@@ -86,18 +84,22 @@ public class DataReportService_Impl implements DataReportService_Interface {
 
             // Perform the HTTP GET request
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
-
-            // Check if the response is successful
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                listOfStories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve most liked stories. Response status: " + response.getStatus());
+            
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get most liked stories. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                listOfStories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
         } catch (ProcessingException | IllegalStateException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+            return null;
         } catch (IOException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             // Close the response to release resources
             if (response != null) {
@@ -124,18 +126,22 @@ public class DataReportService_Impl implements DataReportService_Interface {
             // Perform the HTTP GET request
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
 
-            // Check if the response is successful
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                listOfStories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve most viewed stories. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get most viewed stories. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                listOfStories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+            return null;
         } catch (IOException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             // Close the response to release resources
             if (response != null) {
@@ -191,19 +197,22 @@ public class DataReportService_Impl implements DataReportService_Interface {
             // Perform the HTTP GET request
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
 
-            // Check if the response is successful
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                // Read the response entity as a list of Story objects
-                listOfStories = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Story>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve top rated stories. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to retrieve highest rated stories. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                listOfStories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+            return null;
         } catch (IOException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             // Close the response to release resources
             if (response != null) {
@@ -259,18 +268,22 @@ public class DataReportService_Impl implements DataReportService_Interface {
             // Perform the HTTP GET request
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
 
-            // Check if the response is successful
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                topWriters = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Writer>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve top writers. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get top writers. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                topWriters = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
             }
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+            return null;
         } catch (IOException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             // Close the response to release resources
             if (response != null) {
@@ -297,19 +310,22 @@ public class DataReportService_Impl implements DataReportService_Interface {
             // Perform the HTTP GET request
             response = webTarget.request(MediaType.APPLICATION_JSON).get();        
 
-            // Check if the response is successful
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                // Read the response entity as a list of Genre objects
-                listOfTopGenres = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Genre>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve top genres. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get top genres. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                listOfTopGenres = mapper.readValue(responseStr, new TypeReference<List<Genre>>(){});
             }
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+            return null;
         } catch (IOException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             // Close the response to release resources
             if (response != null) {
@@ -393,18 +409,22 @@ public Integer getTotalViewsByWriterId(Integer writerId) {
             // Perform the HTTP GET request
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
 
-            // Check if the response is successful
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                topEditors = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Editor>>() {
-                });
-            } else {
-                System.err.println("Failed to retrieve top editors. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get top editors. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                topEditors = mapper.readValue(responseStr, new TypeReference<List<Editor>>(){});
             }
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
+            return null;
         } catch (IOException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } finally {
             // Close the response to release resources
             if (response != null) {

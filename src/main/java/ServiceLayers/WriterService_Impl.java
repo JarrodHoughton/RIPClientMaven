@@ -18,7 +18,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,11 +72,14 @@ public class WriterService_Impl implements WriterService_Interface{
             webTarget = client.target(getwriterUri);
             response = webTarget.request().get();
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                writers = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Writer>>(){});
-            } else {
-                System.err.println("Failed to retrieve writers. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get writers. Response status: " + response.getStatus());
                 return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                writers = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
             }
         } catch (IOException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);

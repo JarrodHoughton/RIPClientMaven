@@ -47,10 +47,14 @@ public class CommentService_Impl implements CommentService_Interface{
             webTarget = client.target(getCommentsForStoryUri).resolveTemplate("storyId",storyId);
             response = webTarget.request(MediaType.APPLICATION_JSON).get();
             
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                allComments = mapper.readValue(response.readEntity(String.class), new TypeReference<List<Comment>>(){});
-            }else {
-                System.err.println("Failed to retrieve all comments. Response status: " + response.getStatus());
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                System.err.println("Failed to get all comments. Response status: " + response.getStatus());
+                return null;
+            }
+            
+            String responseStr = response.readEntity(String.class);            
+            if (!responseStr.isEmpty()) {
+                allComments = mapper.readValue(responseStr, new TypeReference<List<Comment>>(){});
             }            
         } catch (IOException ex) {
             Logger.getLogger(CommentService_Impl.class.getName()).log(Level.SEVERE, null, ex);
