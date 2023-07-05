@@ -170,7 +170,7 @@
                             if (readerName!=null) {
                         %>
                         <h2 class="text-white text-center">Story of the day</h2>
-                        <h3 class="text-white">Welcome to Readers Are Innovators <%=readerName%>!</h3>
+                        <h6 class="text-white text-center">Welcome to Readers Are Innovators <%=readerName%>!</h6>
                         <%
                             }
                         %>

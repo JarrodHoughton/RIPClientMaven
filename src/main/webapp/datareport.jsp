@@ -267,9 +267,9 @@
             <%
                 }
             %>
-            <div class="mb-3 mt-4">
-            <button type="button" id="printTables" class="btn btn-primary" onclick="downloadTables()">Download PDF</button>
         </div>
+        <div class="mb-3 mt-4 text-center">
+            <button type="button" id="printTables" class="btn btn-primary" onclick="downloadTables()">Download PDF</button>
         </div>
         
         <%
