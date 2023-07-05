@@ -1,9 +1,3 @@
-<%-- 
-    Document   : createStory
-    Created on : 15 Jun 2023, 13:41:37
-    Author     : faiza
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -18,12 +12,14 @@
     </head>
     <style>
         .other-space{
-            margin-bottom: 100px;
+            margin-bottom: -15px;
         }
 
         body {
             background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
         }
+
+
     </style>
     <script>
         var loadFile = function (event) {
@@ -50,9 +46,7 @@
                              style="filter: invert(1)">
                         READERS ARE INNOVATORS
                     </a>
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
-                    </div>
+
                 </div>
             </nav>
         </div>
@@ -65,66 +59,81 @@
                 if (user != null) {
             %>
             <div class="row">
-                <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
-                    <div class="card text-white bg-dark">
+                <div class="col-12">
+                    <div class="card text-white bg-black">
                         <form action="StoryController" method="post" enctype="multipart/form-data">
-                            <div class="card-header">
-                                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Write a new story</h1>
-                            </div>
+                            
                             <div class="card-body">
-                                <div class="row">
-                                    <label for="title">Title:</label><br>
-                                    <input class="form-control" type="text" id="title" name="title" required>
-                                </div>
-                                <div class="row">
-                                    <div class="row" >
-                                        <div class="col text-center" style="height: 200px; width: 200px;">
-                                            <img class="img-thumbnail" id="storyImage" src="" alt="">
-                                        </div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <h3 id="exampleModalToggleLabel2">Write a new story</h3>
+                                        <label for="title" class="form-label">Title:</label>
+                                        <input class="form-control" type="text" id="title" name="title" required>
                                     </div>
-                                    <div class="row">
-                                        <label for="image">Upload Image:</label><br>
+                                </div>
+                                <div class="row mb-3 justify-content-center">
+                                    <div class="col-6 text-center">
+                                        <img class="img-thumbnail"Here is the remaining code for you:
+
+                                             ```html
+                                             id="storyImage" src="" alt="" style="width: 200px; height: 200px; object-fit: cover;">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="image" class="form-label">Upload Image:</label>
                                         <input class="form-control" type="file" id="image" name="image" accept="image/*" onchange="loadFile(event)">
                                     </div>
                                 </div>
-                                <div>
-                                    <label for="story">Story:</label><br>
-                                    <textarea class="form-control" id="story" name="story" rows="10" cols="50" required></textarea>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="story" class="form-label">Story:</label>
+                                        <textarea class="form-control" id="story" name="story" rows="10" required></textarea>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="summary">Summary:</label><br>
-                                    <textarea class="form-control" id="summary" name="summary" rows="5" cols="50" required></textarea>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="summary" class="form-label">Summary:</label>
+                                        <textarea class="form-control" id="summary" name="summary" rows="5" required></textarea>
+                                    </div>
                                 </div>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Select Genres
-                                    </button>
-                                    <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="dropdownMenuButton">
-                                        <% for (Genre genre : genres) {%>
-                                        <li>
-                                            <label>
-                                                <input type="checkbox" name="<%= genre.getId()%>" value="<%= genre.getId()%>">
-                                                <%= genre.getName()%> 
-                                            </label>
-                                        </li>
-                                        <% } %>
-                                    </ul>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Select Genres
+                                            </button>
+                                            <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="dropdownMenuButton">
+                                                <% for (Genre genre : genres) {%>
+                                                <li>
+                                                    <label>
+                                                        <input type="checkbox" name="<%= genre.getId()%>" value="<%= genre.getId()%>">
+                                                        <%= genre.getName()%> 
+                                                    </label>
+                                                </li>
+                                                <% } %>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="commentsEnabled" name="commentsEnabled" value="true">
-                                    <label class="form-check-label" for="commentsEnabled">Comments Enabled</label>
-                                </div>
+                                
+                                    <div class="col-12">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="commentsEnabled" name="commentsEnabled" value="true">
+                                            <label class="form-check-label" for="commentsEnabled">Comments Enabled</label>
+                                        </div>
+                                    </div>
+                                
                             </div>
                             <div class="card-footer">
                                 <input type="hidden" name="submit" value="addStory">
-                                <div class="btn-group">
+                                
                                     <input class="btn btn-primary" type="submit" name="submitStory" value="Submit">
                                     <input class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">
-                                </div>
+                                
                             </div>
                         </form>
                     </div>
-
                 </div>
             </div>
 
