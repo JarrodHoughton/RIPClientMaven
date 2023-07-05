@@ -34,17 +34,17 @@
 
         .modal-body {
             color: white;
-            background-color: black;
+            
         }
 
         .modal-footer {
             color: white;
-            background-color: black;
+            
         }
 
         .modal-header {
             color: white;
-            background-color: black;
+            
         }
         .smaller-table{
             width: 90%;
@@ -230,12 +230,12 @@
         <%-- Add a form here to add a new editor to the system --%>
         <div class="modal fade" id="addEditorForm" aria-labelledby="addEditorForm" tabindex="-1" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable bg-dark">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content bg-dark">
+                    <div class="modal-header bg-dark">
                         <h1 class="modal-title fs-5" id="editorForm">Add An Editor</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body bg-dark">
                         <form action="EditorController" method="post">
                             <div class="mb-3">
                                 <label for="name" class="col-form-label">First Name</label>
@@ -275,12 +275,12 @@
         <!-- Modal to update an editors details -->
         <div class="modal fade editorModal" id="editorForm" aria-labelledby="editorForm" tabindex="-1" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable bg-dark">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content bg-dark">
+                    <div class="modal-header bg-dark">
                         <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Update Editor Details</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-bodybd-dark">
                         <form action="EditorController" method="post">
                             <div class="mb-3">
                                 <label for="editorNameInput" class="col-form-label">First Name</label>
