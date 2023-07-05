@@ -17,7 +17,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-NTWp1tUQpxgih3k9wV9iVDOZDHR9sYPm9/j1ZDrN8IEEeVn5k1vL/1XTmlfF4zXZ" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="jquery-3.7.0.min.js"></script>
         <style>
             /* Custom CSS to fix the navbar position */
             #navbar-container {

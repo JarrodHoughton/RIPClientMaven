@@ -143,7 +143,7 @@
                         if (userViewedStory == null) {
                             userViewedStory = false;
                         }
-
+                        String readerName = (String) request.getAttribute("readerName");
                         List<Comment> comments = (List<Comment>) request.getAttribute("comments");
                         Story story = (Story) request.getAttribute("story");
                         Rating userRating = (Rating) request.getAttribute("userRating");
@@ -157,15 +157,23 @@
                         }
 
                         if (commentMessage != null) {%>
-                    <h3><%=commentMessage%></h3>
+                        <h3 class="text-white"><%=commentMessage%></h3>
                     <%}
                         if (ratingMessage != null) {%>
-                    <h3><%=ratingMessage%></h3>
+                    <h3 class="text-white"><%=ratingMessage%></h3>
                     <%}
                         if (likeMessage != null) {%>
-                    <h3><%=likeMessage%></h3>
+                    <h3 class="text-white"><%=likeMessage%></h3>
                     <%}
                         if (story != null) {%>
+                        <%
+                            if (readerName!=null) {
+                        %>
+                        <h2 class="text-white text-center">Story of the day</h2>
+                        <h3 class="text-white">Welcome to Readers Are Innovators <%=readerName%>!</h3>
+                        <%
+                            }
+                        %>
                     <div class="story-container">
                         <div class="row">
                             <div class="col-md-4">

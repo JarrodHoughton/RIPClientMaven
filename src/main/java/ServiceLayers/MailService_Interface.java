@@ -18,4 +18,5 @@ public interface MailService_Interface {
     public String notifyApprovedWriters(List<Integer> accountIds, Boolean approved);
     public String notifyBlockedWriters(List<Integer> accountIds);
     public String notifyWriterOfStorySubmission(Integer writerId, Boolean approved);
+    public String sendChangePasswordEmail(String email);
 }

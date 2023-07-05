@@ -15,6 +15,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Login Page</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="jquery-3.7.0.min.js"></script>
         <style>
             html,
             body {
@@ -37,7 +41,7 @@
                 border-radius: 5px;
                 background-color: black;
                 color: #ffffff;
-/*                box-shadow: 0 0 100px rgba(255, 255, 255, 0.1);  Add a subtle box shadow */
+                /*                box-shadow: 0 0 100px rgba(255, 255, 255, 0.1);  Add a subtle box shadow */
             }
 
 
@@ -90,10 +94,54 @@
                         <div class="text-center">
                             <input type="submit" value="Login" class="btn btn-primary login-button">
                         </div>
-                        <div class="not-member">
-                            <p>Not a member? <a href="LoginController?submit=getGenresForRegister">Register</a></p>
+                        <div class="row">
+                            <div class="col">
+                                <div class="not-member">
+                                    <div class="row">
+                                        <p>Not a member?</p>
+                                    </div>
+                                    <div class="row">
+                                        <a href="LoginController?submit=getGenresForRegister">Register</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="not-member">
+                                    <div class="row">
+                                        <p>Forgot Password?</p>
+                                    </div>
+                                    <div class="row">
+                                        <button class="btn btn-link" type="button" data-bs-toggle="modal" data-bs-target="#forgotPasswordForm">Change Password</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <input type="hidden" value="login" name="submit" class="btn btn-primary login-button">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <%-- Forgot Password Modal --%>
+        <div class="modal fade" id="forgotPasswordForm" aria-labelledby="forgotPasswordForm" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-white bg-dark">
+                    <form action="MailController" method="post">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="editorForm">Please enter your email</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="email" class="col-form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="submit" value="sendforgotPasswordEmail">
+                            <button type="submit" class="btn btn-primary mb-3">Change Password</button>
+                        </div>
                     </form>
                 </div>
             </div>

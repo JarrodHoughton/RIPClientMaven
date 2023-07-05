@@ -30,6 +30,7 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -57,6 +58,7 @@ public class StoryController extends HttpServlet {
     private MailService_Interface mailService;
     private EditorService_Interface editorService;
     private DataReportService_Interface dataReportService;
+    private DateTimeFormatter outputFormatter;
     private String message;
     private Integer storyId;
 
@@ -70,6 +72,7 @@ public class StoryController extends HttpServlet {
         this.mailService = new MailService_Impl();
         this.editorService = new EditorService_Impl();
         this.dataReportService = new DataReportService_Impl();
+        this.outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         this.reader = null;
         this.writer = null;
         this.editor = null;
@@ -325,7 +328,6 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "getStoriesForLandingPage":
-                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 List<Genre> topGenres = dataReportService.getTopGenres(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10);
                 request.setAttribute("genre1", topGenres.get(0));
                 request.setAttribute("genre2", topGenres.get(1));
@@ -488,6 +490,13 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("submittedStories", storyService.getWritersSubmittedStories(writer.getSubmittedStoryIds(), writer.getId()));
                 request.setAttribute("draftedStories", storyService.getWritersDraftedStories(writer.getDraftedStoryIds(), writer.getId()));
                 request.getRequestDispatcher("ManageStory.jsp").forward(request, response);
+                break;
+                
+            case "storyOfTheDay":
+                request.setAttribute("readerName", request.getParameter("readerName"));
+                Story storyOfTheDay = dataReportService.getMostViewedStoriesInATimePeriod(1, LocalDate.now().minusDays(1).atStartOfDay().format(outputFormatter), LocalDateTime.now().format(outputFormatter)).get(0);
+                request.setAttribute("story", storyOfTheDay);
+                request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
                 break;
             default:
                 throw new AssertionError();

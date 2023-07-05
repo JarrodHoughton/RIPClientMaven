@@ -175,4 +175,21 @@ public class MailService_Impl implements MailService_Interface {
             response.close();
         }
     }
+
+    @Override
+    public String sendChangePasswordEmail(String email) {
+        String notifyUri = uri + "sendChangePasswordEmail/{accountEmail}";
+        webTarget = client.target(notifyUri).resolveTemplate("accountEmail", email);
+        response = webTarget.request().get();
+        try {
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return response.readEntity(String.class);
+            } else {
+                System.err.println("Failed to send email to change password. Response status: " + response.getStatus());
+                return "Failed to send email to change password.";
+            }
+        } finally {
+            closeResponse();
+        }
+    }
 }

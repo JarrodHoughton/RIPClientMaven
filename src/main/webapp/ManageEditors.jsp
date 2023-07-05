@@ -207,7 +207,7 @@
 
         <%-- Add a form here to add a new editor to the system --%>
         <div class="modal fade" id="addEditorForm" aria-labelledby="addEditorForm" tabindex="-1" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable bg-dark">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="editorForm">Add An Editor</h1>
@@ -250,7 +250,7 @@
 
         <!-- Modal to update an editors details -->
         <div class="modal fade editorModal" id="editorForm" aria-labelledby="editorForm" tabindex="-1" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable bg-dark">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Update Editor Details</h1>

@@ -53,6 +53,10 @@ public class ReaderController extends HttpServlet {
                 request.setAttribute("message", readerService.updateReaderDetails(reader));                
                 request.getRequestDispatcher(currentPage).forward(request, response);
                 break;
+                
+            case "changePassword":
+                String verifyToken = request.getParameter("");
+                break;
             
         }
         
