@@ -1,7 +1,7 @@
 <%-- 
     Document   : ReadLandingPage
     Created on : 14 Jun 2023, 14:42:38
-    Author     : jarro
+    Author     : Jarrod
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>

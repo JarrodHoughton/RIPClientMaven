@@ -141,6 +141,15 @@
             %>
             </tbody>
         </table>
+            <div class="row">
+                <div class="col">
+                    <h4 class="text-white text-center">Title</h4>
+                </div>
+                <div class="col">
+                    <h4 class="text-white text-center">Title</h4>
+                </div>
+            </div>
+            
         <%
             } else {
         %>

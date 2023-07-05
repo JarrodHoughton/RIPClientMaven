@@ -194,7 +194,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="200" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
@@ -509,13 +509,13 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <div class="d-grid" style="text-align: left;">
-                <a class="btn btn-dark" role="button" href="login.jsp"> Login</a>
-                <button class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
+            <div class="d-grid">
+                <a class="btn btn-dark text-start" role="button" href="login.jsp"> Login</a>
+                <button class="btn btn-dark text-start" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
                 <%
                     if (topPicks!=null) {
                 %>
-                <button role="button" class="btn btn-dark" type="button" onclick="scrollToTop()">Top Picks</button>
+                <button role="button" class="btn btn-dark text-start" text-start type="button" onclick="scrollToTop()">Top Picks</button>
                 <%
                     }
                 %>
@@ -530,7 +530,7 @@
                 <%
                     if (mostViewed!=null) {
                 %>
-                <a role="button" class="btn btn-dark" href="#mostViewed">Most Viewed</a>
+                <a role="button" class="btn btn-dark text-start" href="#mostViewed">Most Viewed</a>
                 <%
                     }
                 %>
@@ -538,7 +538,7 @@
                 <%
                     if (highestRated!=null) {
                 %>
-                <a role="button" class="btn btn-dark" href="#highestRated">Highest Rated</a>
+                <a role="button" class="btn btn-dark text-start" href="#highestRated">Highest Rated</a>
                 <%
                     }
                 %>
@@ -546,7 +546,7 @@
                 <%
                     if (genre1!=null) {
                 %>
-                <a role="button" class="btn btn-dark" href="#genre1"><%=genre1.getName()%></a>
+                <a role="button" class="btn btn-dark text-start" href="#genre1"><%=genre1.getName()%></a>
                 <%
                     }
                 %>
@@ -554,7 +554,7 @@
                 <%
                     if (genre2!=null) {
                 %>
-                <a role="button" class="btn btn-dark" href="#genre2"><%=genre2.getName()%></a>
+                <a role="button" class="btn btn-dark text-start" href="#genre2"><%=genre2.getName()%></a>
                 <%
                     }
                 %>
@@ -562,7 +562,7 @@
                 <%
                     if (genre3!=null) {
                 %>
-                <a role="button" class="btn btn-dark" href="#genre3"><%=genre3.getName()%></a>
+                <a role="button" class="btn btn-dark text-start" href="#genre3"><%=genre3.getName()%></a>
                 <%
                     }
                 %>
