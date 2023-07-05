@@ -77,6 +77,8 @@ public class GenreService_Impl implements GenreService_Interface{
             if (!responseStr.isEmpty()) {
                 genres = mapper.readValue(responseStr, new TypeReference<List<Genre>>(){});
             }
+            return genres;
+
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -85,7 +87,6 @@ public class GenreService_Impl implements GenreService_Interface{
                 response.close();
             }
         }
-        return genres;
     }
 
 
@@ -150,6 +151,8 @@ public class GenreService_Impl implements GenreService_Interface{
             if (!responseStr.isEmpty()) {
                 genres = mapper.readValue(responseStr, new TypeReference<List<Genre>>(){});
             }
+            return genres;
+
         } catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -158,7 +161,6 @@ public class GenreService_Impl implements GenreService_Interface{
                 response.close();
             }
         }
-        return genres;
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {

@@ -81,13 +81,14 @@ public class WriterService_Impl implements WriterService_Interface{
             if (!responseStr.isEmpty()) {
                 writers = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
             }
+            return writers;
+
         } catch (IOException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
             closeResponse();
         }
-        return writers;
     }
 
     @Override
@@ -215,13 +216,14 @@ public class WriterService_Impl implements WriterService_Interface{
             } else {
                 System.err.println("Failed to search for writers. Response status: " + response.getStatus());
             }
+           return writers;
+
         } catch (IOException ex) {
             Logger.getLogger(WriterService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
             closeResponse();
         }
-        return writers;
     }
     
     private void closeResponse(){

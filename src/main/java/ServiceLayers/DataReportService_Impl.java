@@ -94,6 +94,8 @@ public class DataReportService_Impl implements DataReportService_Interface {
             if (!responseStr.isEmpty()) {
                 listOfStories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
+            return listOfStories;
+
         } catch (ProcessingException | IllegalStateException ex) {
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
             return null;
@@ -106,7 +108,6 @@ public class DataReportService_Impl implements DataReportService_Interface {
                 response.close();
             }
         }
-        return listOfStories;
     }
 
     @Override
@@ -135,6 +136,7 @@ public class DataReportService_Impl implements DataReportService_Interface {
             if (!responseStr.isEmpty()) {
                 listOfStories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
+            return listOfStories;
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
@@ -148,7 +150,7 @@ public class DataReportService_Impl implements DataReportService_Interface {
                 response.close();
             }
         }
-        return listOfStories;
+
     }
 
     @Override
@@ -206,6 +208,8 @@ public class DataReportService_Impl implements DataReportService_Interface {
             if (!responseStr.isEmpty()) {
                 listOfStories = mapper.readValue(responseStr, new TypeReference<List<Story>>(){});
             }
+            return listOfStories;
+
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
@@ -219,7 +223,6 @@ public class DataReportService_Impl implements DataReportService_Interface {
                 response.close();
             }
         }
-        return listOfStories;
     }
 
     @Override
@@ -277,6 +280,8 @@ public class DataReportService_Impl implements DataReportService_Interface {
             if (!responseStr.isEmpty()) {
                 topWriters = mapper.readValue(responseStr, new TypeReference<List<Writer>>(){});
             }
+            return topWriters;
+
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
@@ -290,7 +295,6 @@ public class DataReportService_Impl implements DataReportService_Interface {
                 response.close();
             }
         }
-        return topWriters;
     }
 
     @Override
@@ -319,6 +323,7 @@ public class DataReportService_Impl implements DataReportService_Interface {
             if (!responseStr.isEmpty()) {
                 listOfTopGenres = mapper.readValue(responseStr, new TypeReference<List<Genre>>(){});
             }
+            return listOfTopGenres;
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
@@ -332,7 +337,6 @@ public class DataReportService_Impl implements DataReportService_Interface {
                 response.close();
             }
         }
-        return listOfTopGenres;
     }
 
     @Override
@@ -418,6 +422,8 @@ public Integer getTotalViewsByWriterId(Integer writerId) {
             if (!responseStr.isEmpty()) {
                 topEditors = mapper.readValue(responseStr, new TypeReference<List<Editor>>(){});
             }
+             return topEditors;
+
         } catch (ProcessingException | IllegalStateException ex) {
             // Handle exceptions related to the HTTP request or response processing
             Logger.getLogger(DataReportService_Impl.class.getName()).log(Level.SEVERE, "Error processing the request", ex);
@@ -431,6 +437,5 @@ public Integer getTotalViewsByWriterId(Integer writerId) {
                 response.close();
             }
         }
-        return topEditors;
     }
 }

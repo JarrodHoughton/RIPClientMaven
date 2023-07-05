@@ -56,13 +56,14 @@ public class EditorService_Impl implements EditorService_Interface{
             if (!responseStr.isEmpty()) {
                 editors = mapper.readValue(responseStr, new TypeReference<List<Editor>>(){});
             }                  
+            return editors;
+
         } catch (IOException ex) {
             Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }finally{
             closeResponse();
         }
-        return editors;
     }
 
     @Override
@@ -76,6 +77,8 @@ public class EditorService_Impl implements EditorService_Interface{
                 return response.readEntity(String.class);
             }else {
                 System.err.println("Failed to add editor. Response status: " + response.getStatus());
+                return "System failed to add editor";
+
             }
         } catch (IOException ex) {
             Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -83,7 +86,6 @@ public class EditorService_Impl implements EditorService_Interface{
         }finally{
             closeResponse();
         }
-        return "System failed to add editor";
     }
 
     @Override
@@ -97,11 +99,11 @@ public class EditorService_Impl implements EditorService_Interface{
                 return response.readEntity(String.class);
             }else {
                 System.err.println("Failed to add editor. Response status: " + response.getStatus());
+                return "System failed to delete editor";
             }
         }finally{
             closeResponse();
         }
-        return "System failed to delete editor";
     }
 
     @Override
@@ -115,6 +117,8 @@ public class EditorService_Impl implements EditorService_Interface{
                 return response.readEntity(String.class);
             }else {
                 System.err.println("Failed to add editor. Response status: " + response.getStatus());
+                return "System failed to update editor";
+
             }
         } catch (IOException ex) {
             Logger.getLogger(EditorService_Impl.class.getName()).log(Level.SEVERE, null, ex);
@@ -122,7 +126,6 @@ public class EditorService_Impl implements EditorService_Interface{
         }finally{
             closeResponse();
         }
-        return "System failed to update editor";
     }
     
     private String toJsonString(Object obj) throws JsonProcessingException {
@@ -140,11 +143,11 @@ public class EditorService_Impl implements EditorService_Interface{
                 return response.readEntity(Boolean.class);
             }else {
                     System.err.println("Failed to search for editor. Response status: " + response.getStatus());
+                    return false;
             }
         }finally{
             closeResponse();
         }
-        return false;
     }
 
     @Override
@@ -158,11 +161,12 @@ public class EditorService_Impl implements EditorService_Interface{
                 return response.readEntity(Editor.class);
             }else {
                     System.err.println("Failed to search for editor. Response status: " + response.getStatus());
+                    return null;
+
             }            
         }finally{
             closeResponse();
         }
-        return null;
     }
 
     @Override
@@ -176,11 +180,12 @@ public class EditorService_Impl implements EditorService_Interface{
                 return response.readEntity(Editor.class);
             }else {
                     System.err.println("Failed to get for editor. Response status: " + response.getStatus());
+                    return null;
+
             }            
         }finally{
             closeResponse();
         }
-        return null;
     }
     
     private void closeResponse(){

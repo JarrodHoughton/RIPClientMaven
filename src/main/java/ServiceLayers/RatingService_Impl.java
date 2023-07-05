@@ -135,6 +135,8 @@ public class RatingService_Impl implements RatingService_Interface {
             if (!responseStr.isEmpty()) {
                 bookIds = mapper.readValue(responseStr, new TypeReference<List<Integer>>(){});
             }
+            return bookIds;
+
         }catch (IOException ex) {
             Logger.getLogger(GenreService_Impl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -145,7 +147,6 @@ public class RatingService_Impl implements RatingService_Interface {
 
         }
 
-        return bookIds;
     }
     
     @Override
