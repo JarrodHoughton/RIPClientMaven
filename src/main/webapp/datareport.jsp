@@ -120,68 +120,75 @@
         %>
 
         <script>
-            function generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle) {
-                console.log(chartId);
-                console.log(dataLabels);
-                console.log(dataValues);
-                console.log(dataLabelString);
-                console.log(valueLabelString);
-                console.log(chartTitle);
+    function generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle) {
+        console.log(chartId);
+        console.log(dataLabels);
+        console.log(dataValues);
+        console.log(dataLabelString);
+        console.log(valueLabelString);
+        console.log(chartTitle);
 
-                var canvas = document.getElementById(chartId);
-                var ctx = canvas.getContext("2d");
-//                var existingChart = Chart.getChart(ctx);
+        var canvas = document.getElementById(chartId);
+        var ctx = canvas.getContext("2d");
 
-                // Destroy the existing chart if it exists
-//                if (existingChart) {
-//                    existingChart.destroy();
-//                }
-
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: dataLabels,
-                        datasets: [{
-                                label: valueLabelString,
-                                data: dataValues,
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1
-                            }]
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dataLabels,
+                datasets: [{
+                    label: valueLabelString,
+                    data: dataValues,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                animation: {
+                    onComplete: () => {
+                        delayed = true;
                     },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: valueLabelString
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: dataLabelString
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            title: {
-                                display: true,
-                                text: chartTitle,
-                                position: 'top',
-                                font: {
-                                    size: 16,
-                                    weight: 'bold'
-                                }
-                            }
+                    delay: (context) => {
+                        let delay = 0;
+                        if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                            delay = context.dataIndex * 200;
+                        }
+                        return delay;
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: valueLabelString
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: dataLabelString
                         }
                     }
-                });
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: chartTitle,
+                        position: 'top',
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                            align: 'center'
+                        }
+                    }
+                }
             }
+        });
+    }
 
             function downloadTables() {
                 var tables = document.getElementById("tablesContainer");
@@ -197,8 +204,8 @@
             %>
             var dataLabels = <%= new JSONArray(chartDataLabels.get(i))%>;
             var dataValues = <%= new JSONArray(chartDataValues.get(i))%>;
-            var dataLabelString = '<%= chartDataLabelsAxisNames.get(i)%>';
-            var valueLabelString = '<%= chartDataValuesAxisNames.get(i)%>';
+            var dataLabelString = '<%=(String) chartDataLabelsAxisNames.get(i)%>';
+            var valueLabelString = '<%=(String) chartDataValuesAxisNames.get(i)%>';
             var chartTitle = '<%= chartTitles.get(i)%>';
             var chartId = '<%= chartIds.get(i)%>';
             generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle);
