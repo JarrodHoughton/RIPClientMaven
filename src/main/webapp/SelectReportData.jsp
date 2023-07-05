@@ -19,83 +19,61 @@
     </head>
     <style>
         .other-space{
-            margin-bottom: 100px;
+            margin-bottom: 75px;
         }
         body{
-            background-color: #333333;
+            background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
             color: white;
         }
     </style>
     <body>
 
-        <!--navbar-->
-    <div class="space-div"></div>
-    <%
-        Account user = (Account) request.getSession(false).getAttribute("user");
-        String message = (String) request.getAttribute("message");
-    %>
+        <%
+            Account user = (Account) request.getSession(false).getAttribute("user");
+            String message = (String) request.getAttribute("message");
+        %>
 
-    <div id="navbar-container">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
-                <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
-                    <i class="bi bi-list"></i> <!-- More Icon -->
-                </button>
-                <div class="container-fluid">
-                    <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
+                <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
                     <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
-                </div>
-                <div class="d-flex align-items-center">
                     <%
                         if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
                     %>
-                    <!-- Button trigger profile modal -->
 
-
-                    <%
-                        }
-                    %>
-                </div>
+                <%
+                    }
+                %>
         </nav>
-    </div>
 
-    <!--side-navbar-->
-    <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div class="d-grid">
-                <button class="btn btn-dark " type="button" data-bs-toggle="modal" data-bs-target="#profileDetails"><i class="bi bi-person-fill"></i> Profile</button>
-                <a class="btn btn-dark " href="LoginController?submit=logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
-            </div>
-        </div>
-    </div>
-
-    
         <div class="other-space"></div>
         <%
             if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
         %>
-        <!-- Editors select which charts they'd like to see -->
         <div class="container mt-5">
             <div class="row mt-5">
-                <h1>Generate Data Report</h1>
+                <h3>Generate Data Report</h3>
                 <form action="DataReportController" method="post">
                     <div class="col-auto">
                         <div class="mb-3">
                             <div class="form-check">
                                 <input name="reportOptions" class="form-check-input" type="checkbox" value="mostViewedStories" id="mostViewedStories">
-                                <label class="form-check-label" for="mostViewed">
+                                <label class="form-check-label" for="mostViewedStories">
                                     Top 10 Most Viewed Stories
                                 </label>
                             </div>
-                            <label class="form-label" for="startDate">Start Date</label>
-                            <input class="form-control" type="date" id="startDate" name="startDate">
-                            <label class="form-label" for="endDate">End Date</label>
-                            <input class="form-control" type="date" id="endDate" name="endDate">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label" for="startDate">Start Date</label>
+                                    <input class="form-control" type="date" id="startDate" name="startDate">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label" for="endDate">End Date</label>
+                                    <input class="form-control" type="date" id="endDate" name="endDate">
+                                </div>
+                            </div>
                         </div>
+
                         <div class="mb-3">
                             <div class="form-check">
                                 <input name="reportOptions" class="form-check-input" type="checkbox" value="mostRatedStories" id="mostRatedStories" >
@@ -106,27 +84,28 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories" >
-                                <label class="form-check-label" for="mostLiked">
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories">
+                                <label class="form-check-label" for="mostLikedStories">
                                     Top 20 Most Liked Stories
                                 </label>
-                                <select name="monthOfMostLikedStories" class="form-select" aria-label="monthOfMostLikedStories">
-                                    <option selected>Select a month</option>
-                                    <option value="1">January</option>
-                                    <option value="2">February</option>
-                                    <option value="3">March</option>
-                                    <option value="4">April</option>
-                                    <option value="5">May</option>
-                                    <option value="6">June</option>
-                                    <option value="7">July</option>
-                                    <option value="8">August</option>
-                                    <option value="9">September</option>
-                                    <option value="10">October</option>
-                                    <option value="11">November</option>
-                                    <option value="12">December</option>
-                                </select>
                             </div>
+                            <select name="monthOfMostLikedStories" class="form-select mt-2" aria-label="monthOfMostLikedStories">
+                                <option selected>Select a month</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
                         </div>
+
                         <div class="mb-3">
                             <div class="form-check">
                                 <input name="reportOptions" class="form-check-input" type="checkbox" value="topGenres" id="topGenres" >

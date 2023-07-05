@@ -15,12 +15,7 @@
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <style>
-            body {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
+            
             
             /* Custom CSS to fix the navbar position */
             #navbar-container {
@@ -32,7 +27,7 @@
             }
 
             .content-container {
-                padding-top: 80px; /* Adjust the padding value as needed */
+                padding-top: 10px; /* Adjust the padding value as needed */
             }
 
             .card {
@@ -56,14 +51,14 @@
                 height: 250px;
                 object-fit: cover;
             }
-
-            .space {
-                margin-bottom: 100px;
-            }
-
-            .other-space {
-                margin-top: 50px;
-                margin-bottom: 50px;
+            
+            body{
+            background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+            color: white;
+        }
+            
+            .other-space {              
+                margin-bottom: 75px;
             }
 
             .canvas {
@@ -71,9 +66,7 @@
                 max-width: 600px;
             }
 
-            .tableContainer {
-
-            }
+            
         </style>
     </head>
 
@@ -81,7 +74,7 @@
         <%
             Account user = (Account) request.getSession(false).getAttribute("user");
         %>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
@@ -91,14 +84,14 @@
                     <%
                         if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
                     %>
-                    <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
+                    
                     <%
                         }
                     %>
                 </div>
             </div>
         </nav>
-        <div class="other-space"></div>
+        
         <%
             if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
         %>
@@ -111,16 +104,17 @@
             List<List<String>> chartDataValues = (List<List<String>>) request.getAttribute("chartDataValues");
             List<Table> tables = new ArrayList<>();
         %>
+        <div class="other-space"></div>
         <div class="container mt-5">
-            <h1>Data Report Charts</h1>
-        </div>
+            <h3>Data Report Charts</h3>
+        
         <%
             for (int i = 0; i < chartIds.size(); i++) {
         %>
-        <div class="container mt-5 mb-5">
+        
             <h4><%= chartTitles.get(i)%></h4>
             <canvas class="canvas" id="<%= chartIds.get(i)%>"></canvas>
-        </div>
+        
         <%
             }
         %>
@@ -222,8 +216,9 @@
                 }
             %>
         </script>
+        </div>
         <div class="container mt-5" id="tablesContainer">
-            <h1>Data Report Tables</h1>
+            <h3>Data Report Tables</h3>
             <%
                 for (Table table : tables) {
             %>
@@ -265,10 +260,11 @@
             <%
                 }
             %>
+            <div class="mb-3 mt-4">
+            <button type="button" id="printTables" class="btn btn-primary" onclick="downloadTables()">Download PDF</button>
         </div>
-        <div class="mb-3 mt-4">
-            <button type="button" id="printTables" class="btn btn-primary btn-lg" onclick="downloadTables()">Download PDF</button>
         </div>
+        
         <%
         } else {
         %>
