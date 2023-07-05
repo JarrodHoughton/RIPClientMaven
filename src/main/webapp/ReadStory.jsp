@@ -24,50 +24,52 @@
             height: 400px; /* Adjust the height as per your requirement */
             object-fit: cover;
         }
+        
+        body {
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+            }
 
-        .other-space{
-            margin-bottom: 100px;
-        }
+        
     </style>
     <body>
         <%
             Account user = (Account) request.getSession(false).getAttribute("user");
         %>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/ReaderLandingPage.jsp">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
-                <div class="d-flex align-items-center">
+                
                     <%
                         if (user != null && (user.getUserType().equals("W") || user.getUserType().equals("R"))) {
                     %>
-                    <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
+                    
                     <%
                         }
                     %>
-                </div>
+                
             </div>
         </nav>
         <%
             Story story = (Story) request.getAttribute("story");
             if (user != null && (user.getUserType().equals("W") || user.getUserType().equals("R"))) {
         %>
-        <div class="other-space"></div>
-        <div class="container">
+        
+        <div class="container" style="margin-top: -18px;">
             <div class="row mt-5">
                 <div class="col mt-5">
-                    <div class="card card-fixed border-light text-bg-dark bg-opacity-25">
+                    <div class="card card-fixed text-bg-dark bg-opacity-25">
                         <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-                        <div class="card-header">
+                        <div class="card-header" style="background-color: black;">
                             Full Story
                         </div>
-                        <div class="card-body">
-                            <h1 class="card-title"><%=story.getTitle()%></h1>
+                        <div class="card-body" style="background-color: black;">
+                            <h3 class="card-title"><%=story.getTitle()%></h3>
                             <p class="card-text"><%=story.getContent()%></p>
                         </div>
-                        <div class="card-footer text-body-secondary">
+                        <div class="card-footer text-body-secondary" style="background-color: black;">
                             <a href="StoryController?submit=viewStory&storyId=<%=story.getId()%>" class="btn btn-primary">Back To Details Page</a>
                         </div>
                     </div>
