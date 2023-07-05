@@ -19,6 +19,7 @@
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="jquery-3.7.0.min.js"></script>
     </head>
     <style>
         
@@ -29,6 +30,21 @@
 
         .other-space{
             margin-bottom: 100px;
+        }
+        
+        .modal-body {
+            color: white;
+            background-color: black;
+        }
+        
+        .modal-footer {
+            color: white;
+            background-color: black;
+        }
+        
+        .modal-header {
+            color: white;
+            background-color: black;
         }
     </style>
     <body>

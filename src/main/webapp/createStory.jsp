@@ -20,6 +20,10 @@
         .other-space{
             margin-bottom: 100px;
         }
+        
+        body {
+            background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+        }
     </style>
     <body>
         <%
@@ -33,7 +37,7 @@
         %>
         <div id="navbar-container">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-black">
                 <div class="container">
                     <a class="navbar-brand" href="<%=homePageUrl%>">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
@@ -57,6 +61,17 @@
             <h1>Write a new story</h1>
             <div class="row">
                 <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
+                    <div class="card text-white bg-dark">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-body">
+                            
+                        </div>
+                        <div class="card-footer">
+                            
+                        </div>
+                    </div>
                     <form action="StoryController" method="post" enctype="multipart/form-data">
                         <div>
                             <label for="title">Title:</label><br>
@@ -93,7 +108,7 @@
                             <label class="form-check-label" for="commentsEnabled">Comments Enabled</label>
                         </div>
                         <input type="hidden" name="submit" value="addStory">
-                        <input class="btn btn-success" type="submit" name="submitStory" value="Submit">
+                        <input class="btn btn-primary" type="submit" name="submitStory" value="Submit">
                         <input class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">
                     </form>
                 </div>
