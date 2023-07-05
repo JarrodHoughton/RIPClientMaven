@@ -19,7 +19,7 @@
         <style>
 
             body{
-
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
             }
 
             /* Custom CSS to fix the navbar position */
@@ -67,7 +67,7 @@
     %>
 
     <div id="navbar-container">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-black">
             <div class="container">
                 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
                     <i class="bi bi-list"></i> <!-- More Icon -->
