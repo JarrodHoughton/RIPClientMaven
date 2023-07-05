@@ -171,7 +171,7 @@
     <!-- Modal -->
     <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content bg-dark text-white">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -203,58 +203,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-target="#profileForm" data-bs-toggle="modal">Edit Profile</button>
-                </div>
+
             </div>
         </div>
     </div>
-    <div class="modal fade" id="profileForm" aria-labelledby="profileForm" tabindex="-1" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Update Profile</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="EditorController" method="post">
-                        <div class="mb-3">
-                            <label for="name" class="col-form-label">First Name</label>
-                            <input type="text" class="form-control" id="name" name="name" value="<%=user.getName()%>">
-                        </div>
-                        <div class="mb-3">
-                            <label for="surname" class="col-form-label">Last Name</label>
-                            <input type="text" class="form-control" id="surname" name="surname" value="<%=user.getSurname()%>">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="col-form-label">Email</label>
-                            <input type="email" class="form-control" id="email"name="email" value="<%=user.getEmail()%>">
-                        </div>
-                        <div class="mb-3">
-                            <label for="phoneNumber" class="col-form-label">Phone Number</label>
-                            <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="col-form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password..." maxlength="16" minlength="8">
-                        </div>
-                        <div class="mb-3">
-                            <label for="passwordRepeat" class="visually-hidden">Repeat-Password</label>
-                            <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." minlength="8" maxlength="16">
-                        </div>
-                        <input type="hidden" name="submit" value="updateEditorFromProfile">
-                        <input type="hidden" name="currentPage" value="EditorLandingPage.jsp">
-                        <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-primary" data-bs-target="#profileDetails" data-bs-toggle="modal">Profile Details</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 
     <!-- End Of Modal -->
 
