@@ -76,14 +76,6 @@
                 height: 100%;
             }
 
-            .TopStoriesSwiper {
-                width: 50%;
-                height: 300px;
-                position: absolute;
-                left: 50%;
-                top: 50%;
-            }
-
             .swiper-slide {
                 text-align: center;
                 font-size: 18px;
@@ -594,7 +586,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="passwordRepeat" class="visually-hidden">Repeat-Password</label>
-                                <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." minlength="8" maxlength="16">
+                                <input type="password" class="form-control" id="passwordRepeat" name="passwordRepeat" placeholder="Repeat Password..." minlength="8" maxlength="16">
                             </div>
                             <input type="hidden" name="submit" value="updateReader">
                             <input type="hidden" name="currentPage" value="ReaderLandingPage.jsp">
@@ -661,7 +653,7 @@
                         <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="MailController" method="post">
+                    <form action="MessageController" method="post">
                         <div class="modal-body">
                             <div class="row mb-3">
                                 <label for="name" class="col-form-label mb-3">Name</label>

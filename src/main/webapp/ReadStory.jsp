@@ -43,7 +43,7 @@
                 </a>
                 
                     <%
-                        if (user != null || (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
+                        if (user == null || (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
                     %>
                     <script>
                         window.location.replace("http://localhost:8080/RIPClientMaven/");
