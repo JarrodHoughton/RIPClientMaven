@@ -17,11 +17,11 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Jarrod
  */
-@WebServlet(name = "MailController", urlPatterns = {"/MailController"})
-public class MailController extends HttpServlet {
+@WebServlet(name = "MessageController", urlPatterns = {"/MessageController"})
+public class MessageController extends HttpServlet {
     private MailService_Interface mailService;
 
-    public MailController() {
+    public MessageController() {
         this.mailService = new MailService_Impl();
     }
     
@@ -33,7 +33,7 @@ public class MailController extends HttpServlet {
                 request.getRequestDispatcher("TestEmail.jsp").forward(request, response);
                 break;
             case "sendReferralEmail":
-                request.setAttribute("message", mailService.sendReferralEmail(request.getParameter("email"), request.getParameter("name")));
+                request.setAttribute("message", mailService.sendReferralEmail(request.getParameter("email"), request.getParameter("name"), request.getParameter("phoneNumber")));
                 request.getRequestDispatcher(request.getParameter("currentPage")).forward(request, response);
                 break;
             case "sendForgotPasswordEmail" :

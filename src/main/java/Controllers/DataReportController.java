@@ -43,6 +43,7 @@ public class DataReportController extends HttpServlet {
             throws ServletException, IOException {
         String submitAction = request.getParameter("submit");
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String message = "";
 
         switch (submitAction) {
             case "showcharts":
@@ -88,7 +89,7 @@ public class DataReportController extends HttpServlet {
                 }
 
                 // Getting the stories with the most likes
-                if (reportSelection.contains("mostLikedStories")) {
+                if (reportSelection.contains("mostLikedStories") && request.getParameter("monthOfMostLikedStories") != null) {
                     //get the month selected
                     Integer monthSelected = Integer.valueOf(request.getParameter("monthOfMostLikedStories"));
 
@@ -127,6 +128,8 @@ public class DataReportController extends HttpServlet {
 
                     chartDataLabels.add(storyTitles);
                     chartDataValues.add(listOfNumberOfStoryLikes);
+                } else {
+                    message += "No month was selected for most liked.<br>";
                 }
 
                 //Getting the top rated stories
@@ -234,11 +237,6 @@ public class DataReportController extends HttpServlet {
                     String startDateString = request.getParameter("startDate");
                     String endDateString = request.getParameter("endDate");
 
-                    chartIds.add("mostViewedStoriesChart");
-                    chartDataLabelsAxisNames.add("Story");
-                    chartDataValuesAxisNames.add("Number of views");
-                    chartTitles.add("The most viewed stories");
-
                     startDate = null;
                     endDate = null;
 
@@ -252,25 +250,34 @@ public class DataReportController extends HttpServlet {
 
                     startDateTime = startDate.atStartOfDay();
                     endDateTime = endDate.atTime(23, 59, 59);
+                    if (startDateTime.isBefore(endDateTime)) {
+                        System.out.println("TRUEEEEEEEEEEEEEEEEEEE");
+                        chartIds.add("mostViewedStoriesChart");
+                        chartDataLabelsAxisNames.add("Story");
+                        chartDataValuesAxisNames.add("Number of views");
+                        chartTitles.add("The most viewed stories");
+                        
+                        List<Story> listOfStories = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, startDateTime.format(outputFormatter), endDateTime.format(outputFormatter));
+                        List<String> storyTitless;
+                        List<String> listOfNumberOfStoryViews;
 
-                    List<Story> listOfStories = dataReportService.getMostViewedStoriesInATimePeriod(numberOfStoriess, startDateTime.format(outputFormatter), endDateTime.format(outputFormatter));
-                    List<String> storyTitless;
-                    List<String> listOfNumberOfStoryViews;
+                        if (listOfStories == null) {
+                            listOfStories = new ArrayList<>();
+                        }
 
-                    if (listOfStories == null) {
-                        listOfStories = new ArrayList<>();
+                        storyTitless = new ArrayList<>();
+                        listOfNumberOfStoryViews = new ArrayList<>();
+
+                        for (Story topStory : listOfStories) {
+                            storyTitless.add(topStory.getTitle());
+                            listOfNumberOfStoryViews.add(String.valueOf(dataReportService.getTheViewsOnAStoryInATimePeriod(topStory.getId(), startDateTime.format(outputFormatter), endDateTime.format(outputFormatter))));
+                        }
+
+                        chartDataLabels.add(storyTitless);
+                        chartDataValues.add(listOfNumberOfStoryViews);
+                    } else {
+                        message += "Start date selected for most viewed stories cannot be after end date.<br>";
                     }
-
-                    storyTitless = new ArrayList<>();
-                    listOfNumberOfStoryViews = new ArrayList<>();
-
-                    for (Story topStory : listOfStories) {
-                        storyTitless.add(topStory.getTitle());
-                        listOfNumberOfStoryViews.add(String.valueOf(dataReportService.getTheViewsOnAStoryInATimePeriod(topStory.getId(), startDateTime.format(outputFormatter), endDateTime.format(outputFormatter))));
-                    }
-
-                    chartDataLabels.add(storyTitless);
-                    chartDataValues.add(listOfNumberOfStoryViews);
                 }
 
                 System.out.println(chartIds);
@@ -280,6 +287,9 @@ public class DataReportController extends HttpServlet {
                 System.out.println(chartDataLabels);
                 System.out.println(chartDataValues);
 
+                if (!message.isEmpty()) {
+                    request.setAttribute("message", message);
+                }
                 request.setAttribute("chartIds", chartIds);
                 request.setAttribute("chartTitles", chartTitles);
                 request.setAttribute("chartDataValuesAxisNames", chartDataValuesAxisNames);

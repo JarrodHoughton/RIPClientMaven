@@ -473,7 +473,7 @@
                     <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
                     <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="MailController" method="post">
+                <form action="MessageController" method="post">
                     <div class="modal-body bg-dark">
                         <div class="row mb-3">
                             <label for="name" class="col-form-label mb-3">Name</label>

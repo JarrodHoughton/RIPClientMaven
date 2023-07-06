@@ -15,8 +15,8 @@
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <style>
-            
-            
+
+
             /* Custom CSS to fix the navbar position */
             #navbar-container {
                 position: fixed;
@@ -51,14 +51,15 @@
                 height: 250px;
                 object-fit: cover;
             }
-            
+
             body{
-            background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
-            color: white;
-        }
-            
-            .other-space {              
-                margin-bottom: 75px;
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+                color: white;
+            }
+
+            .other-space {
+                margin-top: 50px;
+                margin-bottom: 100px;
             }
 
             .canvas {
@@ -66,7 +67,7 @@
                 max-width: 600px;
             }
 
-            
+
         </style>
     </head>
 
@@ -82,11 +83,9 @@
                 </a>
             </div>
         </nav>
-        
+
         <%
-            if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
-        %>
-        <%
+            String message = (String) request.getAttribute("message");
             List<String> chartIds = (List<String>) request.getAttribute("chartIds");
             List<String> chartTitles = (List<String>) request.getAttribute("chartTitles");
             List<String> chartDataValuesAxisNames = (List<String>) request.getAttribute("chartDataValuesAxisNames");
@@ -95,125 +94,134 @@
             List<List<String>> chartDataValues = (List<List<String>>) request.getAttribute("chartDataValues");
             List<Table> tables = new ArrayList<>();
         %>
+        <%
+            if (message == null) {
+        %>
+        <%
+            if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
+        %>
+        
+        
         <div class="other-space"></div>
         <div class="container mt-5">
+
             <h3>Data Report Charts</h3>
-        
-        <%
-            for (int i = 0; i < chartIds.size(); i++) {
-        %>
-        
-            <h4><%= chartTitles.get(i)%></h4>
-            <canvas class="canvas" id="<%= chartIds.get(i)%>"></canvas>
-        
-        <%
-            }
-        %>
 
-        <script>
-    function generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle) {
-        console.log(chartId);
-        console.log(dataLabels);
-        console.log(dataValues);
-        console.log(dataLabelString);
-        console.log(valueLabelString);
-        console.log(chartTitle);
-
-        var canvas = document.getElementById(chartId);
-        var ctx = canvas.getContext("2d");
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: dataLabels,
-                datasets: [{
-                    label: valueLabelString,
-                    data: dataValues,
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                animation: {
-                    onComplete: () => {
-                        delayed = true;
-                    },
-                    delay: (context) => {
-                        let delay = 0;
-                        if (context.type === 'data' && context.mode === 'default' && !delayed) {
-                            delay = context.dataIndex * 200;
-                        }
-                        return delay;
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: valueLabelString
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: dataLabelString
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: chartTitle,
-                        position: 'top',
-                        font: {
-                            size: 16,
-                            weight: 'bold',
-                            align: 'center'
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-            function downloadTables() {
-                var tables = document.getElementById("tablesContainer");
-                var printWindow = window.open('', '', 'left=0, top=0, width=800, height=500, toolbar=0, scrollbars=0, status=0');
-                printWindow.document.head.innerHTML = document.head.innerHTML;
-                printWindow.document.body.innerHTML = tables.innerHTML;
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-            }
             <%
                 for (int i = 0; i < chartIds.size(); i++) {
             %>
-            var dataLabels = <%= new JSONArray(chartDataLabels.get(i))%>;
-            var dataValues = <%= new JSONArray(chartDataValues.get(i))%>;
-            var dataLabelString = '<%=(String) chartDataLabelsAxisNames.get(i)%>';
-            var valueLabelString = '<%=(String) chartDataValuesAxisNames.get(i)%>';
-            var chartTitle = '<%= chartTitles.get(i)%>';
-            var chartId = '<%= chartIds.get(i)%>';
-            generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle);
+
+            <h4><%= chartTitles.get(i)%></h4>
+            <canvas class="canvas" id="<%= chartIds.get(i)%>"></canvas>
+
             <%
-                    //create the tables here:
-                    Table table = new Table();
-                    //Populate Table Title
-                    table.setTableName(chartTitles.get(i));
-                    //Populate Table Columns
-                    table.setColumns(List.of(chartDataLabelsAxisNames.get(i), chartDataValuesAxisNames.get(i)));
-                    //Populate Table Rows
-                    table.setData(List.of(chartDataLabels.get(i), chartDataValues.get(i)));
-                    table.setNumberOfRows(chartDataLabels.get(i).size());
-                    tables.add(table);
                 }
             %>
-        </script>
+
+            <script>
+                function generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle) {
+                    console.log(chartId);
+                    console.log(dataLabels);
+                    console.log(dataValues);
+                    console.log(dataLabelString);
+                    console.log(valueLabelString);
+                    console.log(chartTitle);
+
+                    var canvas = document.getElementById(chartId);
+                    var ctx = canvas.getContext("2d");
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: dataLabels,
+                            datasets: [{
+                                    label: valueLabelString,
+                                    data: dataValues,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 2
+                                }]
+                        },
+                        options: {
+                            animation: {
+                                onComplete: () => {
+                                    delayed = true;
+                                },
+                                delay: (context) => {
+                                    let delay = 0;
+                                    if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                                        delay = context.dataIndex * 200;
+                                    }
+                                    return delay;
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: valueLabelString
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: dataLabelString
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: chartTitle,
+                                    position: 'top',
+                                    font: {
+                                        size: 16,
+                                        weight: 'bold',
+                                        align: 'center'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                function downloadTables() {
+                    var tables = document.getElementById("tablesContainer");
+                    var printWindow = window.open('', '', 'left=0, top=0, width=800, height=500, toolbar=0, scrollbars=0, status=0');
+                    printWindow.document.head.innerHTML = document.head.innerHTML;
+                    printWindow.document.body.innerHTML = tables.innerHTML;
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                }
+                <%
+                    for (int i = 0; i < chartIds.size(); i++) {
+                %>
+                var dataLabels = <%= new JSONArray(chartDataLabels.get(i))%>;
+                var dataValues = <%= new JSONArray(chartDataValues.get(i))%>;
+                var dataLabelString = '<%=(String) chartDataLabelsAxisNames.get(i)%>';
+                var valueLabelString = '<%=(String) chartDataValuesAxisNames.get(i)%>';
+                var chartTitle = '<%= chartTitles.get(i)%>';
+                var chartId = '<%= chartIds.get(i)%>';
+                generateChart(chartId, dataLabels, dataValues, dataLabelString, valueLabelString, chartTitle);
+                <%
+                        //create the tables here:
+                        Table table = new Table();
+                        //Populate Table Title
+                        table.setTableName(chartTitles.get(i));
+                        //Populate Table Columns
+                        table.setColumns(List.of(chartDataLabelsAxisNames.get(i), chartDataValuesAxisNames.get(i)));
+                        //Populate Table Rows
+                        table.setData(List.of(chartDataLabels.get(i), chartDataValues.get(i)));
+                        table.setNumberOfRows(chartDataLabels.get(i).size());
+                        tables.add(table);
+                    }
+                %>
+            </script>
         </div>
         <div class="container mt-5" id="tablesContainer">
             <h3>Data Report Tables</h3>
@@ -262,7 +270,7 @@
         <div class="mb-3 mt-4 text-center">
             <button type="button" id="printTables" class="btn btn-primary" onclick="downloadTables()">Download PDF</button>
         </div>
-        
+
         <%
         } else {
         %>
@@ -272,6 +280,17 @@
         <script>
             window.location.replace("http://localhost:8080/RIPClientMaven/");
         </script>
+        <%
+            }
+        %>
+        <%
+            } else {
+        %>
+        <div class="other-space">
+        </div>
+        <div class="alert alert-primary mt-5" role="alert">
+            <h4 class="alert-heading"><%=message%></h4>
+        </div>
         <%
             }
         %>

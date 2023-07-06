@@ -84,11 +84,12 @@ public class MailService_Impl implements MailService_Interface {
     }
 
     @Override
-    public String sendReferralEmail(String recipientEmail, String recipientName) {
-        String sendReferralEmailUri = uri + "sendReferralEmail/{recipientEmail}/{recipientName}";
+    public String sendReferralEmail(String recipientEmail, String recipientName, String phoneNumber) {
+        String sendReferralEmailUri = uri + "sendReferralEmail/{recipientEmail}/{recipientName}/{recipientPhoneNumber}";
         HashMap<String, Object> referralDetails = new HashMap<>();
         referralDetails.put("recipientEmail", recipientEmail);
         referralDetails.put("recipientName", recipientName);
+        referralDetails.put("recipientPhoneNumber", phoneNumber);
         webTarget = client.target(sendReferralEmailUri).resolveTemplates(referralDetails);
         response = webTarget.request().get();
 

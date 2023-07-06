@@ -27,22 +27,26 @@ public class ReaderController extends HttpServlet {
     private ReaderService_Interface readerService;
     private Reader reader;
     private HttpSession session;
-    
-    public ReaderController(){
+
+    public ReaderController() {
         this.readerService = new ReaderService_Impl();
         this.reader = null;
         this.session = null;
     }
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         session = request.getSession(false);
-        switch (request.getParameter("submit")){
+        switch (request.getParameter("submit")) {
             case "updateReader":
+                String message ="";
                 String currentPage = request.getParameter("currentPage");
-                reader = (Reader) session.getAttribute("user");                
-                String password = request.getParameter("password");                
-                if (!password.isEmpty()) {
+                reader = (Reader) session.getAttribute("user");
+                String password = request.getParameter("password");
+                String passwordRepeat = request.getParameter("passwordRepeat");
+                if (!password.isEmpty() && !passwordRepeat.isEmpty() && !password.equals(passwordRepeat)) {
+                    message = "Failed to update password: Passwords entered did not match.<br>";
+                } else {
                     reader.setPasswordHash(PasswordEncryptor.hashPassword(password, reader.getSalt()));
                 }
                 reader.setEmail(request.getParameter("email"));
@@ -50,10 +54,10 @@ public class ReaderController extends HttpServlet {
                 reader.setSurname(request.getParameter("surname"));
                 reader.setPhoneNumber(request.getParameter("phoneNumber"));
                 session.setAttribute("user", reader);
-                request.setAttribute("message", readerService.updateReaderDetails(reader));                
+                request.setAttribute("message", message + readerService.updateReaderDetails(reader));
                 request.getRequestDispatcher(currentPage).forward(request, response);
                 break;
-                
+
             case "allowPasswordChangeOnLogin":
                 System.out.println("Password change called.");
                 String verifyToken = request.getParameter("verifyToken");
@@ -64,23 +68,23 @@ public class ReaderController extends HttpServlet {
                 if (verifyToken.equals(originalToken)) {
                     tokensMatch = true;
                 }
-                
+
                 if (reader != null) {
                     request.setAttribute("email", reader.getEmail());
                     request.setAttribute("tokensMatch", tokensMatch);
                 } else {
                     request.setAttribute("message", "Change password link failed.");
                 }
-                
+
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
-                
+
             case "changePasswordForLogin":
                 password = request.getParameter("password");
                 String repeatPassword = request.getParameter("repeatPassword");
                 String email = request.getParameter("email");
                 reader = readerService.getReader(email);
-                String message;
+                message = "";
                 if (password.equals(repeatPassword)) {
                     reader.setPasswordHash(PasswordEncryptor.hashPassword(password, reader.getSalt()));
                     message = readerService.updateReaderDetails(reader);
@@ -89,10 +93,10 @@ public class ReaderController extends HttpServlet {
                 }
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("login.jsp").forward(request, response);
-            break;
-            
+                break;
+
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
