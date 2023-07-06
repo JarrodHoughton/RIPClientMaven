@@ -71,7 +71,7 @@
                 width: 100px;
                 height: 100px;
             }
-            
+
             .genre-swiper {
                 width: 80%;
                 height: 200px;
@@ -156,8 +156,7 @@
                                         <input type="text" class="form-control" id="title" name="title" value="<%=story.getTitle()%>">
                                     </div>
                                 </div>
-
-                                <div class="row mb-3 justify-content-center">
+                                <div class="row mb-3 justify-content-left">
                                     <div class="col-6 text-center">
                                         <!--                                            <label for="image">Image</label>-->
                                         <% if (story.getImage() != null) {%>
@@ -174,7 +173,6 @@
 
                                     </div>
                                 </div>
-
                                 <div class="row mb-3">
                                     <div class="col-12">
                                         <input class="form-control" type="file" id="image" name="image" accept="image/*" onchange="loadFile(event)">
@@ -184,15 +182,16 @@
                                 <div class="form-group">
                                     <label>Genres</label>
                                     <% if (genres != null) { %>
-                                    <swiper-container class="genre-swiper" scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
-                                        <swiper-slide>
-                                            <% for (Genre genre : genres) {%>
-                                            <div class="check-form">
+                                    <swiper-container scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
+
+                                        <div class="check-form">
+                                            <swiper-slide>
+                                                <% for (Genre genre : genres) {%>
                                                 <input type="checkbox" class="form-check-input" name="<%= genre.getId()%>" value="<%= genre.getId()%>" id="<%= genre.getId()%>"<% if (story.getGenreIds().contains(genre.getId())) { %> checked <% }%>>
                                                 <label class="form-check-label" for="<%= genre.getId()%>"><%= genre.getName()%></label>
-                                            </div>
                                                 <% } %>
-                                        </swiper-slide>
+                                            </swiper-slide>
+                                        </div>
                                     </swiper-container>
                                     <% } else { %>
                                     <p>Failed to retrieve genres.</p>

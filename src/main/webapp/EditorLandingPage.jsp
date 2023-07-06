@@ -101,7 +101,7 @@
     <%
         if (message != null) {
     %>
-    <div class="alert alert-success text-center " role="alert">
+    <div class="alert alert-primary text-center " role="alert">
         <h4 class="alert-heading"><%=message%></h4>
     </div>
     <%

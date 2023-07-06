@@ -86,10 +86,18 @@
 
             .swiper-slide img {
                 display: block;
-                width: 200px;
+                width: 300px;
                 height: 100%;
                 color: #333333;
                 object-fit: cover;
+            }
+            
+            .favourites-swiper-container {
+                width: 50%;
+            }
+            
+            .favourites-swiper-slide {
+                height: auto;
             }
 
         </style>
@@ -128,6 +136,7 @@
             List<Story> mostViewed = (List<Story>) request.getAttribute("mostViewed");
             List<Story> topPicks = (List<Story>) request.getAttribute("topPicks");
             List<Story> recommendedStories = (List<Story>) request.getAttribute("recommendedStories");
+            List<Story> favouriteStories = (List<Story>) request.getAttribute("favouriteStories");
             if (getStoriesCalled == null) {
                 getStoriesCalled = false;
             }
@@ -175,6 +184,55 @@
             }
         %>
         
+        <div class="other-space"></div>
+        
+        <div class="container mt-5">
+            <div class="other-space"></div>
+            <%
+                if (favouriteStories != null) {
+            %>
+
+            <!-- Spacing -->
+            <h3 class="text-center" style="color: white;">Your Favourite Stories</h3>
+
+            <!-- Favourite Stories Swiper -->
+            <div class="container">
+                <swiper-container class="favourites-swiper-container" speed="500" navigation="true" space-between="10" slides-per-view="auto" loop="true" mousewheel="true" effect="coverflow">
+                    <%
+                        for (Story story : favouriteStories) {
+                    %>
+                    <swiper-slide class="favourites-swiper-slide">
+                        <a style="text-decoration: none;" href="StoryController?submit=viewStory&storyId=<%=story.getId()%>">
+                            <div class="card text-white bg-black">
+                                <%
+                                    if (story.getImage() != null) {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                                <%
+                                } else {
+                                %>
+                                <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                                <%
+                                    }
+                                %>
+                                <div class="card-body">
+                                    <h5 class="card-title"><%=story.getTitle()%></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </swiper-slide>
+                    <%
+                        }
+                    %>
+                </swiper-container>
+            </div>
+            <%
+                }
+            %>
+        </div>
+        
+        <div class="other-space" id="topPicks"></div>
+        
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -186,7 +244,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container initialSlide="4" speed="200" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="300" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
@@ -694,24 +752,24 @@
                     %>
                     <!-- Button trigger profile modal -->
                     <button type="button" class="btn btn-dark text-start" data-bs-toggle="modal" data-bs-target="#profileDetails">
-                        Profile
+                        <i class="bi bi-person-fill"></i> Profile
                     </button>
-                    <a class="btn btn-dark text-start" href="LoginController?submit=logout">Logout</a>
+                    <a class="btn btn-dark text-start" href="LoginController?submit=logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
                     <%
                         }
                     %>
                     <%
                         if (writer != null) {
                     %>
-                    <a class="btn btn-dark text-start" href="StoryController?submit=manageStories">Manage Stories</a>
+                    <a class="btn btn-dark text-start" href="StoryController?submit=manageStories"><i class="bi bi-book"></i> Manage Stories</a>
                     <%
                         }
                     %>
-                    <button class="btn btn-dark text-start" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
+                    <button class="btn btn-dark text-start" type="button" data-bs-toggle="modal" data-bs-target="#referFriend"><i class="bi bi-share"></i> Share</button>
                     <%
                         if (topPicks != null) {
                     %>
-                    <button role="button" class="btn btn-dark text-start" type="button" onclick="scrollToTop()">Top Picks</button>
+                    <button role="button" class="btn btn-dark text-start" type="button" onclick="scrollToTop()"> <i class="bi bi-caret-right-fill"></i> Favourite Stories</button>
                     <%
                         }
                     %>
@@ -723,9 +781,17 @@
                         }
                     </script>
                     <%
+                        if (topPicks != null) {
+                    %>
+                    <a role="button" class="btn btn-dark text-start" href="#topPicks"><i class="bi bi-caret-right-fill"></i> Top Picks</a>
+                    <%
+                        }
+                    %>
+                    
+                    <%
                         if (recommendedStories != null) {
                     %>
-                    <a role="button" class="btn btn-dark text-start" href="#recommendedStories">Recommended Stories</a>
+                    <a role="button" class="btn btn-dark text-start" href="#recommendedStories"><i class="bi bi-caret-right-fill"></i> Recommended Stories</a>
                     <%
                         }
                     %>
@@ -733,7 +799,7 @@
                     <%
                         if (mostViewed != null) {
                     %>
-                    <a role="button" class="btn btn-dark text-start" href="#mostViewed">Most Viewed</a>
+                    <a role="button" class="btn btn-dark text-start" href="#mostViewed"><i class="bi bi-caret-right-fill"></i> Most Viewed</a>
                     <%
                         }
                     %>
@@ -741,7 +807,7 @@
                     <%
                         if (highestRated != null) {
                     %>
-                    <a role="button" class="btn btn-dark text-start" href="#highestRated">Highest Rated</a>
+                    <a role="button" class="btn btn-dark text-start" href="#highestRated"><i class="bi bi-caret-right-fill"></i> Highest Rated</a>
                     <%
                         }
                     %>
@@ -749,7 +815,7 @@
                     <%
                         if (genre1 != null) {
                     %>
-                    <a role="button" class="btn btn-dark text-start" href="#genre1"><%=genre1.getName()%></a>
+                    <a role="button" class="btn btn-dark text-start" href="#genre1"><i class="bi bi-caret-right-fill"></i> <%=genre1.getName()%></a>
                     <%
                         }
                     %>
@@ -757,7 +823,7 @@
                     <%
                         if (genre2 != null) {
                     %>
-                    <a role="button" class="btn btn-dark text-start" href="#genre2"><%=genre2.getName()%></a>
+                    <a role="button" class="btn btn-dark text-start" href="#genre2"><i class="bi bi-caret-right-fill"></i> <%=genre2.getName()%></a>
                     <%
                         }
                     %>
@@ -765,7 +831,7 @@
                     <%
                         if (genre3 != null) {
                     %>
-                    <a role="button" class="btn btn-dark text-start" href="#genre3"><%=genre3.getName()%></a>
+                    <a role="button" class="btn btn-dark text-start" href="#genre3"><i class="bi bi-caret-right-fill"></i> <%=genre3.getName()%></a>
                     <%
                         }
                     %>

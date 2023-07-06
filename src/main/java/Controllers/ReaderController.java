@@ -40,7 +40,6 @@ public class ReaderController extends HttpServlet {
         switch (request.getParameter("submit")) {
             case "updateReader":
                 String message ="";
-                String currentPage = request.getParameter("currentPage");
                 reader = (Reader) session.getAttribute("user");
                 String password = request.getParameter("password");
                 String passwordRepeat = request.getParameter("passwordRepeat");
@@ -55,7 +54,7 @@ public class ReaderController extends HttpServlet {
                 reader.setPhoneNumber(request.getParameter("phoneNumber"));
                 session.setAttribute("user", reader);
                 request.setAttribute("message", message + readerService.updateReaderDetails(reader));
-                request.getRequestDispatcher(currentPage).forward(request, response);
+                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                 break;
 
             case "allowPasswordChangeOnLogin":

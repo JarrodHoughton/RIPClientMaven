@@ -116,7 +116,7 @@ public class StoryController extends HttpServlet {
                 like.setReaderId(readerId);
                 like.setStoryId(storyId);
                 reader.getFavouriteStoryIds().add(storyId);
-
+                
                 request.setAttribute("userViewedStory", true);
                 request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
                 request.setAttribute("message", likeService.addLike(like));
@@ -337,6 +337,13 @@ public class StoryController extends HttpServlet {
 
             case "getStoriesForReaderLandingPage":
                 request.setAttribute("getStoriesForReaderLandingPageCalled", Boolean.TRUE);
+                if (reader != null) {
+                    List<Story> favouriteStories = new ArrayList<>();
+                    for (Integer favStoryId : reader.getFavouriteStoryIds()) {
+                        favouriteStories.add(storyService.getStory(favStoryId));
+                    }
+                    request.setAttribute("favouriteStories", favouriteStories);
+                }
                 topGenres = dataReportService.getTopGenres(LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter), 10);
                 if (topGenres != null) {
                     request.setAttribute("genre1", topGenres.get(0));
@@ -351,8 +358,10 @@ public class StoryController extends HttpServlet {
                 request.setAttribute("topPicks", dataReportService.getMostLikedStories(10, LocalDate.now().minusMonths(1).atStartOfDay().format(outputFormatter), LocalDate.now().atStartOfDay().format(outputFormatter)));
                 if (reader != null) {
                     request.setAttribute("recommendedStories", storyService.getRecommendations(reader.getFavouriteGenreIds()));
+                    request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
+                } else {
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
                 }
-                request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
                 break;
 
             case "manageStories":
