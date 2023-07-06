@@ -17,51 +17,61 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            function validateForm() {
-                var checkboxes = document.getElementsByName('reportOptions');
-                var startDate = document.getElementById('startDate');
-                var endDate = document.getElementById('endDate');
-                var monthOfMostLikedStories = document.getElementById('monthOfMostLikedStories');
+function validateForm() {
+    var checkboxes = document.getElementsByName('reportOptions');
+    var startDate = document.getElementById('startDate');
+    var endDate = document.getElementById('endDate');
+    var monthOfMostLikedStories = document.getElementById('monthOfMostLikedStories');
 
-                var selectedDatesRequired = false;
-                var mostLikedStoriesChecked = false;
+    var selectedDatesRequired = false;
+    var mostLikedStoriesChecked = false;
 
-                for (var i = 0; i < checkboxes.length; i++) {
-                    if (checkboxes[i].checked) {
-                        if (checkboxes[i].value === 'mostViewedStories') {
-                            selectedDatesRequired = true;
-                        } else if (checkboxes[i].value === 'mostLikedStories') {
-                            mostLikedStoriesChecked = true;
-                        }
-                    }
-                }
-
-                if (selectedDatesRequired && (startDate.value === '' || endDate.value === '')) {
-                    alert('Please enter both Start Date and End Date.');
-                    return false;
-                }
-
-                if (mostLikedStoriesChecked && monthOfMostLikedStories.value === 'Select a month') {
-                    alert('Please select a month for Most Liked Stories.');
-                    return false;
-                }
-
-                return true;
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+            if (checkboxes[i].value === 'mostViewedStories') {
+                selectedDatesRequired = true;
             }
+            if (checkboxes[i].value === 'mostLikedStories') {
+                mostLikedStoriesChecked = true;
+            }
+        }
+    }
+
+    if (selectedDatesRequired) {
+        if (startDate.value === '' || endDate.value === '') {
+            alert('Please enter both Start Date and End Date.');
+            return false;
+        }
+
+        var startDateObj = new Date(startDate.value);
+        var endDateObj = new Date(endDate.value);
+
+        if (startDateObj >= endDateObj) {
+            alert('End Date must be greater than Start Date.');
+            return false;
+        }
+    }
+
+    if (mostLikedStoriesChecked && monthOfMostLikedStories.value === 'Select a month') {
+        alert('Please select a month for Most Liked Stories.');
+        return false;
+    }
+
+    return true;
+}
+
         </script>
-
+        <style>
+            .other-space {
+                margin-bottom: 75px;
+            }
+            body {
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+                color: white;
+            }
+        </style>
     </head>
-    <style>
-        .other-space{
-            margin-bottom: 75px;
-        }
-        body{
-            background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
-            color: white;
-        }
-    </style>
     <body>
-
         <% 
             Account user = (Account) request.getSession(false).getAttribute("user");
             String message = (String) request.getAttribute("message");
@@ -70,8 +80,8 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
                 <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
-                    <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
-                <% if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) { %>
+                    <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)">READERS ARE INNOVATORS</a>
+                <% if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))){ %>
                 
                 <% }%>
         </nav>
@@ -104,12 +114,13 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostRatedStories" id="mostRatedStories" >
-                                <label class="form-check-label" for="mostRated">
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostRatedStories" id="mostRatedStories">
+                                <label class="form-check-label" for="mostRatedStories">
                                     Top 20 Most Rated Stories Of The Month
                                 </label>
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <div class="form-check">
                                 <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories">
@@ -118,7 +129,7 @@
                                 </label>
                             </div>
                             <select name="monthOfMostLikedStories" class="form-select mt-2" aria-label="monthOfMostLikedStories">
-                                <option selected disabled hidden>Select a month</option>
+                                <option value="">Select a month</option>
                                 <option value="1">January</option>
                                 <option value="2">February</option>
                                 <option value="3">March</option>
@@ -136,20 +147,22 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input name="reportOptions" class="form-check-input" type="checkbox" value="topGenres" id="topGenres" >
+                                <input name="reportOptions" class="form-check-input" type="checkbox" value="topGenres" id="topGenres">
                                 <label class="form-check-label" for="topGenres">
                                     Top 3 Genres Of The Month
                                 </label>
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <div class="form-check">
                                 <input name="reportOptions" class="form-check-input" type="checkbox" value="topWriters" id="topWriters">
                                 <label class="form-check-label" for="topWriters">
-                                    Top 30 Writers Of All Time(Based on views)
+                                    Top 30 Writers Of All Time (Based on views)
                                 </label>
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <div class="form-check">
                                 <input name="reportOptions" class="form-check-input" type="checkbox" value="topEditors" id="topEditors">
@@ -158,6 +171,7 @@
                                 </label>
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <input type="hidden" name="submit" value="showcharts">
                             <button type="submit" class="btn btn-primary mb-3">Generate Reports</button>
