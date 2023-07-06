@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : SelectReportData
     Created on : 29 Jun 2023, 15:15:51
     Author     : Jarrod
@@ -16,6 +16,40 @@
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function validateForm() {
+                var checkboxes = document.getElementsByName('reportOptions');
+                var startDate = document.getElementById('startDate');
+                var endDate = document.getElementById('endDate');
+                var monthOfMostLikedStories = document.getElementById('monthOfMostLikedStories');
+
+                var selectedDatesRequired = false;
+                var mostLikedStoriesChecked = false;
+
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked) {
+                        if (checkboxes[i].value === 'mostViewedStories') {
+                            selectedDatesRequired = true;
+                        } else if (checkboxes[i].value === 'mostLikedStories') {
+                            mostLikedStoriesChecked = true;
+                        }
+                    }
+                }
+
+                if (selectedDatesRequired && (startDate.value === '' || endDate.value === '')) {
+                    alert('Please enter both Start Date and End Date.');
+                    return false;
+                }
+
+                if (mostLikedStoriesChecked && monthOfMostLikedStories.value === 'Select a month') {
+                    alert('Please select a month for Most Liked Stories.');
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
+
     </head>
     <style>
         .other-space{
@@ -28,7 +62,7 @@
     </style>
     <body>
 
-        <%
+        <% 
             Account user = (Account) request.getSession(false).getAttribute("user");
             String message = (String) request.getAttribute("message");
         %>
@@ -37,23 +71,17 @@
             <div class="container">
                 <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
                     <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
-                    <%
-                        if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
-                    %>
-
-                <%
-                    }
-                %>
+                <% if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) { %>
+                
+                <% }%>
         </nav>
 
         <div class="other-space"></div>
-        <%
-            if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
-        %>
+        <% if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) { %>
         <div class="container mt-5">
             <div class="row mt-5">
                 <h3>Generate Data Report</h3>
-                <form action="DataReportController" method="post">
+                <form action="DataReportController" method="post" onsubmit="return validateForm();">
                     <div class="col-auto">
                         <div class="mb-3">
                             <div class="form-check">
@@ -90,7 +118,7 @@
                                 </label>
                             </div>
                             <select name="monthOfMostLikedStories" class="form-select mt-2" aria-label="monthOfMostLikedStories">
-                                <option selected>Select a month</option>
+                                <option selected disabled hidden>Select a month</option>
                                 <option value="1">January</option>
                                 <option value="2">February</option>
                                 <option value="3">March</option>
@@ -138,17 +166,13 @@
                 </form>
             </div>
         </div>
-        <%
-        } else {
-        %>
+        <% } else { %>
         <div class="alert alert-primary mx-auto my-auto" role="alert">
             <h4 class="alert-heading">You are not currently logged in.</h4>
         </div>
         <script>
             window.location.replace("http://localhost:8080/RIPClientMaven/");
         </script>
-        <%
-            }
-        %>
+        <% } %>
     </body>
 </html>
