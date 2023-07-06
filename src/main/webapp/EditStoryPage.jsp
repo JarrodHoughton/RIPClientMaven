@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : EditStoryPage
     Created on : 20 Jun 2023, 17:21:52
     Author     : jarro
@@ -28,223 +28,218 @@
                 z-index: 9999;
             }
 
-            .card {
-                border: 1px solid #ddd; /* Add border to the cards */
-                border-radius: 5px; /* Round the card corners */
-                transition: transform 0.3s;
-            }
 
-            .card:hover {
-                transform: translateY(-5px);
-                border-color: #007bff; /* Add blue border color on hover */
-                box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Add blue box shadow on hover */
-            }
-
-            .card-fixed {
-                height: 400px; /* Adjust the height as per your requirement */
-            }
-
-            .card-img-top-fixed {
-                width: 100%;
-                height: 250px; /* Adjust the height as per your requirement */
-                object-fit: cover;
-            }
 
             .space {
                 /* Adjust the margin-top as per your requirement */
-                margin-bottom: 100px; /* Adjust the margin-bottom as per your requirement */
+                margin-bottom: 88px; /* Adjust the margin-bottom as per your requirement */
             }
 
             .other-space{
                 margin-bottom: 40px;
             }
-        </style>
-        <script>
-            $('.dropdown').unbind('show.bs.dropdown');
-            $('.dropdown').unbind('hide.bs.dropdown');
-            $('.dropdown').bind('show.bs.dropdown', function () {
-                $('.fixed-table-body').css("overflow", "inherit");
-            });
-            $('.dropdown').bind('hide.bs.dropdown', function () {
-                $('.fixed-table-body').css("overflow", "auto");
-            });
-        </script>
-    </head>
-    <script>
-        var loadFile = function (event) {
-            var image = document.getElementById('storyImage');
-            image.src = URL.createObjectURL(event.target.files[0]);
-        };
-    </script>
-    <body>
-        <%
-            Account user = (Account) request.getSession(false).getAttribute("user");
-            String message = (String) request.getAttribute("message");
-            Story story = (Story) request.getAttribute("story");
-            List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
-            String navBarRef = "http://localhost:8080/RIPClientMaven/";
-        %>
 
-        <%
-            if (user != null && !user.getUserType().equals("R")) {
-                
-                if (user.getUserType().equals("W")) {
-                    navBarRef += "ReaderLandingPage.jsp";
-                } else {
-                    navBarRef += "EditorLandingPage.jsp";
-                }
-                
-        %>
-
-        <%
-            if (message!=null) {
-        %>
-        <h3><%=message%></h3>
-        <%
+            body {
+                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
             }
-        %>
-        <div id="navbar-container">
-            <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div class="container">
-                    <a class="navbar-brand" href="<%=navBarRef%>">
-                        <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
-                             style="filter: invert(1)">
-                        READERS ARE INNOVATORS
-                    </a>
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-primary ms-2" href="LoginController?submit=logout">Logout</a>
+
+            h2 {
+                color: white;
+            }
+
+            .form-white,
+            .form-white label,
+            .form-white input,
+            .form-white textarea,
+            .form-white select,
+            .form-white .form-check-label,
+            .form-white p {
+                color: white;
+            </style>
+            <script>
+                $('.dropdown').unbind('show.bs.dropdown');
+                $('.dropdown').unbind('hide.bs.dropdown');
+                $('.dropdown').bind('show.bs.dropdown', function () {
+                    $('.fixed-table-body').css("overflow", "inherit");
+                });
+                $('.dropdown').bind('hide.bs.dropdown', function () {
+                    $('.fixed-table-body').css("overflow", "auto");
+                });
+            </script>
+        </head>
+        <script>
+            var loadFile = function (event) {
+                var image = document.getElementById('storyImage');
+                image.src = URL.createObjectURL(event.target.files[0]);
+            };
+        </script>
+        <body>
+            <%
+                Account user = (Account) request.getSession(false).getAttribute("user");
+                String message = (String) request.getAttribute("message");
+                Story story = (Story) request.getAttribute("story");
+                List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
+                String navBarRef = "http://localhost:8080/RIPClientMaven/";
+            %>
+
+            <%
+                if (user != null && !user.getUserType().equals("R")) {
+
+                    if (user.getUserType().equals("W")) {
+                        navBarRef += "ReaderLandingPage.jsp";
+                    } else {
+                        navBarRef += "EditorLandingPage.jsp";
+                    }
+
+            %>
+
+            <%            if (message != null) {
+            %>
+            <h3><%=message%></h3>
+            <%
+                }
+            %>
+            <div id="navbar-container">
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+                    <div class="container">
+                        <a class="navbar-brand" href="<%=navBarRef%>">
+                            <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24"
+                                 style="filter: invert(1)">
+                                 READERS ARE INNOVATORS
+                            </a>
+
+                        </div>
+                    </nav>
+                </div>
+                <%
+                    if (story != null) {
+                %>
+                <div class="space"></div>
+                <div class="container mt-5">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card text-white bg-black">
+                                <!-- Spacing -->
+
+                                <form action="StoryController" method="post" enctype="multipart/form-data">
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <h3 class="text-left book-title">Edit Story</h3>
+                                                <label for="title">Title</label>
+                                                <input type="text" class="form-control" id="title" name="title" value="<%=story.getTitle()%>">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3 justify-content-center">
+                                            <div class="col-6 text-center">
+                                                <!--                                            <label for="image">Image</label>-->
+                                                <% if (story.getImage() != null) {%>
+                                                <img style="width: 200px;
+                                                height: 200px;
+                                                object-fit: cover;" id="storyImage" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image" class="img-thumbnail">
+                                            <input type="hidden" name="encodedImage" value="<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>">
+                                            <% } else { %>
+                                            <img style="width: 200px;
+                                                 height: 200px;
+                                                 object-fit: cover;" id="storyImage" class="img-thumbnail" src="book.svg" alt="Book Image">
+                                            <input type="hidden" name="encodedImage" value="book.svg">
+                                            <% } %>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <input class="form-control" type="file" id="image" name="image" accept="image/*" onchange="loadFile(event)">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Genres</label>
+                                        <% if (genres != null) { %>
+                                        <% for (Genre genre : genres) {%>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="<%= genre.getId()%>" value="<%= genre.getId()%>" id="<%= genre.getId()%>"<% if (story.getGenreIds().contains(genre.getId())) { %> checked <% }%>>
+                                            <label class="form-check-label" for="<%= genre.getId()%>"><%= genre.getName()%></label>
+                                        </div>
+                                        <% } %>
+                                        <% } else { %>
+                                        <p>Failed to retrieve genres.</p>
+                                        <% }%>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <label for="summary">Blurb</label>
+                                            <textarea class="form-control" id="summary" name="summary" rows="3" required><%=story.getBlurb()%></textarea>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <label for="story">Story</label>
+                                            <textarea class="form-control" id="story" name="story" rows="3" required><%=story.getContent()%></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="commentsEnabled" name="commentsEnabled" value="true"<%if (story.getCommentsEnabled()) {%>checked<%}%>>
+                                            <label class="form-check-label" for="commentsEnabled">Comments Enabled</label>
+                                        </div>
+                                    </div>
+
+
+                                    <input type="hidden" name="storyId" value="<%=story.getId()%>">
+                                    <input type="hidden" name="authorId" value="<%=story.getAuthorId()%>">
+
+                                    <% if (user.getUserType().equals("E") || user.getUserType().equals("A")) {%>
+                                    <input type="hidden" name="submit" value="approveEditedStoryFromEditor">
+                                    ```html
+                                    <button class="btn btn-primary" type="submit">Approve</button>
+                                    <a class="btn btn-danger" href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">Deny</a>
+                                    <% } %>
+                                    <% if (user.getUserType().equals("W")) { %>
+
+                                </div>
+
+                                <div class="card-footer">
+                                    <input type="hidden" name="submit" value="updateEditedStoryFromWriter">
+                                    <button class="btn btn-success" type="submit" name="submitStory">Submit</button>
+                                    <button class="btn btn-primary" type="submit" name="submitStory">Save To Drafts</button>
+                                    <% } %>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </nav>
-        </div>
-        <%
-        if (story!=null) {
-        %>
-        <div class="space"></div>
-        <div class="container mt-5">
-            <!-- Spacing -->
-            <h2 class="text-center book-title">Edit Story</h2>
-            <form action="StoryController" method="post"enctype="multipart/form-data">
-                <table border="1">
-                    <tr>
-                        <th>Author</th>
-                        <th>Title</th>
-                        <th>Image</th>
-                        <th>Genres</th>
-                        <th>Blurb</th>
-                        <th>Story</th>
-                        <th>Comments Enabled</th>
-                        <th>Action</th>
-                    </tr>
-                    <tr>
-                        <td>Author/Writer</td>
-                        <td><input type="text" name="title" value="<%=story.getTitle()%>"></td>
-                        <td>
-                            <%
-                                if (story.getImage()!= null) {
-                            %>
-                            <img id="storyImage" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
-                            <input type="hidden" name="encodedImage" value="<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>">
-                            <%
-                                } else {
-                            %>
-                            <img id="storyImage" class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
-                            <input type="hidden" name="encodedImage" value="book.svg">
-                            <%
-                                }
-                            %>
-                            <br>
-                            <input type="file" name="image" accept="image/*" onchange="loadFile(event)">
-                        </td>
-                        <td>
-                            <%
-                                if (genres != null) {
-                            %>
-<!--                            <div class="dropdown checkbox-dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Select Genres
-                                </button>
-                                <ul class="dropdown-menu checkbox-menu allow-focus position-static" aria-labelledby="dropdownMenuButton">
-                                    <% for(Genre genre: genres) { %>
-                                    <li>
-                                        <div class="form-check">
-                                            <label class="form-check-label" for="<%= genre.getId() %>"><%= genre.getName() %></label>
-                                            <input type="checkbox" class="form-check-input" name="<%= genre.getId() %>" value="<%= genre.getId() %>" id="<%= genre.getId() %>"<% if (story.getGenreIds().contains(genre.getId())) { %> checked <% } %>>
-                                        </div>
-                                    </li>
-                                    <% } %>
-                                </ul>
-                            </div>-->
-                            <% for(Genre genre: genres) { %>
-                            <div class="form-check">
-                                <label class="form-check-label" for="<%= genre.getId() %>"><%= genre.getName() %></label>
-                                <input type="checkbox" class="form-check-input" name="<%= genre.getId() %>" value="<%= genre.getId() %>" id="<%= genre.getId() %>"<% if (story.getGenreIds().contains(genre.getId())) { %> checked <% } %>>
-                            </div>
-                            <% } %>
-                            <%      
-                                } else {
-                            %>
-                            <p>Failed to retrieve genres.</p>
-                            <%
-                                }
-                            %>
-                        </td>
-                        <td><textarea name="summary" rows="5" cols="50" required><%=story.getBlurb()%></textarea></td>
-                        <td><textarea name="story" rows="5" cols="50" required><%=story.getContent()%></textarea></td>
-                        <td>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="commentsEnabled" name="commentsEnabled" value="true"<%if (story.getCommentsEnabled()) {%>checked<%}%>>
-                                <label class="form-check-label" for="commentsEnabled"></label>
-                            </div>
-                        </td>
-                        <td>
-                            <input type="hidden" name="storyId" value="<%=story.getId()%>">
-                            <input type="hidden" name="authorId" value="<%=story.getAuthorId()%>">
-                            <%
-                                if (user.getUserType().equals("E") || user.getUserType().equals("A")) {
-                            %>
-                            <input type="hidden" name="submit" value="approveEditedStoryFromEditor">
-                            <input class="btn btn-primary" type="submit" value="Approve">
-                            <a class="btn btn-danger" href="StoryController?submit=rejectStoryFromEditor&storyId=<%=story.getId()%>">
-                                Deny
-                            </a>
-                            <%
-                                }
-                            %>
-                            <%
-                                if (user.getUserType().equals("W")) {
-                            %>
-                            <input type="hidden" name="submit" value="updateEditedStoryFromWriter">
-                            <input class="btn btn-success" type="submit" name="submitStory" value="Submit">
-                            <input class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">
-                            <%
-                                }
-                            %>
 
-                        </td>
-                    </tr>
-                </table>
-            </form>
-            <div class="other-space"></div>
-        </div>
-        <% 
+                <div class="other-space"></div>
+            </div>
+            <%
             } else {
-        %>
-        <div class="alert alert-danger" role="alert">
-            <h4 class="alert-heading">Story not found.</h4>
-        </div>
-        <%
-            }
-        %>
-        <%
+            %>
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Story not found.</h4>
+            </div>
+            <%
+                }
+            %>
+            <%
             } else {
-        %>
-        <div class="alert alert-danger" role="alert">
-            <h4 class="alert-heading">You do not have priviliges to edit a story.</h4>
-        </div>
-        <%
-            }
-        %>
-    </body>
-</html>
+            %>
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">You do not have priviliges to edit a story.</h4>
+            </div>
+            <script>
+                window.location.replace("http://localhost:8080/RIPClientMaven/");
+            </script>
+            <%
+                }
+            %>
+        </body>
+    </html>

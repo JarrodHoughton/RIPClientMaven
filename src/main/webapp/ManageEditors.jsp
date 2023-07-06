@@ -34,17 +34,17 @@
 
         .modal-body {
             color: white;
-            
+
         }
 
         .modal-footer {
             color: white;
-            
+
         }
 
         .modal-header {
             color: white;
-            
+
         }
         .smaller-table{
             width: 90%;
@@ -68,7 +68,7 @@
                         <i class="bi bi-list"></i> <!-- More Icon -->
                     </button>
                     <div class="container-fluid">
-                        <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
+                        <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
                             <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
                     </div>
                     <div class="d-flex align-items-center">
@@ -235,37 +235,32 @@
                         <h1 class="modal-title fs-5" id="editorForm">Add An Editor</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body bg-dark">
-                        <form action="EditorController" method="post">
-                            <div class="mb-3">
-                                <label for="name" class="col-form-label">First Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                    <div class="modal-body">
+                        <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
+                        <div class="mb-3 row">
+                            <label for="name" class="col col-form-label">First Name</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control-plaintext text-white" id="name" name="name" value="<%=user.getName()%>" readonly>
                             </div>
-                            <div class="mb-3">
-                                <label for="surname" class="col-form-label">Last Name</label>
-                                <input type="text" class="form-control" id="surname" name="surname" required>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="surname" class="col col-form-label">Last Name</label>
+                            <div class="col-8 text-white">
+                                <input type="text" class="form-control-plaintext text-white" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
                             </div>
-                            <div class="mb-3">
-                                <label for="email" class="col-form-label">Email</label>
-                                <input type="email" class="form-control" id="email"name="email" required>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="email" class="col col-form-label">Email</label>
+                            <div class="col-8">
+                                <input type="email" class="form-control-plaintext text-white" id="email" name="email" value="<%=user.getEmail()%>" readonly>
                             </div>
-                            <div class="mb-3">
-                                <label for="phoneNumber" class="col-form-label">Phone Number</label>
-                                <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="phoneNumber" class="col col-form-label">Phone Number</label>
+                            <div class="col-8">
+                                <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
                             </div>
-                            <div class="mb-3">
-                                <label for="password" class="col-form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password..." minlength="8" maxlength="16" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="passwordRepeat" class="visually-hidden">Repeat-Password</label>
-                                <input type="password" class="form-control" id="password" name="passwordRepeat" placeholder="Repeat Password..." minlength="8" maxlength="16" required>
-                            </div>
-                            <div class="add-editor">
-                                <input type="hidden" name="submit" value="addEditor">
-                                <button type="submit" class="btn btn-primary mb-3">Add Editor</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                     <div class="modal-footer"></div>
                 </div>
@@ -317,51 +312,54 @@
             </div>
         </div>
         <!-- Profile Pop Up Modal -->
-    <!-- Modal -->
-    <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-white">
-                <div class="modal-header bg-dark">
-                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body bg-dark">
-                    <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
-                    <div class="mb-3 row">
-                        <label for="name" class="col col-form-label">First Name</label>
-                        <div class="col-8">
-                            <input type="text" class="form-control-plaintext" id="name" name="name" value="<%=user.getName()%>" readonly>
+        <!-- Modal -->
+        <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header bg-dark">
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body bg-dark">
+                        <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
+                        <div class="mb-3 row">
+                            <label for="name" class="col col-form-label">First Name</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control-plaintext text-white" id="name" name="name" value="<%=user.getName()%>" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="surname" class="col col-form-label">Last Name</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control-plaintext text-white" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="email" class="col col-form-label">Email</label>
+                            <div class="col-8">
+                                <input type="email" class="form-control-plaintext text-white" id="email" name="email" value="<%=user.getEmail()%>" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="phoneNumber" class="col col-form-label">Phone Number</label>
+                            <div class="col-8">
+                                <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3 row">
-                        <label for="surname" class="col col-form-label">Last Name</label>
-                        <div class="col-8">
-                            <input type="text" class="form-control-plaintext" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="email" class="col col-form-label">Email</label>
-                        <div class="col-8">
-                            <input type="email" class="form-control-plaintext" id="email" name="email" value="<%=user.getEmail()%>" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="phoneNumber" class="col col-form-label">Phone Number</label>
-                        <div class="col-8">
-                            <input type="tel" class="form-control-plaintext" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
-                        </div>
-                    </div>
-                </div>
 
+                </div>
             </div>
         </div>
-    </div>
         <%
         } else {
         %>
         <div class="alert alert-primary mx-auto my-auto" role="alert">
             <h4 class="alert-heading">You are currently not logged in.</h4>
         </div>
+        <script>
+            window.location.replace("http://localhost:8080/RIPClientMaven/");
+        </script>
         <%
             }
         %>

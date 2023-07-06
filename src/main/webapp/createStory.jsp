@@ -9,6 +9,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="jquery-3.7.0.min.js"></script>
     </head>
     <style>
         .other-space{
@@ -22,10 +23,27 @@
 
     </style>
     <script>
-        var loadFile = function (event) {
-            var image = document.getElementById('storyImage');
-            image.src = URL.createObjectURL(event.target.files[0]);
-        };
+
+        Filevalidation = () => {
+            const fi = document.getElementById('imageFile');
+            // Check if any file is selected.
+            if (fi.files.length > 0) {
+                const fsize = fi.files[0].size;
+                const file = Math.round((fsize / 1024));
+                // The size of the file.
+                if (file >= 512) {
+                    document.getElementById('imageMessage').style.display = "block";
+                } else {
+                    document.getElementById('imageMessage').style.display = "none";
+                    var image = document.getElementById('storyImage');
+                    image.src = URL.createObjectURL(fi.files[0]);
+                    image.style.display = "block";
+                    image.style.width = "200px";
+                    image.style.height = "200px";
+                }
+            }
+        }
+
     </script>
     <body>
         <%
@@ -60,9 +78,12 @@
             %>
             <div class="row">
                 <div class="col-12">
+                    <div class="alert alert-primary mt-5" role="alert" id="imageMessage" style="display: none;">
+                        <h4 class="alert-heading">Image uploaded exceed size limit. Please upload images less than 512kb.</h4>
+                    </div>
                     <div class="card text-white bg-black">
                         <form action="StoryController" method="post" enctype="multipart/form-data">
-                            
+
                             <div class="card-body">
                                 <div class="row mb-3">
                                     <div class="col-12">
@@ -73,16 +94,13 @@
                                 </div>
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-6 text-center">
-                                        <img class="img-thumbnail"Here is the remaining code for you:
-
-                                             ```html
-                                             id="storyImage" src="" alt="" style="width: 200px; height: 200px; object-fit: cover;">
+                                        <img class="img-thumbnail" id="storyImage" src="" alt="" style="display: none; object-fit: cover;">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-12">
-                                        <label for="image" class="form-label">Upload Image:</label>
-                                        <input class="form-control" type="file" id="image" name="image" accept="image/*" onchange="loadFile(event)">
+                                        <label for="imageFile" class="form-label">Upload Image:</label>
+                                        <input class="form-control" type="file" id="imageFile" name="image" accept="image/*" onchange="Filevalidation()">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -116,21 +134,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                    <div class="col-12">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="commentsEnabled" name="commentsEnabled" value="true">
-                                            <label class="form-check-label" for="commentsEnabled">Comments Enabled</label>
-                                        </div>
+
+                                <div class="col-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="commentsEnabled" name="commentsEnabled" value="true">
+                                        <label class="form-check-label" for="commentsEnabled">Comments Enabled</label>
                                     </div>
-                                
+                                </div>
+
                             </div>
                             <div class="card-footer">
                                 <input type="hidden" name="submit" value="addStory">
-                                
-                                    <input class="btn btn-primary" type="submit" name="submitStory" value="Submit">
-                                    <input class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">
-                                
+
+                                <input class="btn btn-primary" type="submit" name="submitStory" value="Submit">
+                                <input class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">
+
                             </div>
                         </form>
                     </div>
@@ -143,6 +161,9 @@
             <div class="alert alert-primary mt-5" role="alert">
                 <h4 class="alert-heading">You are not currently logged in.</h4>
             </div>
+            <script>
+                window.location.replace("http://localhost:8080/RIPClientMaven/");
+            </script>
             <%
                 }
             %>

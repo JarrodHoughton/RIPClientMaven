@@ -99,20 +99,6 @@
                 color: #333333;
                 object-fit: cover;
             }
-            
-            
-            
-            .modal-body {
-                color: white;
-            }
-            
-            .modal-footer {
-                color: white;
-            }
-            
-            .modal-header {
-                color: white;
-            }
 
         </style>
 
@@ -208,7 +194,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="200" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="200" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
@@ -255,7 +241,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="300" class="recommendedStories" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="300" class="recommendedStories" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : recommendedStories) {
                     %>
@@ -302,7 +288,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="300" class="mostViewed" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="300" class="mostViewed" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : mostViewed) {
                     %>
@@ -349,7 +335,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="300" class="highestRated" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="300" class="highestRated" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : highestRated) {
                     %>
@@ -396,7 +382,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="300" class="genre1" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="300" class="genre1" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre1Stories) {
                     %>
@@ -443,7 +429,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="300" class="genre2" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="300" class="genre2" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre2Stories) {
                     %>
@@ -490,7 +476,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="300" class="genre3" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="4" speed="300" class="genre3" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre3Stories) {
                     %>
@@ -528,7 +514,7 @@
 
         <!-- Profile Pop Up Modal -->
         <!-- Modal Profile Details -->
-        <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
+        <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none; color: white;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-dark text-white">
                     <div class="modal-header">
@@ -540,25 +526,25 @@
                         <div class="mb-3 row">
                             <label for="name" class="col col-form-label">First Name</label>
                             <div class="col-8">
-                                <input type="text" class="form-control-plaintext" id="name" name="name" value="<%=user.getName()%>" readonly>
+                                <input type="text" class="form-control-plaintext text-white" id="name" name="name" value="<%=user.getName()%>" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="surname" class="col col-form-label">Last Name</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control-plaintext" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
+                            <div class="col-8 text-white">
+                                <input type="text" class="form-control-plaintext text-white" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="email" class="col col-form-label">Email</label>
                             <div class="col-8">
-                                <input type="email" class="form-control-plaintext" id="email" name="email" value="<%=user.getEmail()%>" readonly>
+                                <input type="email" class="form-control-plaintext text-white" id="email" name="email" value="<%=user.getEmail()%>" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="phoneNumber" class="col col-form-label">Phone Number</label>
                             <div class="col-8">
-                                <input type="tel" class="form-control-plaintext" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
+                                <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
                             </div>
                         </div>
                     </div>

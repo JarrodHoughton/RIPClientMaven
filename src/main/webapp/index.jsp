@@ -194,7 +194,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="5" speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : topPicks) {
                     %>
@@ -241,7 +241,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="5" speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : mostViewed) {
                     %>
@@ -288,7 +288,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container" >
-                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="5" speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : highestRated) {
                     %>
@@ -335,7 +335,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="5" speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre1Stories) {
                     %>
@@ -382,7 +382,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="5" speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre2Stories) {
                     %>
@@ -429,7 +429,7 @@
 
             <!-- Top Picks Swiper -->
             <div class="container">
-                <swiper-container speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
+                <swiper-container initialSlide="5" speed="300" class="topPicks" navigation="true" space-between="10" slides-per-view="5" loop="true" mousewheel="true" effect="coverflow">
                     <%
                         for (Story story : genre3Stories) {
                     %>

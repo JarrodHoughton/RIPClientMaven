@@ -74,18 +74,7 @@
                 </button>
                 <div class="container-fluid">
                     <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
-                    <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
-                </div>
-                <div class="d-flex align-items-center">
-                    <%
-                        if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
-                    %>
-                    <!-- Button trigger profile modal -->
-
-
-                    <%
-                        }
-                    %>
+                        <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
                 </div>
         </nav>
     </div>
@@ -132,13 +121,13 @@
                 <div class="col">
                     <ul>
                         <li>View and manage pending books</li>
-                        
+
                     </ul>
                 </div>
                 <div class="col">
                     <ul>
                         <li>Access a list of approved books</li>
-                        
+
 
                     </ul>
                 </div>
@@ -181,25 +170,25 @@
                     <div class="mb-3 row">
                         <label for="name" class="col col-form-label">First Name</label>
                         <div class="col-8">
-                            <input type="text" class="form-control-plaintext" id="name" name="name" value="<%=user.getName()%>" readonly>
+                            <input type="text" class="form-control-plaintext text-white" id="name" name="name" value="<%=user.getName()%>" readonly>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="surname" class="col col-form-label">Last Name</label>
-                        <div class="col-8">
-                            <input type="text" class="form-control-plaintext" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
+                        <div class="col-8 text-white">
+                            <input type="text" class="form-control-plaintext text-white" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="email" class="col col-form-label">Email</label>
                         <div class="col-8">
-                            <input type="email" class="form-control-plaintext" id="email" name="email" value="<%=user.getEmail()%>" readonly>
+                            <input type="email" class="form-control-plaintext text-white" id="email" name="email" value="<%=user.getEmail()%>" readonly>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="phoneNumber" class="col col-form-label">Phone Number</label>
                         <div class="col-8">
-                            <input type="tel" class="form-control-plaintext" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
+                            <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
                         </div>
                     </div>
                 </div>
@@ -207,7 +196,7 @@
             </div>
         </div>
     </div>
-   
+
 
     <!-- End Of Modal -->
 
@@ -216,7 +205,10 @@
     %>
     <div class="alert alert-danger" role="alert">
         <h4 class="alert-heading">You are not currently logged in.</h4>
-    </div> 
+    </div>
+    <script>
+        window.location.replace("http://localhost:8080/RIPClientMaven/");
+    </script>
     <%
         }
     %>

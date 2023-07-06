@@ -1,3 +1,4 @@
+<%@page import="java.time.LocalDateTime"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -9,15 +10,19 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-element-bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"></script>
         <title>Story Details</title>
         <style>
             body {
-                
+
                 background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
             }
-            
+
             .title-right {
                 margin-left: 50px; /* Adjust the margin value as needed */
             }
@@ -87,6 +92,20 @@
 
             /* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
 
+            swiper-container {
+                width: 100%;
+                height: 500px;
+            }
+
+            swiper-slide {
+                font-size: 18px;
+                height: auto;
+                width: 100%;
+                -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+                padding: 30px;
+            }
+
         </style>
         <script>
             function autoSubmit() {
@@ -147,33 +166,35 @@
                         List<Comment> comments = (List<Comment>) request.getAttribute("comments");
                         Story story = (Story) request.getAttribute("story");
                         Rating userRating = (Rating) request.getAttribute("userRating");
-                        String likeMessage = (String) request.getAttribute("likeMessage");
-                        String ratingMessage = (String) request.getAttribute("ratingMessage");
-                        String commentMessage = (String) request.getAttribute("commentMessage");
+                        String message = (String) request.getAttribute("message");
                         Boolean ratingExists = false;
 
                         if (userRating != null) {
                             ratingExists = true;
                         }
+                        
+                        if (message != null) {
+                    %>
+                    <div class="alert alert-primary mt-5" role="alert">
+                        <h4 class="alert-heading"><%= message%></h4>
+                    </div>
+                    <%
+                        }
+                    %>
 
-                        if (commentMessage != null) {%>
-                        <h3 class="text-white"><%=commentMessage%></h3>
-                    <%}
-                        if (ratingMessage != null) {%>
-                    <h3 class="text-white"><%=ratingMessage%></h3>
-                    <%}
-                        if (likeMessage != null) {%>
-                    <h3 class="text-white"><%=likeMessage%></h3>
-                    <%}
-                        if (story != null) {%>
-                        <%
-                            if (readerName!=null) {
-                        %>
-                        <h2 class="text-white text-center">Story of the day</h2>
-                        <h6 class="text-white text-center">Welcome to Readers Are Innovators <%=readerName%>!</h6>
-                        <%
-                            }
-                        %>
+                    <%
+                        if (readerName != null) {
+                    %>
+                    <div class="alert alert-primary mt-5" role="alert">
+                        <h2 class="alert-heading">Story of the day</h2><br>
+                        <h6 class="alert-heading">Welcome to Readers Are Innovators <%=readerName%>!</h6>
+                    </div>
+                    <%
+                        }
+                    %>
+                    <%
+                        if (story!=null) {
+                    %>
                     <div class="story-container">
                         <div class="row">
                             <div class="col-md-4">
@@ -210,6 +231,9 @@
                                         if (reader != null) {
                                     %>
                                     <div class="readbutton-container">
+                                        <%
+                                            if (userViewedStory) {
+                                        %>
                                         <form class="rate title-right" id="ratingForm" name="ratingForm" action="StoryController" method="get">
                                             <input type="radio" id="star5" name="rate" value="5" onclick="autoSubmit()"
                                                    <%if (ratingExists && userRating.getValue() == 5) {%> checked <%}%>>
@@ -230,14 +254,16 @@
                                             <input type="hidden" name="storyId" value="<%=story.getId()%>">
 
                                         </form>
-
+                                            <%
+                                                }
+                                            %>
 
 
 
                                     </div>
                                     <br>
                                     <br>
-                                    <a class="title-right" href="StoryController?submit=readStory&storyId=<%=story.getId()%>">Read</a>
+                                    <a class="title-right btn btn-primary" href="StoryController?submit=readStory&storyId=<%=story.getId()%>"><i class="bi bi-book-fill"></i></a>
 
                                     <%
                                         if (userViewedStory || story.getAuthorId() == reader.getId()) {
@@ -246,12 +272,12 @@
                                         if (reader.getFavouriteStoryIds().contains(story.getId())) {
                                     %>
 
-                                    <a href="StoryController?submit=unlikeStory&storyId=<%=story.getId()%>">UnLike</a>
+                                    <a class="btn btn-danger" href="StoryController?submit=unlikeStory&storyId=<%=story.getId()%>"><i class="bi bi-heart-fill"></i></a>
                                     <%
                                     } else {
                                     %>
 
-                                    <a href="StoryController?submit=likeStory&storyId=<%=story.getId()%>">Like</a>
+                                    <a class="btn btn-danger" href="StoryController?submit=likeStory&storyId=<%=story.getId()%>"><i class="bi bi-heart"></i></a>
                                     <%
                                         }
                                     %>
@@ -265,7 +291,7 @@
                                     <br>
                                     <form class="title-right" action="StoryController" method="get">
                                         <div class="mb-3">
-                                           
+
                                             <textarea placeholder="Leave a comment!" name="comment" id="comments" class="form-control" style="font-family:sans-serif; font-size:1.2em;"></textarea>
                                         </div>
                                         <input type="hidden" name="storyId" value="<%=story.getId()%>">
@@ -282,20 +308,46 @@
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div class="container t-5">
                         <% if (story.getCommentsEnabled() && comments != null) { %>
                         <h3 class="text-white">Comments</h3>
-                        <%
-                            for (Comment comment : comments) {
-                        %>
-                        <div>
-                            <p class="comment-content text-white"><%= comment.getName() + " " + comment.getSurname() + ":" + comment.getDate() + " -> " + comment.getMessage()%></p>
+                        <div class="d-flex justify-content-center row text-white bg-dark">
+                            <swiper-container scrollbar="true" direction="vertical" slides-per-view="auto" scrollbar-draggable="true" free-mode="true" mousewheel="true">
+                                <swiper-slide>
+                                    <%
+                                        for (Comment comment : comments) {
+                                    %>
+                                    <div class="card">
+                                        <div class="card-content bg-white text-black">
+                                            <div class="card-header">
+                                                <div class="row">
+                                                    <p class="card-title"><%= comment.getName() + " " + comment.getSurname()%></p>
+                                                </div>
+                                                <div class="row">
+                                                    <p style="font-size: 11px;">
+                                                        <%= comment.getDate().getDayOfWeek() + " " + comment.getDate().getDayOfMonth() + ", " + comment.getDate().getMonth() + " - " + comment.getDate().getYear() + " " + comment.getDate().getHour() + ":" + comment.getDate().getMinute()%>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="card-body text-start">
+                                                <p>
+                                                    <%= comment.getMessage()%>
+                                                </p>
+                                            </div>
+                                            <div class="card-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <%
+                                        }
+                                    %>
+                                </swiper-slide>
+                            </swiper-container>
                         </div>
-                        <%
-                            }
-                        %>
                         <% } %>
                     </div>
+                    <div style="margin-top: 100px;" ></div>
                     <%
                         }
                     %>

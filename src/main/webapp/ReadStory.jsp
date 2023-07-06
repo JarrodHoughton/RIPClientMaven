@@ -43,9 +43,11 @@
                 </a>
                 
                     <%
-                        if (user != null && (user.getUserType().equals("W") || user.getUserType().equals("R"))) {
+                        if (user != null || (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
                     %>
-                    
+                    <script>
+                        window.location.replace("http://localhost:8080/RIPClientMaven/");
+                    </script>
                     <%
                         }
                     %>
@@ -82,6 +84,9 @@
         <div class="alert alert-primary mx-auto my-auto" role="alert">
             <h4 class="alert-heading">You are currently not logged in.</h4>
         </div>
+        <script>
+            window.location.replace("http://localhost:8080/RIPClientMaven/");
+        </script>
         <%
             }
         %>

@@ -80,15 +80,6 @@
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
-                <div class="d-flex align-items-center">
-                    <%
-                        if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
-                    %>
-                    
-                    <%
-                        }
-                    %>
-                </div>
             </div>
         </nav>
         
@@ -278,6 +269,9 @@
         <div class="alert alert-primary mx-auto my-auto" role="alert">
             <h4 class="alert-heading">You are not currently logged in.</h4>
         </div> 
+        <script>
+            window.location.replace("http://localhost:8080/RIPClientMaven/");
+        </script>
         <%
             }
         %>

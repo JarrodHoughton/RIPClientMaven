@@ -23,6 +23,15 @@
         <title>Edit Story</title>
     </head>
     <style>
+        /* Custom CSS to fix the navbar position */
+        #navbar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+
         .other-space {
             margin-bottom: 150px;
         }
@@ -52,21 +61,98 @@
             box-sizing: border-box;
             padding: 30px;
         }
+
+        .blurb-swiper {
+            height: 90px;
+            color: black;
+        }
     </style>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
-                    <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
-                    READERS ARE INNOVATORS
-                </a>
-            </div>
-        </nav>
         <%
+            Account user = (Account) request.getSession(false).getAttribute("user");
             List<Story> submittedStories = (List<Story>) request.getAttribute("submittedStories");
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
             String message = (String) request.getAttribute("message");
         %>
+        
+        <%
+            if (user == null) {
+        %>
+        <script>
+            window.location.replace("http://localhost:8080/RIPClientMaven/");
+        </script>
+        <%
+            }
+        %>
+        <div id="navbar-container">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+                <div class="container">
+                    <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
+                        <i class="bi bi-list"></i> <!-- More Icon -->
+                    </button>
+                    <div class="container-fluid">
+                        <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
+                            <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
+                    </div>
+            </nav>
+        </div>
+
+
+        <!--side-navbar-->
+        <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="d-grid">
+                    <button class="btn btn-dark " type="button" data-bs-toggle="modal" data-bs-target="#profileDetails"><i class="bi bi-person-fill"></i> Profile</button>
+                    <a class="btn btn-dark " href="LoginController?submit=logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Pop Up Modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
+                        <div class="mb-3 row">
+                            <label for="name" class="col col-form-label">First Name</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control-plaintext text-white" id="name" name="name" value="<%=user.getName()%>" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="surname" class="col col-form-label">Last Name</label>
+                            <div class="col-8 text-white">
+                                <input type="text" class="form-control-plaintext text-white" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="email" class="col col-form-label">Email</label>
+                            <div class="col-8">
+                                <input type="email" class="form-control-plaintext text-white" id="email" name="email" value="<%=user.getEmail()%>" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="phoneNumber" class="col col-form-label">Phone Number</label>
+                            <div class="col-8">
+                                <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+                            
         <div class="other-space"></div>
 
         <div class="container mt-8">
@@ -85,7 +171,7 @@
                 %>
                 <h2>Submitted Stories</h2>
 
-                <div class="container mt-5  text-center">
+                <div class="container mt-5  text-center" style="align-items: center;">
                     <div class="row bg-dark">
                         <div class="col">
                             <h4 class="text-white text-center">Title</h4>
@@ -99,12 +185,16 @@
                     <%
                         for (Story story : submittedStories) {
                     %>
-                    <div class="row rows-cols-auto bg-white text-black text-center" style="border-block-end: 2px solid black; height: 50px;">
+                    <div class="row rows-cols-auto bg-white text-black text-center" style="border-block-end: 2px solid black; height: 100px;  align-items: center;">
                         <div class="col">
                             <h6 class="text-start"><%=story.getTitle()%></h6>
                         </div>
                         <div class="col">
-                            <h6 class="text-start"><%=story.getBlurb()%></h6>
+                            <swiper-container class="blurb-swiper" scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
+                                <swiper-slide>
+                                    <p class="text-start text-black"><%=story.getBlurb()%></p>
+                                </swiper-slide>
+                            </swiper-container>
                         </div>
                         <div class="col">
                             <div class="row">
@@ -116,8 +206,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row rows-cols-auto collapse text-center bg-black" id="story<%=story.getId()%>">
-                        <div class="col" style="width: 30%;">
+                    <div class="row rows-cols-auto collapse text-center bg-black" id="story<%=story.getId()%>" style=" align-items: center;">
+                        <div class="col" style="width: 30%;" style="align-items: center;">
                             <div class="row text-center">
                                 <div class="image-container" style="height: 60%;">
                                     <%
@@ -153,11 +243,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col" style="width: 70%;">
+                        <div class="col" style="width: 70%; align-items: center;">
                             <div class="row">
                                 <div class="col">
                                     <div class="row my-auto">
-                                        <swiper-container class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
+                                        <swiper-container scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true" mousewheel-sensitivity="0.4">
                                             <swiper-slide>
                                                 <h4 class="text-center text-white"><%=story.getTitle()%></h4>
                                                 <p class="text-start text-white"><%=story.getContent()%></p>

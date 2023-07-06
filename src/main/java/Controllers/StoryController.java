@@ -1,24 +1,7 @@
 package Controllers;
 
 import Models.*;
-import ServiceLayers.CommentService_Impl;
-import ServiceLayers.CommentService_Interface;
-import ServiceLayers.DataReportService_Impl;
-import ServiceLayers.DataReportService_Interface;
-import ServiceLayers.EditorService_Impl;
-import ServiceLayers.EditorService_Interface;
-import ServiceLayers.GenreService_Impl;
-import ServiceLayers.GenreService_Interface;
-import ServiceLayers.StoryService_Impl;
-import ServiceLayers.StoryService_Interface;
-import ServiceLayers.LikeService_Impl;
-import ServiceLayers.LikeService_Interface;
-import ServiceLayers.MailService_Impl;
-import ServiceLayers.MailService_Interface;
-import ServiceLayers.RatingService_Impl;
-import ServiceLayers.RatingService_Interface;
-import ServiceLayers.ViewService_Impl;
-import ServiceLayers.ViewService_Interface;
+import ServiceLayers.*;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -136,7 +119,7 @@ public class StoryController extends HttpServlet {
 
                 request.setAttribute("userViewedStory", true);
                 request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
-                request.setAttribute("likeMessage", likeService.addLike(like));
+                request.setAttribute("message", likeService.addLike(like));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
@@ -152,7 +135,7 @@ public class StoryController extends HttpServlet {
 
                 request.setAttribute("userViewedStory", true);
                 request.setAttribute("userRating", ratingService.getRating(reader.getId(), storyId));
-                request.setAttribute("likeMessage", likeService.deleteLike(like));
+                request.setAttribute("message", likeService.deleteLike(like));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
                 request.getRequestDispatcher("DetailsPage.jsp").forward(request, response);
@@ -166,9 +149,9 @@ public class StoryController extends HttpServlet {
                 rating.setStoryId(storyId);
                 rating.setValue(Integer.valueOf(request.getParameter("rate")));
                 if (Boolean.parseBoolean(request.getParameter("isAdding"))) {
-                    request.setAttribute("ratingMessage", ratingService.addRating(rating));
+                    request.setAttribute("message", ratingService.addRating(rating));
                 } else {
-                    request.setAttribute("ratingMessage", ratingService.updateRatingValue(rating));
+                    request.setAttribute("message", ratingService.updateRatingValue(rating));
                 }
 
                 request.setAttribute("userViewedStory", true);
@@ -190,7 +173,7 @@ public class StoryController extends HttpServlet {
                 comment.setStoryId(storyId);
 
                 request.setAttribute("userViewedStory", true);
-                request.setAttribute("commentMessage", commentService.addComment(comment));
+                request.setAttribute("message", commentService.addComment(comment));
                 request.setAttribute("userRating", ratingService.getRating(readerId, storyId));
                 request.setAttribute("story", storyService.getStory(storyId));
                 request.setAttribute("comments", commentService.getAllCommentForStory(storyId));
@@ -287,7 +270,9 @@ public class StoryController extends HttpServlet {
                 }
                 story.setGenreIds(genreIds);
                 if (genreIds.isEmpty()) {
-                    message += "<br>Failed to update story: Please select genres for your story.";
+                    message += "<br>Failed to update story: Please select genres for this story.";
+                } else if (validateWordCount(1000, story.getContent()) || validateWordCount(250, story.getBlurb())) {
+                    message += "<br>Failed to update story: Max number of words exceeded";
                 } else {
                     message += "<br>" + storyService.updateStory(story);
                     System.out.println("Updated story.");
@@ -298,13 +283,19 @@ public class StoryController extends HttpServlet {
                 break;
 
             case "submitStoryFromSelectStoryToEditPage":
-                editor.setApprovalCount(editor.getApprovalCount() + 1);
-                message = editorService.updateEditor(editor);
+
                 storyId = Integer.valueOf(request.getParameter("storyId"));
                 story = storyService.getStory(storyId);
-                story.setApproved(Boolean.TRUE);
-                story.setRejected(Boolean.FALSE);
-                message += mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.TRUE) + "<br>" + storyService.updateStory(story);
+                if (validateWordCount(1000, story.getContent()) || validateWordCount(250, story.getBlurb())) {
+                    message = "Failed to create story: Max number of words for story is 1000 and 250 for your summary.";
+                } else {
+                    editor.setApprovalCount(editor.getApprovalCount() + 1);
+                    message = editorService.updateEditor(editor);
+                    story.setApproved(Boolean.TRUE);
+                    story.setRejected(Boolean.FALSE);
+                    message += mailService.notifyWriterOfStorySubmission(story.getAuthorId(), Boolean.TRUE) + "<br>" + storyService.updateStory(story);
+
+                }
                 request.setAttribute("message", message);
                 request.setAttribute("submittedStories", storyService.getSubmittedStories(20, 0));
                 request.getRequestDispatcher("SelectStoryToEdit.jsp").forward(request, response);
@@ -412,6 +403,8 @@ public class StoryController extends HttpServlet {
                 story.setGenreIds(genreIds);
                 if (genreIds.isEmpty()) {
                     message = "Failed to create story: Please select genres for your story.";
+                } else if (validateWordCount(1000, story.getContent()) || validateWordCount(250, story.getBlurb())) {
+                    message = "Failed to create story: Max number of words for story is 1000 and 250 for your summary.";
                 } else {
                     message = storyService.addStory(story);
                 }
@@ -470,6 +463,8 @@ public class StoryController extends HttpServlet {
                 story.setGenreIds(genreIds);
                 if (genreIds.isEmpty()) {
                     message = "Failed to update story: Please select genres for your story.";
+                } else if (validateWordCount(1000, story.getContent()) || validateWordCount(250, story.getBlurb())) {
+                    message = "Failed to update story: Max number of words for story is 1000 and 250 for your summary.";
                 } else {
                     message = storyService.updateStory(story);
                     System.out.println("Updated story.");
@@ -524,6 +519,10 @@ public class StoryController extends HttpServlet {
             }
         }
         return alphaNumericOnly;
+    }
+
+    public Boolean validateWordCount(Integer maxNumberOfWords, String content) {
+        return content.stripTrailing().stripLeading().split(" ").length > maxNumberOfWords;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -41,7 +41,7 @@
                         <i class="bi bi-list"></i> <!-- More Icon -->
                     </button>
                     <div class="container-fluid">
-                        <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
+                        <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
                             <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
                     </div>
                     <div class="d-flex align-items-center">
@@ -156,47 +156,47 @@
                         </div>
                     </div>
             </div>
- <!-- Profile Pop Up Modal -->
-    <!-- Modal -->
-    <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-white">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
-                    <div class="mb-3 row">
-                        <label for="name" class="col col-form-label">First Name</label>
-                        <div class="col-8">
-                            <input type="text" class="form-control-plaintext" id="name" name="name" value="<%=user.getName()%>" readonly>
+            <!-- Profile Pop Up Modal -->
+            <!-- Modal -->
+            <div class="modal fade" id="profileDetails" aria-labelledby="profileDetails" tabindex="-1" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-dark text-white">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="surname" class="col col-form-label">Last Name</label>
-                        <div class="col-8">
-                            <input type="text" class="form-control-plaintext" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
+                        <div class="modal-body">
+                            <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
+                            <div class="mb-3 row">
+                                <label for="name" class="col col-form-label">First Name</label>
+                                <div class="col-8">
+                                    <input type="text" class="form-control-plaintext text-white" id="name" name="name" value="<%=user.getName()%>" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="surname" class="col col-form-label">Last Name</label>
+                                <div class="col-8 text-white">
+                                    <input type="text" class="form-control-plaintext text-white" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="email" class="col col-form-label">Email</label>
+                                <div class="col-8">
+                                    <input type="email" class="form-control-plaintext text-white" id="email" name="email" value="<%=user.getEmail()%>" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="phoneNumber" class="col col-form-label">Phone Number</label>
+                                <div class="col-8">
+                                    <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="email" class="col col-form-label">Email</label>
-                        <div class="col-8">
-                            <input type="email" class="form-control-plaintext" id="email" name="email" value="<%=user.getEmail()%>" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="phoneNumber" class="col col-form-label">Phone Number</label>
-                        <div class="col-8">
-                            <input type="tel" class="form-control-plaintext" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
-                        </div>
-                    </div>
-                </div>
 
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-   
+
 
         </div>
 
@@ -216,6 +216,9 @@
     <div class="alert alert-danger mt-5" role="alert">
         You do not have permission to access this page.
     </div>
+    <script>
+        window.location.replace("http://localhost:8080/RIPClientMaven/");
+    </script>
     <%
         }
     %>
