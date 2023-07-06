@@ -251,7 +251,6 @@ public class DataReportController extends HttpServlet {
                     startDateTime = startDate.atStartOfDay();
                     endDateTime = endDate.atTime(23, 59, 59);
                     if (startDateTime.isBefore(endDateTime)) {
-                        System.out.println("TRUEEEEEEEEEEEEEEEEEEE");
                         chartIds.add("mostViewedStoriesChart");
                         chartDataLabelsAxisNames.add("Story");
                         chartDataValuesAxisNames.add("Number of views");
