@@ -121,29 +121,40 @@ function validateForm() {
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories">
-                                <label class="form-check-label" for="mostLikedStories">
-                                    Top 20 Most Liked Stories
-                                </label>
-                            </div>
-                            <select name="monthOfMostLikedStories" class="form-select mt-2" aria-label="monthOfMostLikedStories">
-                                <option value="">Select a month</option>
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                                <option value="4">April</option>
-                                <option value="5">May</option>
-                                <option value="6">June</option>
-                                <option value="7">July</option>
-                                <option value="8">August</option>
-                                <option value="9">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
-                            </select>
-                        </div>
+        <div class="mb-3">
+            <div class="form-check">
+                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories">
+                <label class="form-check-label" for="mostLikedStories">
+                    Top 20 Most Liked Stories
+                </label>
+            </div>
+            <select name="monthOfMostLikedStories" class="form-select mt-2" aria-label="monthOfMostLikedStories">
+                <option value="" disabled>Select a month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+        </div>
+
+        <script>
+            // Get the current month
+            var currentMonth = new Date().getMonth() + 1;
+
+            // Set the default option based on the current month
+            var selectElement = document.querySelector('select[name="monthOfMostLikedStories"]');
+            selectElement.value = currentMonth.toString();
+        </script>
+
+
 
                         <div class="mb-3">
                             <div class="form-check">
