@@ -24,12 +24,12 @@
             height: 400px; /* Adjust the height as per your requirement */
             object-fit: cover;
         }
-        
-        body {
-                background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
-            }
 
-        
+        body {
+            background: linear-gradient(180deg, #0d0d0d, #111111, #0d0d0d);
+        }
+
+
     </style>
     <body>
         <%
@@ -41,29 +41,41 @@
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
-                
-                    <%
-                        if (user == null || (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
-                    %>
-                    <script>
-                        window.location.replace("http://localhost:8080/RIPClientMaven/");
-                    </script>
-                    <%
-                        }
-                    %>
-                
+
+                <%
+                    if (user == null || (user.getUserType().equals("E") || user.getUserType().equals("A"))) {
+                %>
+                <script>
+                    window.location.replace("http://localhost:8080/RIPClientMaven/");
+                </script>
+                <%
+                    }
+                %>
+
             </div>
         </nav>
         <%
             Story story = (Story) request.getAttribute("story");
             if (user != null && (user.getUserType().equals("W") || user.getUserType().equals("R"))) {
         %>
-        
+
         <div class="container" style="margin-top: -18px;">
             <div class="row mt-5">
                 <div class="col mt-5">
                     <div class="card card-fixed text-bg-dark bg-opacity-25">
-                        <img class="card-img-top card-img-top-fixed" src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>" alt="Book Image">
+                        <%
+                            if (story.getImage() != null) {
+                        %>
+                        <img class="card-img-top card-img-top-fixed border-image"
+                             src="data:image/jpg;base64,<%=Base64.getEncoder().encodeToString(ArrayUtils.toPrimitive(story.getImage()))%>"
+                             alt="Book Image">
+                        <%
+                        } else {
+                        %>
+                        <img class="card-img-top card-img-top-fixed" src="book.svg" alt="Book Image">
+                        <%
+                            }
+                        %>
                         <div class="card-header" style="background-color: black;">
                             Full Story
                         </div>

@@ -236,8 +236,8 @@
 
                             <div class="card-footer">
                                 <input type="hidden" name="submit" value="updateEditedStoryFromWriter">
-                                <button class="btn btn-success" type="submit" name="submitStory">Submit</button>
-                                <button class="btn btn-primary" type="submit" name="submitStory">Save To Drafts</button>
+                                <button class="btn btn-success" type="submit" name="submitStory" value="Submit">Submit</button>
+                                <button class="btn btn-primary" type="submit" name="submitStory" value="Save To Drafts">Save To Drafts</button>
                                 <% } %>
                             </div>
                         </form>

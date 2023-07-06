@@ -229,41 +229,53 @@
 
         <%-- Add a form here to add a new editor to the system --%>
         <div class="modal fade" id="addEditorForm" aria-labelledby="addEditorForm" tabindex="-1" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable bg-dark">
-                <div class="modal-content bg-dark">
-                    <div class="modal-header bg-dark">
-                        <h1 class="modal-title fs-5" id="editorForm">Add An Editor</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <form action="EditorController" method="post">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header bg-dark">
+                            <h1 class="modal-title fs-5" id="editorForm">Add An Editor</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3 row">
+                                <label for="name" class="col col-form-label">First Name</label>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="surname" class="col col-form-label">Last Name</label>
+                                <div class="col-8 text-white">
+                                    <input type="text" class="form-control" id="surname" name="surname" required>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="email" class="col col-form-label">Email</label>
+                                <div class="col-8">
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="phoneNumber" class="col col-form-label">Phone Number</label>
+                                <div class="col-8">
+                                    <input type="tel" class="form-control text-white" id="phoneNumber" name="phoneNumber" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editorPassword" class="col-form-label">Password</label>
+                                <input type="password" class="form-control" id="editorPassword" name="password" placeholder="Password..." minlength="8" maxlength="16">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editorPasswordRepeat" class="visually-hidden">Repeat-Password</label>
+                                <input type="password" class="form-control" id="editorPasswordRepeat" name="passwordRepeat" placeholder="Repeat Password..." minlength="8" maxlength="16">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="submit" value="addEditor">
+                            <button type="submit" class="btn btn-primary mb-3">Add Editor</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
-                        <div class="mb-3 row">
-                            <label for="name" class="col col-form-label">First Name</label>
-                            <div class="col-8">
-                                <input type="text" class="form-control-plaintext text-white" id="name" name="name" value="<%=user.getName()%>" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="surname" class="col col-form-label">Last Name</label>
-                            <div class="col-8 text-white">
-                                <input type="text" class="form-control-plaintext text-white" id="surname" name="surname" value="<%=user.getSurname()%>" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="email" class="col col-form-label">Email</label>
-                            <div class="col-8">
-                                <input type="email" class="form-control-plaintext text-white" id="email" name="email" value="<%=user.getEmail()%>" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="phoneNumber" class="col col-form-label">Phone Number</label>
-                            <div class="col-8">
-                                <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer"></div>
-                </div>
+                </form>
             </div>
         </div>
 
