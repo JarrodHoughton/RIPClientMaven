@@ -16,17 +16,12 @@
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+        <script>
 function validateForm() {
     var checkboxes = document.getElementsByName('reportOptions');
     var startDate = document.getElementById('startDate');
     var endDate = document.getElementById('endDate');
-    var monthSelect = document.getElementsByName('monthOfMostLikedStories')[0];
-    var monthOfMostLikedStories = '';
-
-    if (monthSelect.selectedIndex !== 0) {
-        monthOfMostLikedStories = monthSelect.value;
-    }
+    var monthOfMostLikedStories = document.getElementById('monthOfMostLikedStories');
 
     var selectedDatesRequired = false;
     var mostLikedStoriesChecked = false;
@@ -57,16 +52,15 @@ function validateForm() {
         }
     }
 
-    if (mostLikedStoriesChecked && monthOfMostLikedStories === '') {
+    if (mostLikedStoriesChecked && monthOfMostLikedStories.value === 'Select a month') {
         alert('Please select a month for Most Liked Stories.');
         return false;
     }
 
     return true;
 }
-</script>
 
-
+        </script>
         <style>
             .other-space {
                 margin-bottom: 75px;
@@ -97,7 +91,7 @@ function validateForm() {
         <div class="container mt-5">
             <div class="row mt-5">
                 <h3>Generate Data Report</h3>
-                <form action="DataReportController" method="post" onsubmit="return validateForm()">
+                <form action="DataReportController" method="post" onsubmit="return validateForm();">
                     <div class="col-auto">
                         <div class="mb-3">
                             <div class="form-check">
@@ -127,32 +121,38 @@ function validateForm() {
                             </div>
                         </div>
 
-<div class="mb-3">
-    <div class="form-check">
-        <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories">
-        <label class="form-check-label" for="mostLikedStories">
-            Top 20 Most Liked Stories
-        </label>
-    </div>
-           <select name="monthOfMostLikedStories" class="form-select mt-2" aria-label="monthOfMostLikedStories">
-    <option value="" disabled selected>Select a month</option>
-    <option value="1">January</option>
-    <option value="2">February</option>
-    <option value="3">March</option>
-    <option value="4">April</option>
-    <option value="5">May</option>
-    <option value="6">June</option>
-    <option value="7">July</option>
-    <option value="8">August</option>
-    <option value="9">September</option>
-    <option value="10">October</option>
-    <option value="11">November</option>
-    <option value="12">December</option>
-</select>
+        <div class="mb-3">
+            <div class="form-check">
+                <input name="reportOptions" class="form-check-input" type="checkbox" value="mostLikedStories" id="mostLikedStories">
+                <label class="form-check-label" for="mostLikedStories">
+                    Top 20 Most Liked Stories
+                </label>
+            </div>
+            <select name="monthOfMostLikedStories" class="form-select mt-2" aria-label="monthOfMostLikedStories">
+                <option value="" disabled>Select a month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+        </div>
 
+        <script>
+            // Get the current month
+            var currentMonth = new Date().getMonth() + 1;
 
-</div>
-
+            // Set the default option based on the current month
+            var selectElement = document.querySelector('select[name="monthOfMostLikedStories"]');
+            selectElement.value = currentMonth.toString();
+        </script>
 
 
 

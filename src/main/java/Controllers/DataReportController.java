@@ -128,6 +128,8 @@ public class DataReportController extends HttpServlet {
 
                     chartDataLabels.add(storyTitles);
                     chartDataValues.add(listOfNumberOfStoryLikes);
+                } else {
+                    message += "No month was selected for most liked.<br>";
                 }
 
                 //Getting the top rated stories
