@@ -4,10 +4,13 @@
  */
 package Controllers;
 
-import Models.Application;
+import Models.Account;
 import Models.Reader;
+import Models.Writer;
 import ServiceLayers.ReaderService_Impl;
 import ServiceLayers.ReaderService_Interface;
+import ServiceLayers.WriterService_Impl;
+import ServiceLayers.WriterService_Interface;
 import Utils.PasswordEncryptor;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -16,6 +19,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -25,11 +31,13 @@ import jakarta.servlet.http.HttpSession;
 public class ReaderController extends HttpServlet {
 
     private ReaderService_Interface readerService;
+    private WriterService_Interface writerService;
     private Reader reader;
     private HttpSession session;
 
     public ReaderController() {
         this.readerService = new ReaderService_Impl();
+        this.writerService = new WriterService_Impl();
         this.reader = null;
         this.session = null;
     }
@@ -52,9 +60,36 @@ public class ReaderController extends HttpServlet {
                 reader.setName(request.getParameter("name"));
                 reader.setSurname(request.getParameter("surname"));
                 reader.setPhoneNumber(request.getParameter("phoneNumber"));
-                session.setAttribute("user", reader);
+                session.setAttribute("user", (Account) reader);
                 request.setAttribute("message", message + readerService.updateReaderDetails(reader));
                 request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
+                break;
+                
+            case "updateFavouriteGenres":
+                String[] selectedGenres = request.getParameterValues("selectedGenres");
+                System.out.println(Arrays.toString(selectedGenres));
+                if (session == null) {
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
+                } else if (selectedGenres != null) {
+                    Account user = (Account) session.getAttribute("user");
+                    List<Integer> genreIds = new ArrayList<>();
+                    for (String genreId : selectedGenres) {
+                        genreIds.add(Integer.valueOf(genreId));
+                    }
+                    if (user.getUserType().equals("R")) {
+                        reader = readerService.getReader(user.getEmail());
+                        reader.setFavouriteGenreIds(genreIds);
+                        readerService.updateReaderDetails(reader);
+                        session.setAttribute("user", reader);
+                    } else {
+                        Writer writer = writerService.getWriter(user.getId());
+                        writer.setFavouriteGenreIds(genreIds);
+                        session.setAttribute("user", writer);   
+                    }
+                    request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
+                } else {
+                    request.getRequestDispatcher("ReaderLandingPage.jsp").forward(request, response);
+                }
                 break;
 
             case "allowPasswordChangeOnLogin":
@@ -84,11 +119,13 @@ public class ReaderController extends HttpServlet {
                 String email = request.getParameter("email");
                 reader = readerService.getReader(email);
                 message = "";
-                if (password.equals(repeatPassword)) {
+                if (!password.equals(repeatPassword)) {
+                    message = "The passwords you entered did not match. Please try again.";
+                } else if(PasswordEncryptor.hashPassword(password, reader.getSalt()).equals(reader.getPasswordHash())) {
+                    message = "Previous password entered. Please enter a new password.";
+                } else {
                     reader.setPasswordHash(PasswordEncryptor.hashPassword(password, reader.getSalt()));
                     message = readerService.updateReaderDetails(reader);
-                } else {
-                    message = "The passwords you entered did not match. Please try again.";
                 }
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("login.jsp").forward(request, response);

@@ -1,9 +1,11 @@
+
 <%--
     Document   : EditStoryPage
     Created on : 20 Jun 2023, 17:21:52
-    Author     : jarro
+    Author     : Jarrod
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -99,11 +101,13 @@
     </script>
     <body>
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Account user = (Account) request.getSession(false).getAttribute("user");
             String message = (String) request.getAttribute("message");
             Story story = (Story) request.getAttribute("story");
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
-            String navBarRef = "http://localhost:8080/RIPClientMaven/";
+            String navBarRef = clientUrl;
         %>
 
         <%
@@ -150,14 +154,10 @@
                         <form action="StoryController" method="post" enctype="multipart/form-data">
                             <div class="card-body">
                                 <div class="row mb-3">
-                                    <div class="col-12">
+                                    <div class="col-4 align-self-start">
                                         <h3 class="text-left book-title">Edit Story</h3>
-                                        <label for="title">Title</label>
-                                        <input type="text" class="form-control" id="title" name="title" value="<%=story.getTitle()%>">
                                     </div>
-                                </div>
-                                <div class="row mb-3 justify-content-left">
-                                    <div class="col-6 text-center">
+                                    <div class="col-8 text-center align-self-center">
                                         <!--                                            <label for="image">Image</label>-->
                                         <% if (story.getImage() != null) {%>
                                         <img style="width: 200px;
@@ -169,8 +169,14 @@
                                              height: 200px;
                                              object-fit: cover;" id="storyImage" class="img-thumbnail" src="book.svg" alt="Book Image">
                                         <input type="hidden" name="encodedImage" value="book.svg">
-                                        <% } %>
+                                        <% }%>
 
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="title">Title</label>
+                                        <input type="text" class="form-control" id="title" name="title" value="<%=story.getTitle()%>">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -182,17 +188,16 @@
                                 <div class="form-group">
                                     <label>Genres</label>
                                     <% if (genres != null) { %>
-                                    <swiper-container scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
-
-                                        <div class="check-form">
+                                    <div class="check-form">
+                                        <swiper-container scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
                                             <swiper-slide>
                                                 <% for (Genre genre : genres) {%>
                                                 <input type="checkbox" class="form-check-input" name="<%= genre.getId()%>" value="<%= genre.getId()%>" id="<%= genre.getId()%>"<% if (story.getGenreIds().contains(genre.getId())) { %> checked <% }%>>
                                                 <label class="form-check-label" for="<%= genre.getId()%>"><%= genre.getName()%></label>
                                                 <% } %>
                                             </swiper-slide>
-                                        </div>
-                                    </swiper-container>
+                                        </swiper-container>
+                                    </div>
                                     <% } else { %>
                                     <p>Failed to retrieve genres.</p>
                                     <% }%>
@@ -262,7 +267,7 @@
             <h4 class="alert-heading">You do not have priviliges to edit a story.</h4>
         </div>
         <script>
-            window.location.replace("http://localhost:8080/RIPClientMaven/");
+            window.location.replace("<%=clientUrl%>");
         </script>
         <%
             }

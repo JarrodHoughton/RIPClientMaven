@@ -1,3 +1,4 @@
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -47,8 +48,10 @@
     </script>
     <body>
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Writer user = (Writer) request.getSession(false).getAttribute("user");
-            String homePageUrl = "http://localhost:8080/RIPClientMaven/";
+            String homePageUrl = clientUrl;
             if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) {
                 homePageUrl += "ReaderLandingPage.jsp";
             } else {
@@ -162,7 +165,7 @@
                 <h4 class="alert-heading">You are not currently logged in.</h4>
             </div>
             <script>
-                window.location.replace("http://localhost:8080/RIPClientMaven/");
+                window.location.replace("<%=clientUrl%>");
             </script>
             <%
                 }

@@ -4,6 +4,7 @@
     Author     : Jarrod
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -91,11 +92,11 @@
                 color: #333333;
                 object-fit: cover;
             }
-            
+
             .favourites-swiper-container {
                 width: 50%;
             }
-            
+
             .favourites-swiper-slide {
                 height: auto;
             }
@@ -105,6 +106,8 @@
     </head>
     <body>
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Account user = (Account) request.getSession(false).getAttribute("user");
 
             if (user == null) {
@@ -119,11 +122,13 @@
             Writer writer = null;
             if (user != null && user.getUserType().equals("R")) {
                 reader = (Reader) user;
-            } else if (user != null && user.getUserType().equals("W")) {
-                writer = (Writer) user;
-            } else {
-
             }
+
+            if (user != null && user.getUserType().equals("W")) {
+                writer = (Writer) user;
+            }
+
+            List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
             String message = (String) request.getAttribute("message");
             Boolean getStoriesCalled = (Boolean) request.getAttribute("getStoriesForReaderLandingPageCalled");
             Genre genre1 = (Genre) request.getAttribute("genre1");
@@ -145,7 +150,7 @@
         <script>
             window.location.replace("StoryController?submit=getStoriesForReaderLandingPage");
         </script>
-        <% } %>
+        <% }%>
 
         <div id="navbar-container">
             <nav class="navbar navbar-expand-lg navbar-dark bg-black">
@@ -154,7 +159,7 @@
                         <i class="bi bi-list"></i> <!-- More Icon -->
                     </button>
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                        <a class="navbar-brand" href="<%=clientUrl%>">
                             <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                             READERS ARE INNOVATORS
                         </a>
@@ -173,7 +178,7 @@
         <%
             if (user != null) {
         %>
-        
+
         <%
             if (message != null) {
         %>
@@ -183,9 +188,9 @@
         <%
             }
         %>
-        
+
         <div class="other-space"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -230,9 +235,9 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space" id="topPicks"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -277,9 +282,9 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space" id="recommendedStories"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -324,9 +329,9 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space" id="mostViewed"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -371,9 +376,9 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space" id="highestRated"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -418,9 +423,9 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space" id="genre1"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -465,9 +470,9 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space" id="genre2"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -512,9 +517,9 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space" id="genre3"></div>
-        
+
         <div class="container mt-5">
             <div class="other-space"></div>
             <%
@@ -559,7 +564,7 @@
                 }
             %>
         </div>
-        
+
         <div class="other-space"></div>
 
         <!-- Profile Pop Up Modal -->
@@ -569,7 +574,7 @@
                 <div class="modal-content bg-dark text-white">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Profile Details</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <img src="person-square.svg" alt="Profile" class="rounded-circle p-1 bg-primary" width="110">
@@ -597,11 +602,49 @@
                                 <input type="tel" class="form-control-plaintext text-white" id="phoneNumber" name="phoneNumber" value="<%=user.getPhoneNumber()%>" readonly>
                             </div>
                         </div>
+                        <div class="mb-3 row">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Favourite Genres
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <%
+                                        if (genres != null) {
+                                            for (Genre genre : genres) {
+
+                                    %>
+                                    <%                                                  
+                                        if (writer != null) {
+                                    %>
+                                    <%                                        
+                                        if (writer.getFavouriteGenreIds().contains(genre.getId())) {
+                                    %>
+                                    <li><%=genre.getName()%></li>
+                                        <%
+                                            }
+                                        %>
+                                        <%
+                                        } else {
+                                        %>                                          
+                                        <%    
+                                            if (reader.getFavouriteGenreIds().contains(genre.getId())) {
+                                        %>
+                                            <li><%=genre.getName()%></li> 
+                                            <%}%>
+                                    <%
+
+                                            }
+                                        }
+                                        }
+                                    %>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary" data-bs-target="#profileForm" data-bs-toggle="modal">Edit Profile</button>
                         <%
-                            if (writer == null) {
+                            if (user.getUserType().equals("R")) {
                         %>
                         <button class="btn btn-primary" data-bs-target="#applicationForm" data-bs-toggle="modal">Apply To Become A Writer</button>
                         <%
@@ -618,7 +661,7 @@
                 <div class="modal-content bg-dark text-white">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Update Profile</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form action="ReaderController" method="post">
@@ -654,6 +697,57 @@
                     <div class="modal-footer">
                         <div class="btn-group" role="group">
                             <button class="btn btn-primary" data-bs-target="#profileDetails" data-bs-toggle="modal">Profile Details</button>
+                            <button class="btn btn-primary" data-bs-target="#updateFavouriteGenres" data-bs-toggle="modal">Update Favourite Genres</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal Change Favourite Genres Form -->
+        <div class="modal fade" id="updateFavouriteGenres" aria-labelledby="updateFavouriteGenres" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Update Favourite Genres</h1>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="ReaderController" method="post">
+                            <div class="row mb-3">
+                                <% if (genres != null) { %>
+                                <div class="check-form">
+                                    <% for (Genre genre : genres) {%>
+                                    <%
+                                        if (reader != null) {
+                                    %>
+                                    <input type="checkbox" class="form-check-input" name="selectedGenres" value="<%= genre.getId()%>" id="<%= genre.getId()%>"
+                                           <%if (reader.getFavouriteGenreIds().contains(genre.getId())) {%>checked<%}%>
+                                           >
+                                    <%
+                                    } else {
+                                    %>
+                                    <input type="checkbox" class="form-check-input" name="selectedGenres" value="<%= genre.getId()%>" id="<%= genre.getId()%>"
+                                           <%if (writer.getFavouriteGenreIds().contains(genre.getId())) {%>checked<%}%>
+                                           >
+                                    <%
+                                        }
+                                    %>
+                                    <label class="form-check-label" for="<%= genre.getId()%>"><%= genre.getName()%></label>
+                                    <% } %>
+                                </div>
+                                <% } else { %>
+                                <p>Failed to retrieve genres.</p>
+                                <% }%>
+                            </div>
+                            <input type="hidden" name="submit" value="updateFavouriteGenres">
+                            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" data-bs-target="#profileDetails" data-bs-toggle="modal">Profile Details</button>
                         </div>
                     </div>
                 </div>
@@ -661,7 +755,7 @@
         </div>
 
         <%
-            if (writer == null) {
+            if (user.getUserType().equals("R")) {
         %>
         <!-- Modal Writer Application Form -->
         <div class="modal fade" id="applicationForm" aria-labelledby="applicationForm" tabindex="-1" style="display: none;" aria-hidden="true">
@@ -669,7 +763,7 @@
                 <div class="modal-content bg-dark text-white">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Apply To Be A Writer</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form action="ApplicationController" method="post">
@@ -693,6 +787,7 @@
             }
         %>
         <!-- End Of Modal -->
+
         <%
         } else {
         %>
@@ -709,7 +804,7 @@
                 <div class="modal-content bg-dark text-white">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Share Our Platform!</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form action="MessageController" method="post">
                         <div class="modal-body">
@@ -741,102 +836,102 @@
 
         <!-- Side Bar Menu -->
         <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
-            <div class="offcanvas-header">
+            <div class="offcanvas-header bg-black">
                 <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body">
-                <div class="d-grid" style="text-align: left;">
-                    <%
-                        if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) {
-                    %>
-                    <!-- Button trigger profile modal -->
-                    <button type="button" class="btn btn-dark text-start" data-bs-toggle="modal" data-bs-target="#profileDetails">
-                        <i class="bi bi-person-fill"></i> Profile
-                    </button>
-                    <a class="btn btn-dark text-start" href="LoginController?submit=logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-                    <%
-                        }
-                    %>
-                    <%
-                        if (writer != null) {
-                    %>
-                    <a class="btn btn-dark text-start" href="StoryController?submit=manageStories"><i class="bi bi-book"></i> Manage Stories</a>
-                    <%
-                        }
-                    %>
-                    <button class="btn btn-dark text-start" type="button" data-bs-toggle="modal" data-bs-target="#referFriend"><i class="bi bi-share"></i> Share</button>
-                    <%
-                        if (topPicks != null) {
-                    %>
-                    <button role="button" class="btn btn-dark text-start" type="button" onclick="scrollToTop()"> <i class="bi bi-caret-right-fill"></i> Favourite Stories</button>
-                    <%
-                        }
-                    %>
 
-                    <script>
-                        function scrollToTop() {
-                            document.body.scrollTop = 0;
-                            document.documentElement.scrollTop = 0;
-                        }
-                    </script>
-                    <%
-                        if (topPicks != null) {
-                    %>
-                    <a role="button" class="btn btn-dark text-start" href="#topPicks"><i class="bi bi-caret-right-fill"></i> Top Picks</a>
-                    <%
-                        }
-                    %>
-                    
-                    <%
-                        if (recommendedStories != null) {
-                    %>
-                    <a role="button" class="btn btn-dark text-start" href="#recommendedStories"><i class="bi bi-caret-right-fill"></i> Recommended Stories</a>
-                    <%
-                        }
-                    %>
 
-                    <%
-                        if (mostViewed != null) {
-                    %>
-                    <a role="button" class="btn btn-dark text-start" href="#mostViewed"><i class="bi bi-caret-right-fill"></i> Most Viewed</a>
-                    <%
-                        }
-                    %>
+            <%
+                if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) {
+            %>
+            <!-- Button trigger profile modal -->
+            <button type="button" class="btn btn-dark text-start" data-bs-toggle="modal" data-bs-target="#profileDetails">
+                <i class="bi bi-person-fill"></i> Profile
+            </button>
+            <a class="btn btn-dark text-start" href="LoginController?submit=logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            <%
+                }
+            %>
+            <%
+                if (user.getUserType().equals("W")) {
+            %>
+            <a class="btn btn-dark text-start" href="StoryController?submit=manageStories"><i class="bi bi-book"></i> Manage Stories</a>
+            <%
+                }
+            %>
+            <button class="btn btn-dark text-start" type="button" data-bs-toggle="modal" data-bs-target="#referFriend"><i class="bi bi-share"></i> Share</button>
+            <%
+                if (topPicks != null) {
+            %>
+            <button role="button" class="btn btn-dark text-start" type="button" onclick="scrollToTop()"> <i class="bi bi-caret-right-fill"></i> Favourite Stories</button>
+            <%
+                }
+            %>
 
-                    <%
-                        if (highestRated != null) {
-                    %>
-                    <a role="button" class="btn btn-dark text-start" href="#highestRated"><i class="bi bi-caret-right-fill"></i> Highest Rated</a>
-                    <%
-                        }
-                    %>
+            <script>
+                function scrollToTop() {
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                }
+            </script>
+            <%
+                if (topPicks != null) {
+            %>
+            <a role="button" class="btn btn-dark text-start" href="#topPicks"><i class="bi bi-caret-right-fill"></i> Top Picks</a>
+            <%
+                }
+            %>
 
-                    <%
-                        if (genre1 != null) {
-                    %>
-                    <a role="button" class="btn btn-dark text-start" href="#genre1"><i class="bi bi-caret-right-fill"></i> <%=genre1.getName()%></a>
-                    <%
-                        }
-                    %>
+            <%
+                if (recommendedStories != null) {
+            %>
+            <a role="button" class="btn btn-dark text-start" href="#recommendedStories"><i class="bi bi-caret-right-fill"></i> Recommended Stories</a>
+            <%
+                }
+            %>
 
-                    <%
-                        if (genre2 != null) {
-                    %>
-                    <a role="button" class="btn btn-dark text-start" href="#genre2"><i class="bi bi-caret-right-fill"></i> <%=genre2.getName()%></a>
-                    <%
-                        }
-                    %>
+            <%
+                if (mostViewed != null) {
+            %>
+            <a role="button" class="btn btn-dark text-start" href="#mostViewed"><i class="bi bi-caret-right-fill"></i> Most Viewed</a>
+            <%
+                }
+            %>
 
-                    <%
-                        if (genre3 != null) {
-                    %>
-                    <a role="button" class="btn btn-dark text-start" href="#genre3"><i class="bi bi-caret-right-fill"></i> <%=genre3.getName()%></a>
-                    <%
-                        }
-                    %>
-                </div>
-            </div>
+            <%
+                if (highestRated != null) {
+            %>
+            <a role="button" class="btn btn-dark text-start" href="#highestRated"><i class="bi bi-caret-right-fill"></i> Highest Rated</a>
+            <%
+                }
+            %>
+
+            <%
+                if (genre1 != null) {
+            %>
+            <a role="button" class="btn btn-dark text-start" href="#genre1"><i class="bi bi-caret-right-fill"></i> <%=genre1.getName()%></a>
+            <%
+                }
+            %>
+
+            <%
+                if (genre2 != null) {
+            %>
+            <a role="button" class="btn btn-dark text-start" href="#genre2"><i class="bi bi-caret-right-fill"></i> <%=genre2.getName()%></a>
+            <%
+                }
+            %>
+
+            <%
+                if (genre3 != null) {
+            %>
+            <a role="button" class="btn btn-dark text-start" href="#genre3"><i class="bi bi-caret-right-fill"></i> <%=genre3.getName()%></a>
+            <%
+                }
+            %>
+
+
         </div>
     </body>
 </html>

@@ -4,6 +4,7 @@
     Author     : jarro
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <!DOCTYPE html>
@@ -91,9 +92,13 @@
         </script>
 
     <body>
+        <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
+        %>
         <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                <a class="navbar-brand" href="<%=clientUrl%>">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>

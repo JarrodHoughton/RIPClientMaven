@@ -4,6 +4,7 @@
     Author     : jarro
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -58,18 +59,20 @@
 
     </head>
     <body>
+        <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
+            List<Genre> genres = (List<Genre>) request.getAttribute("genres");
+            Account user = (Account) request.getSession(false).getAttribute("user");
+        %>
         <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                <a class="navbar-brand" href="<%=clientUrl%>">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
             </div>
         </nav>
-        <%
-            List<Genre> genres = (List<Genre>) request.getAttribute("genres");
-            Account user = (Account) request.getSession(false).getAttribute("user");
-        %>
 
         <div class="container mt-4">
             <div class="row">

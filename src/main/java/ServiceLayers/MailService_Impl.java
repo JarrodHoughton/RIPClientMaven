@@ -28,8 +28,8 @@ public class MailService_Impl implements MailService_Interface {
     public MailService_Impl() {
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
-        properties = new GetProperties("src\\java\\Properties\\config.properties");
-        uri = "http://localhost:8080/RIPServerMaven/RIP/mail/";
+        properties = new GetProperties("config.properties");
+        uri = properties.get("serverUri")+properties.get("mailUri");
     }
 
     @Override

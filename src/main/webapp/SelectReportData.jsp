@@ -4,6 +4,7 @@
     Author     : Jarrod
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <!DOCTYPE html>
@@ -30,6 +31,11 @@ function validateForm() {
 
     var selectedDatesRequired = false;
     var mostLikedStoriesChecked = false;
+
+    if (checkboxes.length == 0) {
+            alert("Please select a data report option.");
+            return false;
+}
 
     for (var i = 0; i < checkboxes.length; i++) {
         if (checkboxes[i].checked) {
@@ -79,13 +85,15 @@ function validateForm() {
     </head>
     <body>
         <% 
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Account user = (Account) request.getSession(false).getAttribute("user");
             String message = (String) request.getAttribute("message");
         %>
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
-                <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
+                <a class="navbar-brand position-relative" href="<%=clientUrl%>EditorLandingPage.jsp">
                     <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)">READERS ARE INNOVATORS</a>
                 <% if (user != null && (user.getUserType().equals("E") || user.getUserType().equals("A"))){ %>
                 
@@ -196,7 +204,7 @@ function validateForm() {
             <h4 class="alert-heading">You are not currently logged in.</h4>
         </div>
         <script>
-            window.location.replace("http://localhost:8080/RIPClientMaven/");
+            window.location.replace("h<%=clientUrl%>");
         </script>
         <% } %>
     </body>

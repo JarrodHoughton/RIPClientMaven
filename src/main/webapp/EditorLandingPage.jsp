@@ -4,6 +4,7 @@
     Author     : Jarrod
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <!DOCTYPE html>
@@ -62,6 +63,8 @@
     <!--navbar-->
     <div class="space-div"></div>
     <%
+        GetProperties properties = new GetProperties("config.properties");
+        String clientUrl = properties.get("clientUrl");
         Account user = (Account) request.getSession(false).getAttribute("user");
         String message = (String) request.getAttribute("message");
     %>
@@ -73,9 +76,10 @@
                     <i class="bi bi-list"></i> <!-- More Icon -->
                 </button>
                 <div class="container-fluid">
-                    <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/">
+                    <a class="navbar-brand position-relative" href="<%=clientUrl%>">
                         <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
                 </div>
+            </div>
         </nav>
     </div>
 
@@ -207,7 +211,7 @@
         <h4 class="alert-heading">You are not currently logged in.</h4>
     </div>
     <script>
-        window.location.replace("http://localhost:8080/RIPClientMaven/");
+        window.location.replace("<%=clientUrl%>");
     </script>
     <%
         }

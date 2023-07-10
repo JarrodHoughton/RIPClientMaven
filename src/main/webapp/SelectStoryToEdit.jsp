@@ -4,6 +4,7 @@
     Author     : faiza
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -69,17 +70,19 @@
     </style>
     <body>
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Account user = (Account) request.getSession(false).getAttribute("user");
             List<Story> submittedStories = (List<Story>) request.getAttribute("submittedStories");
             List<Genre> genres = (List<Genre>) request.getSession(false).getAttribute("genres");
             String message = (String) request.getAttribute("message");
         %>
-        
+
         <%
             if (user == null) {
         %>
         <script>
-            window.location.replace("http://localhost:8080/RIPClientMaven/");
+            window.location.replace("<%=clientUrl%>");
         </script>
         <%
             }
@@ -91,9 +94,10 @@
                         <i class="bi bi-list"></i> <!-- More Icon -->
                     </button>
                     <div class="container-fluid">
-                        <a class="navbar-brand position-relative" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
+                        <a class="navbar-brand position-relative" href="<%=clientUrl%>EditorLandingPage.jsp">
                             <img src="book.svg" alt="Book Icon" class="me-2 " width="24" height="24" style="filter: invert(1)" >READERS ARE INNOVATORS</a>
                     </div>
+                </div>
             </nav>
         </div>
 
@@ -152,7 +156,7 @@
                 </div>
             </div>
         </div>
-                            
+
         <div class="other-space"></div>
 
         <div class="container mt-8">
@@ -227,26 +231,26 @@
                             </div>
                             <div class="row text-center">
                                 <div class="col text-center">
-                                    <ul class="list-group list-group-flush">
+                                    <span>
                                         <%
                                             if (genres != null) {
                                                 for (Genre genre : genres) {
                                                     if (story.getGenreIds().contains(genre.getId())) {
                                         %>
-                                        <li class="list-group-item text-white bg-black"><%=genre.getName()%></li>
-                                            <%
-                                                        }
+                                        <%=genre.getName() + " "%>
+                                        <%
                                                     }
                                                 }
-                                            %>
-                                    </ul>
+                                            }
+                                        %>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="col" style="width: 70%; align-items: center;">
                             <div class="row">
                                 <div class="col">
-                                    <div class="row my-auto">
+                                    <div class="row my-auto bg-dark">
                                         <swiper-container scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true" mousewheel-sensitivity="0.4">
                                             <swiper-slide>
                                                 <h4 class="text-center text-white"><%=story.getTitle()%></h4>

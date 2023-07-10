@@ -35,8 +35,8 @@ public class CommentService_Impl implements CommentService_Interface{
     public CommentService_Impl() {
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
-        properties = new GetProperties("src\\java\\Properties\\config.properties");
-        uri = "http://localhost:8080/RIPServerMaven/RIP/comment/";
+        properties = new GetProperties("config.properties");
+        uri = properties.get("serverUri")+properties.get("commentUri");
     }
     
     @Override

@@ -1,3 +1,4 @@
+<%@page import="Utils.GetProperties"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.ArrayList"%>
@@ -73,11 +74,13 @@
 
     <body>
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Account user = (Account) request.getSession(false).getAttribute("user");
         %>
         <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/EditorLandingPage.jsp">
+                <a class="navbar-brand" href="<%=clientUrl%>EditorLandingPage.jsp">
                     <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                     READERS ARE INNOVATORS
                 </a>
@@ -278,7 +281,7 @@
             <h4 class="alert-heading">You are not currently logged in.</h4>
         </div> 
         <script>
-            window.location.replace("http://localhost:8080/RIPClientMaven/");
+            window.location.replace("<%=clientUrl%>");
         </script>
         <%
             }

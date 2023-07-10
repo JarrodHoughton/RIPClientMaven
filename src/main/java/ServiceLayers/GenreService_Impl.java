@@ -35,8 +35,8 @@ public class GenreService_Impl implements GenreService_Interface{
     public GenreService_Impl() {
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
-        properties = new GetProperties("src\\java\\Properties\\config.properties");
-        uri = "http://localhost:8080/RIPServerMaven/RIP/genre/";
+        properties = new GetProperties("config.properties");
+        uri = properties.get("serverUri")+properties.get("genreUri");
     }
     
     @Override

@@ -4,6 +4,7 @@
     Author     : jarro
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -73,11 +74,13 @@
     </head>
     <body>
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Account user = null;
             if (request.getSession(false) != null) {
                 user = (Account) request.getSession(false).getAttribute("user");
             }
-            String homePageUrl = "http://localhost:8080/RIPClientMaven/";
+            String homePageUrl = clientUrl;
             if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) {
                 homePageUrl += "ReaderLandingPage.jsp";
             } else {
@@ -116,7 +119,7 @@
         <div class="space"></div>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h3 class="text-center book-title" style="color: white;">Search Results In Stories</h3>
+            <h3 class="text-center book-title" style="color: white;">Search Results In Stories For "<%=searchValue%>"</h3>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
 
                 <%
@@ -181,7 +184,7 @@
         %>
         <div class="container mt-5">
             <!-- Spacing -->
-            <h3 class="text-center book-title" style="color: white;">Search Results In Genres</h3>
+            <h3 class="text-center book-title" style="color: white;">Search Results In Genres For "<%=searchValue%>"</h3>
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
                 <%
                     for (Genre genre : genresFromSearch) {

@@ -1,3 +1,4 @@
+<%@page import="Utils.GetProperties"%>
 <%@page import="java.time.LocalDateTime"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
@@ -122,12 +123,14 @@
     </head>
     <body>
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Reader reader = null;
             Account user = null;
             if (request.getSession(false) != null) {
                 user = (Account) request.getSession(false).getAttribute("user");
             }
-            String homePageUrl = "http://localhost:8080/RIPClientMaven/";
+            String homePageUrl = clientUrl;
             if (user != null && (user.getUserType().equals("R") || user.getUserType().equals("W"))) {
                 homePageUrl += "ReaderLandingPage.jsp";
                 reader = (Reader) user;
@@ -173,7 +176,7 @@
                         if (userRating != null) {
                             ratingExists = true;
                         }
-                        
+
                         if (message != null) {
                     %>
                     <div class="alert alert-primary mt-5" role="alert">
@@ -194,7 +197,7 @@
                         }
                     %>
                     <%
-                        if (story!=null) {
+                        if (story != null) {
                     %>
                     <div class="story-container">
                         <div class="row">
@@ -255,9 +258,9 @@
                                             <input type="hidden" name="storyId" value="<%=story.getId()%>">
 
                                         </form>
-                                            <%
-                                                }
-                                            %>
+                                        <%
+                                            }
+                                        %>
 
 
 
@@ -274,34 +277,21 @@
                                     %>
 
                                     <a class="btn btn-danger" href="StoryController?submit=unlikeStory&storyId=<%=story.getId()%>"><i class="bi bi-heart-fill"></i></a>
-                                    <%
-                                    } else {
-                                    %>
+                                        <%
+                                        } else {
+                                        %>
 
                                     <a class="btn btn-danger" href="StoryController?submit=likeStory&storyId=<%=story.getId()%>"><i class="bi bi-heart"></i></a>
-                                    <%
-                                        }
-                                    %>
-                                    <%
-                                        }
-                                    %>
-                                    <%
-                                        if ((userViewedStory && story.getCommentsEnabled()) || story.getAuthorId() == reader.getId()) {
-                                    %>
+                                        <%
+                                            }
+                                        %>
+                                        <%
+                                            }
+                                        %>
+
                                     <br>
                                     <br>
-                                    <form class="title-right" action="StoryController" method="get">
-                                        <div class="mb-3">
 
-                                            <textarea placeholder="Leave a comment!" name="comment" id="comments" class="form-control" style="font-family:sans-serif; font-size:1.2em;"></textarea>
-                                        </div>
-                                        <input type="hidden" name="storyId" value="<%=story.getId()%>">
-                                        <input type="submit" name="submit" value="commentStory" class="btn btn-primary">
-                                    </form>
-
-                                    <%
-                                        }
-                                    %>
                                     <%
                                         }
                                     %>
@@ -309,9 +299,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="container t-5">
-                        <% if (story.getCommentsEnabled() && comments != null) { %>
-                        <h3 class="text-white">Comments</h3>
+
+                    <%
+                        }
+                    %>
+                </div>
+            </div>
+            <% if (story.getCommentsEnabled() && comments != null) { %>
+            <div class="card">
+                <div class="card-content bg-dark text-white text-center">
+                    <div class="card-header">
+                        <h3 class="card-title">Comments</h3>
+                    </div>
+                    <div class="card-body">
                         <div class="d-flex justify-content-center row text-white bg-dark">
                             <swiper-container scrollbar="true" direction="vertical" slides-per-view="auto" scrollbar-draggable="true" free-mode="true" mousewheel="true">
                                 <swiper-slide>
@@ -346,14 +346,26 @@
                                 </swiper-slide>
                             </swiper-container>
                         </div>
-                        <% } %>
                     </div>
-                    <div style="margin-top: 100px;" ></div>
-                    <%
-                        }
-                    %>
+                    <div class="card-footer">
+                        <%
+                            if ((userViewedStory && (user.getUserType().equals("R") || user.getUserType().equals("W")))) {
+                        %>
+                        <form class="title-right" action="StoryController" method="get">
+                            <div class="mb-3">
+                                <textarea placeholder="Leave a comment!" name="comment" id="comments" class="form-control" style="font-family:sans-serif; font-size:1.2em;"></textarea>
+                            </div>
+                            <input type="hidden" name="storyId" value="<%=story.getId()%>">
+                            <input type="submit" name="submit" value="commentStory" class="btn btn-primary">
+                        </form>
+                        <% }%>
+                    </div>
                 </div>
             </div>
+            <%
+                }
+            %>
         </div>
+        <div style="margin-top: 100px;" ></div>
     </body>
 </html>

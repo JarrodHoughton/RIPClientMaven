@@ -38,8 +38,8 @@ public class LoginService_Impl implements LoginService_Interface{
     public LoginService_Impl() {
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
-        properties = new GetProperties("src\\java\\Properties\\config.properties");
-        uri = "http://localhost:8080/RIPServerMaven/RIP/login/";
+        properties = new GetProperties("config.properties");
+        uri = properties.get("serverUri")+properties.get("loginUri");
     }
     
     @Override

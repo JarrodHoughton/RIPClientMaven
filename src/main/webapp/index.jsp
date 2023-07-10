@@ -4,6 +4,7 @@
     Author     : Jarrod
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -118,6 +119,8 @@
         </style>
 
         <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
             Genre genre1 = (Genre) request.getAttribute("genre1");
             Genre genre2 = (Genre)  request.getAttribute("genre2");
             Genre genre3 = (Genre)  request.getAttribute("genre3");
@@ -150,7 +153,7 @@
                         <i class="bi bi-list"></i> <!-- More Icon -->
                     </button>
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/">
+                        <a class="navbar-brand" href="<%=clientUrl%>">
                             <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                             READERS ARE INNOVATORS
                         </a>
@@ -477,7 +480,7 @@
                     <div class="modal-body bg-dark">
                         <div class="row mb-3">
                             <label for="name" class="col-form-label mb-3">Name</label>
-                            <input type="text" class="form-control" id="name" name="name">
+                            <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="row mb-3">
                             <label for="email" class="col-form-label mb-3">Email</label>
@@ -504,18 +507,18 @@
 
     <!-- Side Bar Menu -->
     <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="sidebar" aria-labelledby="sidebar">
-        <div class="offcanvas-header">
+        <div class="offcanvas-header bg-black">
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close bg-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div class="d-grid">
-                <a class="btn btn-dark text-start" role="button" href="login.jsp"> Login</a>
-                <button class="btn btn-dark text-start" type="button" data-bs-toggle="modal" data-bs-target="#referFriend">Share</button>
+                <a class="btn btn-dark text-start" role="button" href="login.jsp"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                <button class="btn btn-dark text-start" type="button" data-bs-toggle="modal" data-bs-target="#referFriend"><i class="bi bi-share"></i> Share</button>
                 <%
                     if (topPicks!=null) {
                 %>
-                <button role="button" class="btn btn-dark text-start" text-start type="button" onclick="scrollToTop()">Top Picks</button>
+                <button role="button" class="btn btn-dark text-start" text-start type="button" onclick="scrollToTop()"><i class="bi bi-caret-right-fill"></i> Top Picks</button>
                 <%
                     }
                 %>
@@ -526,46 +529,46 @@
                         document.documentElement.scrollTop = 0;
                     }
                 </script>
-                
-                <%
-                    if (mostViewed!=null) {
-                %>
-                <a role="button" class="btn btn-dark text-start" href="#mostViewed">Most Viewed</a>
-                <%
-                    }
-                %>
-                
-                <%
-                    if (highestRated!=null) {
-                %>
-                <a role="button" class="btn btn-dark text-start" href="#highestRated">Highest Rated</a>
-                <%
-                    }
-                %>
-                
-                <%
-                    if (genre1!=null) {
-                %>
-                <a role="button" class="btn btn-dark text-start" href="#genre1"><%=genre1.getName()%></a>
-                <%
-                    }
-                %>
-                
-                <%
-                    if (genre2!=null) {
-                %>
-                <a role="button" class="btn btn-dark text-start" href="#genre2"><%=genre2.getName()%></a>
-                <%
-                    }
-                %>
-                
-                <%
-                    if (genre3!=null) {
-                %>
-                <a role="button" class="btn btn-dark text-start" href="#genre3"><%=genre3.getName()%></a>
-                <%
-                    }
-                %>
+
+                    <%
+                        if (mostViewed != null) {
+                    %>
+                    <a role="button" class="btn btn-dark text-start" href="#mostViewed"><i class="bi bi-caret-right-fill"></i> Most Viewed</a>
+                    <%
+                        }
+                    %>
+
+                    <%
+                        if (highestRated != null) {
+                    %>
+                    <a role="button" class="btn btn-dark text-start" href="#highestRated"><i class="bi bi-caret-right-fill"></i> Highest Rated</a>
+                    <%
+                        }
+                    %>
+
+                    <%
+                        if (genre1 != null) {
+                    %>
+                    <a role="button" class="btn btn-dark text-start" href="#genre1"><i class="bi bi-caret-right-fill"></i> <%=genre1.getName()%></a>
+                    <%
+                        }
+                    %>
+
+                    <%
+                        if (genre2 != null) {
+                    %>
+                    <a role="button" class="btn btn-dark text-start" href="#genre2"><i class="bi bi-caret-right-fill"></i> <%=genre2.getName()%></a>
+                    <%
+                        }
+                    %>
+
+                    <%
+                        if (genre3 != null) {
+                    %>
+                    <a role="button" class="btn btn-dark text-start" href="#genre3"><i class="bi bi-caret-right-fill"></i> <%=genre3.getName()%></a>
+                    <%
+                        }
+                    %>
             </div>
         </div>
     </div>

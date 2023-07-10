@@ -38,8 +38,8 @@ public class RatingService_Impl implements RatingService_Interface {
     public RatingService_Impl() {
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
-        properties = new GetProperties("src\\java\\Properties\\config.properties");
-        uri = "http://localhost:8080/RIPServerMaven/RIP/rating/";
+        properties = new GetProperties("config.properties");
+        uri = properties.get("serverUri")+properties.get("ratingUri");
     }
 
     @Override

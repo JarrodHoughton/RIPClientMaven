@@ -20,21 +20,21 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jarro
+ * @author Jarrod
  */
 public class ReaderService_Impl implements ReaderService_Interface{
     private final Client client;
     private WebTarget webTarget;
     private final ObjectMapper mapper;
     private Response response;
-    private final GetProperties properties = null;
+    private final GetProperties properties;
     private final String uri;
 
     public ReaderService_Impl() {
         client = ClientBuilder.newClient();
         mapper = new ObjectMapper();
-//        properties = new GetProperties("C:\\Users\\jarro\\OneDrive\\Documents\\NetBeansProjects\\RIPClient\\src\\java\\Properties\\config.properties");
-        uri = "http://localhost:8080/RIPServerMaven/RIP/readers/";
+        properties = new GetProperties("config.properties");
+        uri = properties.get("serverUri")+properties.get("readersUri");
     }
     
     @Override

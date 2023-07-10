@@ -4,6 +4,7 @@
     Author     : faiza
 --%>
 
+<%@page import="Utils.GetProperties"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Models.*"%>
 <%@page import="java.util.List"%>
@@ -57,13 +58,14 @@
         }
     </style>
     <body>
+        <%
+            GetProperties properties = new GetProperties("config.properties");
+            String clientUrl = properties.get("clientUrl");
+        %>
         <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
             <div class="container">
-                <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" style="position: absolute; left: 0;">
-                    <i class="bi bi-list"></i> <!-- More Icon -->
-                </button>
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="http://localhost:8080/RIPClientMaven/ReaderLandingPage.jsp">
+                    <a class="navbar-brand" href="<%=clientUrl%>ReaderLandingPage.jsp">
                         <img src="book.svg" alt="Book Icon" class="me-2" width="24" height="24" style="filter: invert(1)">
                         READERS ARE INNOVATORS
                     </a>
@@ -114,7 +116,7 @@
                     %>
                     <div class="row bg-white text-black text-center" style="border-block-end: 2px solid black; height: 100px; align-items: center;">
                         <div class="col">
-                            <input aria-labelledBy="<%=story.getTitle()%>" class="form-check-input me-1 form-check-input-bg-dark" type="checkbox" name="<%=story.getId()%>" value="<%=story.getId()%>" id="<%=story.getId()%>">
+                            <input aria-labelledBy="<%=story.getTitle()%>" class="form-check-input me-1 form-check-input bg-dark" type="checkbox" name="<%=story.getId()%>" value="<%=story.getId()%>" id="<%=story.getId()%>">
                             <label class="form-check-label" for="<%=story.getId()%>"></label>
                         </div>
                         <div class="col">
@@ -158,26 +160,26 @@
                             </div>
                             <div class="row text-center">
                                 <div class="col text-center">
-                                    <ul class="list-group list-group-flush">
+                                    <span>
                                         <%
                                             if (genres != null) {
                                                 for (Genre genre : genres) {
                                                     if (story.getGenreIds().contains(genre.getId())) {
                                         %>
-                                        <li class="list-group-item text-white bg-black"><%=genre.getName()%></li>
+                                                    <%=genre.getName() + " "%>
                                             <%
                                                         }
                                                     }
                                                 }
                                             %>
-                                    </ul>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="col" style="width: 70%;  align-items: center;">
                             <div class="row">
                                 <div class="col">
-                                    <div class="row my-auto">
+                                    <div class="row my-auto bg-dark">
                                         <swiper-container scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
                                             <swiper-slide>
                                                 <h4 class="text-center text-white"><%=story.getTitle()%></h4>
@@ -270,26 +272,26 @@
                             </div>
                             <div class="row text-center">
                                 <div class="col text-center">
-                                    <ul class="list-group list-group-flush">
+                                    <span>
                                         <%
                                             if (genres != null) {
                                                 for (Genre genre : genres) {
                                                     if (story.getGenreIds().contains(genre.getId())) {
                                         %>
-                                        <li class="list-group-item text-white bg-black"><%=genre.getName()%></li>
+                                                    <%=genre.getName() + " "%>
                                             <%
                                                         }
                                                     }
                                                 }
                                             %>
-                                    </ul>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="col" style="width: 70%;">
                             <div class="row">
                                 <div class="col">
-                                    <div class="row my-auto">
+                                    <div class="row my-auto bg-dark">
                                         <swiper-container scrollbar-draggable="true" class="mySwiper" scrollbar="true" direction="vertical" slides-per-view="auto" free-mode="true" mousewheel="true">
                                             <swiper-slide>
                                                 <h4 class="text-center text-white"><%=story.getTitle()%></h4>
