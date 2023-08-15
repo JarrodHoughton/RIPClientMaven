@@ -1,4 +1,6 @@
 # RIPClientMaven
+READERS ARE INNOVATORS PLATFORM
+
 Overview
 
 The Readers are Innovators Program is a popular initiative that aims to encourage reading. To achieve this, the system will be digitised by developing an online short story viewer. The system will have three types of users: readers, writers, and editors. Readers can register, select their preferred categories, they can search for specific stories, read the stories, rate them, and add favourites. Readers can also refer friends to the platform. Writers can register, submit stories for approval by editors, and store drafts. Editors are responsible for approving or rejecting stories. The system will include additional features such as user authentication, mobile compatibility, and data mining capabilities for generating reports on book views, ratings, likes, categories, writer performance, and editor performance. These reports can be viewed by all editors and downloaded.
